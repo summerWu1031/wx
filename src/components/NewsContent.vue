@@ -116,6 +116,7 @@ export default {
         line-height: 39px;
         font-size: 16px;
         color: #DB261D;
+        text-indent: 0;
       }
     }
 

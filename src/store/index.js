@@ -16,14 +16,56 @@ export default new Vuex.Store({
       {name: '会员风采', link: '/member'},
       {name: '关于我们', link: '/about'},
       {name: '资料下载', link: '/download'},
-    ]
+    ],
+    userinfo:{},
+    cartcount: 0,
+    headtitle:"",
+    footactive:"",
+    footclass:"",
+    LOADING: false
   },
   mutations: {
     updateSelected(state,t){
       state.current.splice(0,1,t.name)
+    },
+    setSaveUserInfo(state, userinfo) {
+      state.userinfo = userinfo
+    },
+    setSaveCartCount(state, count) {
+      state.count = count
+    },
+    setSaveHeadTitle(state, headtitle) {
+      state.headtitle = headtitle
+    },
+    setSaveFootActive(state, footactive) {
+      state.footactive = footactive
+    },
+    setSaveLoading(state, LOADING) {
+      state.LOADING = LOADING
+    },
+    showLoading(state) {
+      state.LOADING = true
+    },
+    hideLoading(state) {
+      state.LOADING = false
     }
   },
   actions: {
+    saveUserInfo(context, userinfo){
+      context.commit('setSaveUserInfo', userinfo)
+    },
+    saveCartCount(context, count){
+      context.commit('setSaveCartCount', count)
+    },
+    saveHeadTitle(context, headtitle){
+      context.commit('setSaveHeadTitle', headtitle)
+    },
+    saveFootActive(context, footactive){
+      context.commit('setSaveFootActive', footactive)
+    },
+    saveLoading(context, LOADING){
+      context.commit('setSaveLoading', LOADING)
+    }
   },
   modules: {
   }

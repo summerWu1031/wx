@@ -199,7 +199,7 @@ main{
   }
   .danDetail{
     width: 1200px;
-    margin-bottom:60px;
+    margin-bottom:80px;
     ::v-deep.el-table th{
       width: 60px;
     }
@@ -214,7 +214,7 @@ main{
   display:flex;
   border:1px solid #dddddd;
   float: right;
-  //margin-right: 20px;
+  margin-right: 20px;
   margin-top:20px;
   ::v-deep.el-input{
     width: 40px;

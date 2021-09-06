@@ -11,6 +11,11 @@ import Member from '@/views/Member/Member.vue';
 import MemberDetail from '@/views/Member/MemberDetail.vue';
 import About from '@/views/About.vue';
 import Dan from '@/views/Dan.vue'
+import SignUp from "@/views/User/SignUp";
+import Login from "@/views/User/Login";
+import Agreement from "@/components/Agreement";
+import Helloword from "@/components/Helloword";
+import MyUser from "@/views/User/MyUser";
 Vue.use(VueRouter)
 
 const routes = [
@@ -58,6 +63,26 @@ const routes = [
   {
     path: '/dan',
     component: Dan
+  },
+  {
+    path: '/signup',
+    component: SignUp
+  },
+  {
+    path: '/login',
+    component: Login
+  },
+  {
+    path: '/agreement',
+    component: Agreement
+  },
+  {
+    path: '/helloworld',
+    component: Helloword
+  },
+  {
+    path: '/myuser',
+    component: MyUser
   }
 
 ]

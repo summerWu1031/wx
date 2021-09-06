@@ -94,12 +94,15 @@
           <div class="title">惠民服务</div>
         </div>
         <ul class="content">
-          <li>
-            <img src="../assets/image/huimin1.png" alt="会员服务">
-            <div>
-              <span>会员注册、会员登录、信息查阅</span>
-            </div>
-          </li>
+          <router-link to="/login">
+            <li>
+              <img src="../assets/image/huimin1.png" alt="会员服务">
+              <div>
+                <span>会员注册、会员登录、信息查阅</span>
+              </div>
+            </li>
+          </router-link>
+
           <router-link to="/dan">
             <li>
 

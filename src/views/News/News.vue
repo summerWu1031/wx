@@ -4,7 +4,7 @@
     <Nav2>
       新闻动态
     </Nav2>
-    <Aside>
+    <NewsContent>
       <div class="list_box">
         <div class="title">
           <p>
@@ -53,17 +53,17 @@
           </div>
         </div>
       </div>
-    </Aside>
+    </NewsContent>
     <Footer/>
   </div>
 </template>
 
 <script lang="js">
 import {getNoticeList} from '@/api'
-import Aside from '@/components/Aside.vue';
+import NewsContent from '@/components/NewsContent.vue';
 import {pagination} from '@/mixins/mixin'
 export default {
-  components:{ Aside},
+  components:{ NewsContent},
   mixins:[pagination],
   data() {
     return {

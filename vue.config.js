@@ -24,18 +24,19 @@ module.exports = {
     config
         .plugin('html')
         .tap(args => {
+          args[0].favicon = './public/favicon.ico'
           args[0].title = '广东省武术协会'
           return args
         })
   },
-  pwa: {
-    iconPaths: {
-      favicon32: 'favicon.ico',
-      favicon16: 'favicon.ico',
-      appleTouchIcon: 'favicon.ico',
-      maskIcon: 'favicon.ico',
-      msTileImage: 'favicon.ico'
-    }
-  }
+  // pwa: {
+  //   iconPaths: {
+  //     favicon32: 'favicon.ico',
+  //     favicon16: 'favicon.ico',
+  //     appleTouchIcon: 'favicon.ico',
+  //     maskIcon: 'favicon.ico',
+  //     msTileImage: 'favicon.ico'
+  //   }
+  // }
 
 }

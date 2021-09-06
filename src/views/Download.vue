@@ -65,15 +65,8 @@
   </div>
 </template>
 
-<script lang="ts">
-import Nav from '@/components/Nav.vue';
-import Nav2 from '@/components/Nav2.vue';
-import Aside from '@/components/Aside.vue';
-import Footer from '@/components/Footer.vue';
-
-export default {
-  components: {Footer, Aside, Nav, Nav2}
-};
+<script >
+export default {}
 </script>
 
 <style lang="scss" scoped>

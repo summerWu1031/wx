@@ -98,3 +98,14 @@ export const queryUserRank = params => {
     })
 }
 
+/**
+ * 获取openID
+ * 参数：code
+ */
+export const getOpenId = params => {
+    return request({
+        url: '/common/getOpenId',
+        method: 'get',
+        params
+    })
+}
