@@ -16,6 +16,7 @@ import Login from "@/views/User/Login";
 import Agreement from "@/components/Agreement";
 import Helloword from "@/components/Helloword";
 import MyUser from "@/views/User/MyUser";
+import ForgetPassword from "@/views/User/ForgetPassword";
 Vue.use(VueRouter)
 
 const routes = [
@@ -83,7 +84,12 @@ const routes = [
   {
     path: '/myuser',
     component: MyUser
-  }
+  },
+  {
+    path: '/forgot-password',
+    component: ForgetPassword
+  },
+
 
 ]
 

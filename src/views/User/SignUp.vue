@@ -76,12 +76,16 @@ export default {
     let name = (rule, value, callback)=>{
       if (value === '') {
        callback(new Error('姓名不能为空!'))
+      }else {
+        callback()
       }
 
     }
     let code = (rule, value, callback)=>{
       if (value === '') {
         callback(new Error('请填写验证码!'))
+      }else {
+        callback()
       }
 
     }
@@ -107,9 +111,7 @@ export default {
     let formatter = (rule, value, callback) => {
       // const reg = /^[a-z0-9]+([._\\-]*[a-z0-9])*@([a-z0-9]+[-a-z0-9]*[a-z0-9]+.){1,63}[a-z0-9]+$/;
       const reg = /^1[3|4|5|6|7|8|9][0-9]\d{8}$/;
-      if (!value) {
-        callback(new Error('手机号不能为空!'))
-      }
+      if (!value) return
       if (!reg.test(value)) {
         callback(new Error('请输入正确的手机号码'));
       } else {
@@ -161,14 +163,16 @@ export default {
       user: {},
       rules: {
         name: [
-          // {required: true, message: '请输入活动名称', trigger: 'blur'},
+          // {required: true, message: '姓名不能为空!', trigger: 'blur'},
           {validator: name, trigger: 'blur'}
         ],
         phone: [
+          // {required: true, message: '手机号不能为空!', trigger: 'blur'},
           {validator: formatter, trigger: 'blur'}
         ],
         code: [
-          {validator: code, trigger: 'blur'}
+          {required: true, message: '请输入验证码!', trigger: 'blur'},
+          // {validator: code, trigger: 'blur'}
         ],
         password: [
           {validator: validatePass, trigger: 'blur'}
@@ -180,35 +184,16 @@ export default {
     }
   },
   methods: {
-    // submitForm(formName) {
-    //   console.log(1)
-    //   this.$refs[formName].validate((valid) => {
-    //     console.log(valid)
-    //     if (valid) {
-    //
-    //       this.onResigter(1)
-    //       console.log(2)
-    //     } else {
-    //       console.log('请正确填写表格内容');
-    //       return false;
-    //     }
-    //   });
-    // },
     submitForm(formName) {
-      // alert('formName!',this.$refs.ruleForm);
-      console.log(this.$refs[formName])
       this.$refs[formName].validate((valid) => {
-        console.log('valid'+valid)
+        console.log(valid)
         if (valid) {
-          alert('submit!');
+          this.onResigter(1)
         } else {
-          console.log('error submit!!');
+          self.$message('请正确填写表格内容');
           return false;
         }
       });
-    },
-    resetForm(formName) {
-      this.$refs[formName].resetFields();
     },
     onResigter(registerType) {
       let self = this;
@@ -267,8 +252,6 @@ export default {
           self.getUserProfiles();
 
             self.$router.push("/helloword");
-            self.$store.dispatch("saveHeadTitle", "我的");
-            self.$store.dispatch("saveFootActive", "我的");
 
         } else {
           this.$message(res.msg);
@@ -278,7 +261,7 @@ export default {
     },
     getUserProfiles() {
       const self = this;
-      // self.$store.commit("showLoading");
+
       getUserProfile().then((res) => {
         if (res.code == 200) {
           // window.sessionStorage.setItem("user", JSON.stringify(res.data));
@@ -287,7 +270,7 @@ export default {
         } else {
           self.$message("登录失败！");
         }
-        // self.$store.commit("hideLoading");
+
       });
     },
 

@@ -53,6 +53,8 @@ export default {
       const reg = /^1[3|4|5|6|7|8|9][0-9]\d{8}$/;
       if (!value) {
         callback(new Error('手机号码不能为空!'))
+      }else {
+        callback()
       }
       if (!reg.test(value)) {
         callback(new Error('请输入正确的手机号码'));
@@ -63,6 +65,8 @@ export default {
     let password = (rule, value, callback)=>{
       if (!value) {
         callback(new Error('密码不能为空！'))
+      }else {
+        callback()
       }
     }
     return {
@@ -76,6 +80,7 @@ export default {
       },
       rules: {
         username: [
+          // {required: true, message: '手机号不能为空!', trigger: 'blur'},
           {validator: formatter, trigger: 'blur'}
         ],
         password: [
@@ -86,9 +91,8 @@ export default {
     }
   },
   mounted() {
-    // let token = window.sessionStorage.getItem("token");
-    let token = window.localStorage.getItem("token");
-
+    let token = window.sessionStorage.getItem("token");
+    // let token = window.localStorage.getItem("token");
     if (token) {
       this.$router.push("/helloworld");
     }
@@ -117,12 +121,11 @@ export default {
         password: self.personinfo.password,
       };
       login(param).then((res) => {
-        console.log(res + 'logoin.res')
         if (res.token) {
-          // window.sessionStorage.setItem("token", res.token);
-          window.localStorage.setItem("token", res.token);
+          window.sessionStorage.setItem("token", res.token);
+          // window.localStorage.setItem("token", res.token);
           self.getUserProfiles();
-          self.$router.push("/helloworld");
+          // self.$router.push("/helloworld");
         } else {
           this.$message(res.msg);
         }
@@ -131,11 +134,10 @@ export default {
     getUserProfiles() {
       const self = this;
       getUserProfile().then((res) => {
-        console.log(res + 'getUserProfile.res')
+        console.log(res.data)
         if (res.code == 200) {
-          // window.sessionStorage.setItem("user", JSON.stringify(res.data));
-          console.log(res.data, 'user.data')
-          window.localStorage.setItem("user", JSON.stringify(res.data));
+          window.sessionStorage.setItem("user", JSON.stringify(res.data));
+          // window.localStorage.setItem("user", JSON.stringify(res.data));
           self.$store.dispatch("saveUserInfo", res.data);
           self.personinfo.user = res.data.userInfo;
           if (res.data.userType == 1) {
@@ -145,18 +147,26 @@ export default {
             // self.personinfo.user.avatar = res.data.orgInfo.img;
             // self.personinfo.user.updateTime = res.data.orgInfo.updateTime;
           }
-          // console.log(self.user.updateTime)
-          if (!self.personinfo.user) {
-            console.log(1)
+          console.log(self.personinfo.user.updateTime)
+          console.log(self.personinfo.user)
+          if (!self.personinfo.user.updateTime) {
             self.$message("请先完善用户基本信息！");
             self.$router.push("/myuser");
+          }else {
+            self.$router.push("/helloworld");
           }
         } else {
           self.$message("登录失败！");
         }
       });
     },
-  }
+  },
+  computed: {
+    userinfo() {
+      return this.$store.state.userinfo;
+
+    }
+  },
 }
 </script>
 

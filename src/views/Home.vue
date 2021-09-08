@@ -211,7 +211,7 @@
               </li>
             </ul>
           </div>
-          <div class="images_scroll2" ref="images_scroll2">
+          <div class="images_scroll" ref="images_scroll2">
             <ul>
               <li v-for="(img,index) in newSightList" :key="index">
                 <router-link :to="{ path:'/member-detail/'+img.id }">
@@ -336,6 +336,7 @@ export default {
     },
     changeUlWidth() {
       this.newSightList = this.sightList
+      console.log(this.sightList.length)
       if (this.sightList.length < 4) {
         let arr = this.sightList.copyWithin()
         this.newSightList = this.sightList.concat(arr)

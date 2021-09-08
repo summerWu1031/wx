@@ -100,7 +100,18 @@ export const getUserProfile = params => {
  * 完善当前用户基本信息/修改资料信息
  * @param
  * 参数： {
- * 地址：area，生日：birthday，邮箱：email,手机号：phonenumber，昵称：nickName，运动员等级：playerLv，身份证类型：identityType，身份证号码：identityCode,省：province，市：city,县：county,区：street
+ * 地址：area，
+ * 生日：birthday，
+ * 邮箱：email,
+ * 手机号：phonenumber，
+ * 昵称：nickName，
+ * 运动员等级：playerLv，
+ * 身份证类型：identityType，
+ * 身份证号码：identityCode,
+ * 省：province，
+ * 市：city,
+ * 县：county,
+ * 区：street
  *
  * org{
  * 单位名称 name
@@ -121,6 +132,7 @@ export const updUserInfo = data => {
     return request({
         url: '/app/personCenter/updUserInfo',
         method: 'post',
+        // header:{'token':localStorage.setItem('token')},
         data
     });
 }
