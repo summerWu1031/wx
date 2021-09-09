@@ -14,7 +14,7 @@ import Dan from '@/views/Dan.vue'
 import SignUp from "@/views/User/SignUp";
 import Login from "@/views/User/Login";
 import Agreement from "@/components/Agreement";
-import Helloword from "@/components/Helloword";
+import My from "@/views/User/My";
 import MyUser from "@/views/User/MyUser";
 import ForgetPassword from "@/views/User/ForgetPassword";
 Vue.use(VueRouter)
@@ -78,8 +78,8 @@ const routes = [
     component: Agreement
   },
   {
-    path: '/helloworld',
-    component: Helloword
+    path: '/my',
+    component: My
   },
   {
     path: '/myuser',

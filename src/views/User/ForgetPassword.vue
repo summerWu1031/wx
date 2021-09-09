@@ -10,27 +10,27 @@
         <div class="signUpForm">
           <el-form :model="params" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm"
                    @submit="onResigter(1)">
-            <el-form-item label="手机号码" prop="phone">
-              <el-input v-model="params.phone" placeholder="请输入手机号码（账号）"></el-input>
+            <el-form-item label="手机号码" prop="phonenumber">
+              <el-input v-model="params.phonenumber" placeholder="请输入手机号码（账号）"></el-input>
             </el-form-item>
             <el-form-item label="用户新密码" prop="password">
-              <el-input type="password" v-model="params.password" autocomplete="off" placeholder="请输入用户新登录密码"></el-input>
+              <el-input show-password type="password" v-model="params.password" autocomplete="off" placeholder="请输入用户新登录密码"></el-input>
             </el-form-item>
             <el-form-item label="确认密码" prop="passwordt">
               <el-input type="password" v-model="params.passwordt" autocomplete="off" placeholder="请再次确认密码"></el-input>
             </el-form-item>
-<!--            <el-form-item label="短信验证码" prop="sms" class="mes">-->
-<!--              <el-input class="mesInput" v-model="params.sms"></el-input>-->
-<!--              <el-button-->
-<!--                  size="small"-->
-<!--                  class="btn-send"-->
-<!--                  native-type="button"-->
-<!--                  @click="getForgetSms"-->
-<!--                  :disabled="!disabledCodeBtn"-->
-<!--              >-->
-<!--                {{ codeText }}-->
-<!--              </el-button>-->
-<!--            </el-form-item>-->
+            <el-form-item label="短信验证码" prop="sms" class="mes">
+              <el-input class="mesInput" v-model="params.sms"></el-input>
+              <el-button
+                  size="small"
+                  class="btn-send"
+                  native-type="button"
+                  @click="getForgetSms"
+                  :disabled="!disabledCodeBtn"
+              >
+                {{ codeText }}
+              </el-button>
+            </el-form-item>
 
             <el-form-item class="btn">
               <el-button @click="submitForm('ruleForm')" >修改</el-button>
@@ -56,14 +56,14 @@
 import { forgetPassword, forgetSmsCode } from "@/api/user";
 export default {
   data(){
-    // let sms = (rule, value, callback)=>{
-    //   if (value === '') {
-    //     callback(new Error('请填写验证码!'))
-    //   }else {
-    //     callback()
-    //   }
-    //
-    // }
+    let sms = (rule, value, callback)=>{
+      if (value === '') {
+        callback(new Error('请填写验证码!'))
+      }else {
+        callback()
+      }
+
+    }
     let validatePass = (rule, value, callback) => {
       if (value === '') {
         callback(new Error('请输入密码'));
@@ -95,7 +95,7 @@ export default {
     }
     return {
       params:{
-        phone: "",
+        phonenumber: "",
         password: "",
         passwordt: "",
         sms: "",
@@ -104,12 +104,12 @@ export default {
       codeText: "获取验证码",
       disabledCodeBtn: true,
       rules: {
-        phone: [
+        phonenumber: [
           {validator: formatter, trigger: 'blur'}
         ],
-        // sms: [
-        //   {validator: sms, trigger: 'blur'}
-        // ],
+        sms: [
+          {validator: sms, trigger: 'blur'}
+        ],
         password: [
           {validator: validatePass, trigger: 'blur'}
         ],
@@ -135,11 +135,11 @@ export default {
     },
     getForgetSms(){
       const self = this;
-      if (self.params.phone == "") {
+      if (self.params.phonenumber == "") {
         self.$message("手机号码不能为空!");
         return false;
       }
-      forgetSmsCode({ phone: self.params.phone }).then((res) => {
+      forgetSmsCode({ phone: self.params.phonenumber }).then((res) => {
         if (res.code == 200) {
           self.countDown(60);
         } else {

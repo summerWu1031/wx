@@ -5,8 +5,6 @@
         <router-link class="forgot-password" to="/"
         ><img class="image-round" alt="" src="../../assets/image/home-logo.png"
         /></router-link>
-
-        <!--        <p>欢迎回来！</p>-->
       </div>
       <div class="wrapper">
         <div class="loginText"><span>登 录</span></div>
@@ -16,7 +14,7 @@
               <el-input v-model="personinfo.username" placeholder="请输入账号（手机号码）"></el-input>
             </el-form-item>
             <el-form-item label="密码" prop="password">
-              <el-input type="password" v-model="personinfo.password" autocomplete="off" placeholder="请输入密码"></el-input>
+              <el-input show-password type="password" v-model="personinfo.password" autocomplete="off" placeholder="请输入密码"></el-input>
             </el-form-item>
             <el-form-item class="forget">
               <router-link class="forgot-password" to="/forgot-password"
@@ -26,7 +24,6 @@
             </el-form-item>
             <el-form-item class="btn">
               <el-button @click="submitForm('ruleForm')">登录</el-button>
-
             </el-form-item>
 
           </el-form>
@@ -94,7 +91,7 @@ export default {
     let token = window.sessionStorage.getItem("token");
     // let token = window.localStorage.getItem("token");
     if (token) {
-      this.$router.push("/helloworld");
+      this.$router.push("/my");
     }
   },
   methods: {
@@ -153,7 +150,7 @@ export default {
             self.$message("请先完善用户基本信息！");
             self.$router.push("/myuser");
           }else {
-            self.$router.push("/helloworld");
+            self.$router.push("/my");
           }
         } else {
           self.$message("登录失败！");

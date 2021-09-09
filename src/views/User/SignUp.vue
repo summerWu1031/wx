@@ -30,7 +30,7 @@
 <!--            </el-form-item>-->
 
             <el-form-item label="用户密码" prop="password">
-              <el-input type="password" v-model="personinfo.password" autocomplete="off"></el-input>
+              <el-input show-password type="password" v-model="personinfo.password" autocomplete="off"></el-input>
             </el-form-item>
             <el-form-item label="确认密码" prop="passwordt">
               <el-input type="password" v-model="personinfo.passwordt" autocomplete="off"></el-input>
@@ -251,7 +251,7 @@ export default {
           window.localStorage.setItem("token", res.token);
           self.getUserProfiles();
 
-            self.$router.push("/helloword");
+            self.$router.push("/myuser");
 
         } else {
           this.$message(res.msg);

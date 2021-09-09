@@ -3,7 +3,7 @@
     <div class="content">
       <div class="user-head">
         <div class="block">
-          <el-avatar :size="50" :src="loadUrl(userInfo.avatar)"></el-avatar>
+          <el-avatar :size="50" v-model="basic.avatars" :src="basic.avatars[0].url"></el-avatar>
         </div>
         <span class="name"> {{ userInfo.userName }}</span>
         <span class="tel">{{ userInfo.phonenumber }}</span>
@@ -18,17 +18,17 @@
           </el-form-item>
           <el-form-item label="性别" prop="sex">
             <el-radio-group v-model="basic.sex">
-              <el-radio label="男"></el-radio>
-              <el-radio label="女"></el-radio>
+              <el-radio label="1">男</el-radio>
+              <el-radio label="2">女</el-radio>
             </el-radio-group>
           </el-form-item>
           <el-form-item label="手机号码" prop="phonenumber">
             <el-input v-model="basic.phonenumber" placeholder="请输入手机号码"></el-input>
           </el-form-item>
           <el-form-item label="会员类型" prop="memberName">
-            <el-radio-group v-model="basic.memberName">
-              <el-radio label="普通会员"></el-radio>
-              <el-radio label="学生会员"></el-radio>
+            <el-radio-group v-model="basic.memberName" @change="onMemType">
+              <el-radio label="普通会员">普通会员</el-radio>
+              <el-radio label="学生会员">学生会员</el-radio>
             </el-radio-group>
           </el-form-item>
           <el-form-item label="所在区域" prop="province">
@@ -57,15 +57,15 @@
           <el-form-item label="证件照" prop="avatar" class="upload">
             <el-upload
                 @click="getType('basic')"
-                v-model="basic.avatar"
+                v-model="basic.avatars"
                 class="avatar-uploader"
                 action="http://wushu.sportsit.cn:8080/upload/uploadImage"
                 :show-file-list="false"
                 :on-success="handleAvatarSuccess"
                 :before-upload="beforeAvatarUpload">
-              <img v-if="basic.avatar" :src="imageUrl" class="avatar">
+              <img v-if="basic.avatar" :src="basic.avatars[0].url" class="avatar">
               <img v-else src="../../assets/image/upload.png" alt="" class="uploadIcon">
-<!--              <i v-else class="el-icon-plus avatar-uploader-icon"></i>-->
+              <!--              <i v-else class="el-icon-plus avatar-uploader-icon"></i>-->
               <div slot="tip" class="el-upload__tip">(本照片将用于制作证件300*420 px)</div>
             </el-upload>
           </el-form-item>
@@ -76,7 +76,7 @@
             <el-input v-model="basic.email" placeholder="请输入电子邮箱"></el-input>
           </el-form-item>
           <el-form-item label="民族">
-            <el-select v-model="basic.nation" placeholder="选择您民族">
+            <el-select v-model="basic.nation" placeholder="选择您的民族">
               <el-option
                   v-for="item in nationActions"
                   :key="item.value"
@@ -110,7 +110,16 @@
 
 <script>
 import {regionData, CodeToText} from 'element-china-area-data'
-import {updUserInfo, uploadImage, getSourceOrgName, login} from "@/api/user";
+import {
+  updUserInfo,
+  uploadImage,
+  getUserProfile,
+  addOrUpdUserCert,
+  checkUserIsOrgMember,
+  queryCenterApplyMemberList,
+  queryAssociationList,
+} from "@/api/user";
+import {queryDictListByTypeList} from "@/api/dict";
 
 export default {
   data() {
@@ -127,9 +136,27 @@ export default {
     return {
       options: regionData,
       selectedOptions: [],
+      user: {},
       userInfo: {},
+      cId: 0,
       cType: "",
-      imageUrl: "",
+      unitBasic: {
+        name: "",
+        principal: "",
+        phone: "",
+        email: "",
+        creditCode: "",
+        province: "",
+        city: "",
+        county: "",
+        area: "",
+        introduction: "",
+        constitution: "",
+        license: "",
+        licenses: [],
+        img: "",
+        avatars: [],
+      },
       basic: {
         playerLv: "",
         nickName: "",
@@ -148,7 +175,7 @@ export default {
         avatar: "",
 
         // 会员申请元素
-        sourceOrgType: "0",
+        sourceOrgType: null,
         memberName: "",
         memberId: 0,
         goodsPrice: "",
@@ -267,57 +294,163 @@ export default {
         {label: "高中", value: "05"},
         {label: "初中", value: "06"},
         {label: "小学", value: "07"},
-      ]
+      ],
+      // 会员申请元素
+      MemTypeShow: false,
+      MemTypeColumns: [],
+      MemberList: [],
+      MemPrice: 0,
+      MemParms: {
+        sign: "wx",
+        memberId: 0,
+        type: 1,
+      },
+      state: "",
+      isState: 0,
+      associationList: [],
+      showUnit: false,
+      showculture: false,
+      // cultureActions: [],
+
+      // 图片上传尺寸限制
+      flag: false,
     }
   },
   computed: {
-    userinfo() {
-      return this.$store.state.userinfo;
-    }
+    // userinfo() {
+    //   return this.$store.state.userinfo;
+    // },
+    // 计算数学，匹配搜索
+    filteredAssociationList() {
+      const self = this;
+      let searchString = self.dan.searchEvalValue;
+      let association_array = self.danAppraisal;
+      if (!searchString) {
+        return association_array;
+      }
+      searchString = searchString.trim().toLowerCase();
+      association_array = association_array.filter((item) => {
+        if (item.name.toLowerCase().indexOf(searchString) !== -1) {
+          return item;
+        }
+      });
+      // 返回过来后的数组
+      return association_array;
+    },
+
+    // hysq
+    // 计算数学，匹配搜索
+    filteredUnitList() {
+      const self = this;
+      let searchStringUnit = self.basic.searchSourceOrgName;
+      let association_arrayUnit = self.associationList;
+      if (!searchStringUnit) {
+        return association_arrayUnit;
+      }
+      searchStringUnit = searchStringUnit.trim().toLowerCase();
+      association_arrayUnit = association_arrayUnit.filter((itemUnit) => {
+        if (itemUnit.name.toLowerCase().indexOf(searchStringUnit) !== -1) {
+          return itemUnit;
+        }
+      });
+      // 返回过来后的数组
+      return association_arrayUnit;
+    },
   },
   mounted() {
-    // let self = this;
-    this.userInfo = JSON.parse(window.sessionStorage.getItem('user')).userInfo
+    let self = this;
+    // self.userInfo = self.userinfo.userInfo;
+    getUserProfile().then((res) => {
+      if (res.code == 200) {
+        window.sessionStorage.setItem("user", JSON.stringify(res.data));
+        self.$store.dispatch("saveUserInfo", res.data);
+        if (res.data.userType == 1) {
+          self.userInfo = res.data.userInfo
+          if (!self.userInfo.updateTime) {
+            self.basic.userName = self.userInfo.userName;
+            self.basic.phonenumber = self.userInfo.phonenumber;
+            self.basic.identityCode = self.userInfo.identityCode;
+            self.basic.sex = self.userInfo.sex;
+            self.basic.avatar = self.userInfo.avatar
+            self.$set(self.basic, "avatars", [
+              {url: self.loadUrl(self.userInfo.avatar)},
+            ]);
 
-    console.log(this.userInfo)
-    // console.log(this.userinfo)
-    // if (!self.userInfo.updateTime) {
-    //   self.basic.userName = self.userInfo.userName;
-    //   self.basic.phonenumber = self.userInfo.phonenumber;
-    //   self.basic.identityCode = self.userInfo.identityCode;
-    //   self.basic.sex = self.userInfo.sex;
-    //   self.$set(self.basic, "avatars", [
-    //     { url: self.loadUrl(self.userInfo.avatar) },
-    //   ]);
-    //
-    //   self.$set(self.basic, "memberName", self.userInfo.memberName);
-    //   self.$set(self.basic, "sourceOrgType", self.userInfo.sourceOrgType);
-    //
-    // } else {
-    //   self.basic = self.userInfo;
-    //   self.$set(
-    //       self.basic,
-    //       "memberApply",
-    //       Object.assign(
-    //           {},
-    //           {
-    //             sign: "wx",
-    //             memberName: "",
-    //             memberId: 0,
-    //             goodsPrice: "",
-    //             sourceOrgName: "",
-    //             searchSourceOrgName: "",
-    //             sourceOrgId: 0,
-    //             nation: "",
-    //             speciality: "",
-    //             culture: "",
-    //           }
-    //       )
-    //   );
-    //   self.$set(self.basic, "avatars", [
-    //     {url: self.loadUrl(self.basic.avatar)},
-    //   ]);
-    // }
+            self.$set(self.basic, "memberName", self.userInfo.memberName);
+            self.$set(self.basic, "sourceOrgType", self.userInfo.sourceOrgType.toString());
+          } else {
+            self.basic = self.userInfo;
+            self.$set(
+                self.basic,
+                "memberApply",
+                Object.assign(
+                    {},
+                    {
+                      sign: "wx",
+                      memberName: "",
+                      memberId: 0,
+                      goodsPrice: "",
+                      sourceOrgName: "",
+                      searchSourceOrgName: "",
+                      sourceOrgId: 0,
+                      nation: "",
+                      speciality: "",
+                      culture: "",
+                    }
+                )
+            );
+            self.$set(self.basic, "sourceOrgType", self.userInfo.sourceOrgType.toString());
+            self.$set(self.basic, "avatars", [
+              {url: self.loadUrl(self.basic.avatar)},
+            ]);
+            console.log(self.basic.avatars)
+          }
+        } else {
+          self.userInfo = res.data.userInfo
+          let orgInfo = self.userinfo.orgInfo;
+          if (!orgInfo.updateTime) {
+            self.unitBasic.name = orgInfo.name;
+            self.unitBasic.principal = orgInfo.principal;
+            self.unitBasic.phone = orgInfo.phone;
+            self.unitBasic.creditCode = orgInfo.creditCode;
+          } else {
+            self.unitBasic = orgInfo;
+            self.userInfo.avatar = self.unitBasic.img;
+            self.$set(self.unitBasic, "avatars", [
+              {url: self.loadUrl(self.unitBasic.img)},
+            ]);
+            self.$set(self.unitBasic, "licenses", [
+              {url: self.loadUrl(self.unitBasic.license)},
+            ]);
+          }
+        }
+      } else {
+        self.$message(res.mes)
+      }
+    })
+    // this.queryDictListByTypeLists();
+
+    // hysq
+    checkUserIsOrgMember({sign: "wx"}).then((res) => {
+      if (res.code == 200) {
+        const isStaute = (self.state = res.data.isOrgMember);
+        self.isState = isStaute;
+        if (isStaute == 0) {
+          self.getMembershipFee();
+          self.queryAssociationLists();
+        } else {
+          // console.log(2);
+        }
+      } else {
+        self.$toast(res.msg);
+        setTimeout(() => {
+          self.$router.push("/login");
+        }, 3000);
+      }
+      // self.$store.commit("hideLoading");
+    });
+    //  文化程度
+    // this.queryDictListByGrade();
   },
   methods: {
     getType(type) {
@@ -337,7 +470,7 @@ export default {
 
     // 上传头像
     handleAvatarSuccess(res, file) {
-      this.imageUrl = URL.createObjectURL(file.raw);
+      this.basic.avatar = URL.createObjectURL(file.raw);
       let self = this
       let formData = new FormData()
       formData.append('file', file.raw)
@@ -349,6 +482,8 @@ export default {
             file.name = str
             self.basic.avatar = str;
             self.basic.avatars[0] = {url: self.loadUrl(str)};
+            console.log(self.basic.avatar)
+            console.log(self.basic.avatars[0].url)
             file.status = "done";
             file.message = "上传成功";
           }, 1000)
@@ -412,7 +547,7 @@ export default {
           updUserInfo(param).then((res) => {
             if (res.code === 200) {
               self.$message(res.msg)
-              self.$router.push('/helloworld')
+              self.$router.push('/my')
             } else {
               self.$message(res.msg)
             }
@@ -421,6 +556,60 @@ export default {
         } else {
           console.log('error submit!!');
           return false;
+        }
+      });
+    },
+    // 会员申请部分
+    getMembershipFee() {
+      let self = this;
+      queryCenterApplyMemberList({sign: "wx"}).then((res) => {
+        if (res.code == 200) {
+          self.MemberList = res.data;
+          console.log(self.MemberList + 'Memberlist')
+          res.data.map((item) => {
+            self.MemTypeColumns.push(item.memberName);
+          });
+          // self.MemParms.memberId = res.data[0].id
+          // self.getCustomForms();
+        } else {
+          self.$toast(res.msg);
+        }
+      });
+    },
+    // 会员类别
+    onMemType(value) {
+      let self = this;
+      let cItem = self.MemberList.filter((item) => item.memberName == value);
+      console.log(cItem + 'cItem')
+      if (cItem[0].goodsPrice) {
+        self.MemPrice = self.float_calculator(
+            "add",
+            cItem[0].goodsPrice,
+            self.float_calculator(
+                "add",
+                cItem[0].makePrice || 0,
+                cItem[0].rebatePrice || 0
+            )
+        );
+      }
+      self.$set(self.basic, "memberName", value);
+      self.$set(self.basic, "memberId", cItem[0].id);
+      self.$set(self.basic, "goodsPrice", self.MemPrice);
+      self.MemTypeShow = false;
+    },
+    onSelectUnit(item) {
+      let self = this;
+      self.basic.sourceOrgName = item.name;
+      self.basic.sourceOrgId = item.id;
+      self.showUnit = false;
+    },
+    queryAssociationLists() {
+      let self = this;
+      queryAssociationList({}).then((res) => {
+        if (res.code == 200) {
+          self.associationList = res.data;
+        } else {
+          self.$toast(res.msg);
         }
       });
     },
@@ -435,8 +624,8 @@ export default {
   margin: 40px auto;
   background-color: #fff;
   //padding-top: 20px;
-  box-shadow: 0 8px 29px 0 #b8b8c4;
-  border-radius: 10px;
+  //box-shadow: 0 8px 29px 0 #b8b8c4;
+  //border-radius: 10px;
   .user-head {
     text-align: center;
     padding: 16px 0;
@@ -447,6 +636,7 @@ export default {
         height: 100px !important;
         border: solid 8px #fff;
         box-shadow: -6px 6px 20px #eee;
+
         img {
           width: 100%;
           object-fit: fill;
@@ -470,14 +660,15 @@ export default {
   }
 
   .wrapper {
-    width: 674px;
+    width: 800px;
     margin: 0 auto;
 
     .demo-ruleForm {
       margin: 12px auto 6px auto;
-      width: 600px;
+      width: 800px;
       padding-left: 26px;
       margin-left: 66px;
+
       .el-input {
         position: relative;
         font-size: 14px;
@@ -492,6 +683,7 @@ export default {
 .btn {
   margin-top: 8px;
   padding-bottom: 34px;
+
   ::v-deep .el-form-item__content {
     //margin-right: 89px;
     //margin-left: 31px !important;
@@ -500,19 +692,23 @@ export default {
   ::v-deep .el-button {
     width: 100px;
     background-color: #DB261D;
-    span{
+
+    span {
       color: #fff;
     }
   }
-  ::v-deep .el-button--primary{
+
+  ::v-deep .el-button--primary {
     border-color: unset;
   }
 }
-.upload{
-  ::v-deep .el-upload__tip{
+
+.upload {
+  ::v-deep .el-upload__tip {
     margin-top: -12px;
   }
-  img{
+
+  img {
     width: 60px;
     height: 60px;
     object-fit: cover;
