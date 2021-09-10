@@ -14,10 +14,10 @@
             <el-input v-model="basic.userName" placeholder="请输入真实姓名"></el-input>
           </el-form-item>
           <el-form-item label="身份证" prop="identityCode">
-            <el-input v-model="basic.identityCode" placeholder="请输入身份证"></el-input>
+            <el-input :disabled="isState !== 0" v-model="basic.identityCode" placeholder="请输入身份证"></el-input>
           </el-form-item>
           <el-form-item label="性别" prop="sex">
-            <el-radio-group v-model="basic.sex">
+            <el-radio-group v-model="basic.sex" :disabled="isState !== 0">
               <el-radio label="1">男</el-radio>
               <el-radio label="2">女</el-radio>
             </el-radio-group>
@@ -27,8 +27,9 @@
           </el-form-item>
           <el-form-item label="会员类型" prop="memberName">
             <el-radio-group v-model="basic.memberName" @change="onMemType">
-              <el-radio label="普通会员">普通会员</el-radio>
-              <el-radio label="学生会员">学生会员</el-radio>
+              <!--              <el-radio label="普通会员">普通会员</el-radio>-->
+              <!--              <el-radio label="学生会员">学生会员</el-radio>-->
+              <el-radio v-for="(item,index) in MemTypeColumns" :label="item" :key="index">{{ item }}</el-radio>
             </el-radio-group>
           </el-form-item>
           <el-form-item label="所在区域" prop="province">
@@ -40,18 +41,14 @@
             </el-cascader>
           </el-form-item>
           <el-form-item label="入会类型" prop="sourceOrgType">
-            <el-radio-group v-model="basic.sourceOrgType">
+            <el-radio-group v-model="basic.sourceOrgType" :disabled="isState !== 0">
               <el-radio label="0">自主入会</el-radio>
               <el-radio label="1">推荐入会</el-radio>
             </el-radio-group>
           </el-form-item>
           <el-form-item label="推荐单位" v-show="basic.sourceOrgType=='1'">
-            <el-select v-model="basic.sourceOrgName" placeholder="请选择活动区域">
-              <el-option label="穗体信息科技" value="穗体"></el-option>
-              <el-option label="韶关市武术协会" value="韶关武协"></el-option>
-              <el-option label="广东武术协会" value="wx"></el-option>
-              <el-option label="2021年羊城运动汇" value="羊城"></el-option>
-              <el-option label="广东省体育基金会" value="体育基金会"></el-option>
+            <el-select v-model="basic.sourceOrgName" placeholder="请选择活动区域" :disabled="isState !== 0">
+              <el-option v-for="(item,index) in filterAssociationList" :key="index" :label="item.name" :value="item.name"></el-option>
             </el-select>
           </el-form-item>
           <el-form-item label="证件照" prop="avatar" class="upload">
@@ -356,6 +353,13 @@ export default {
       // 返回过来后的数组
       return association_arrayUnit;
     },
+    filterAssociationList() {
+      const self = this
+      let newAssociationList= self.associationList.filter((item) => {
+        return item.name
+      })
+      return newAssociationList
+    }
   },
   mounted() {
     let self = this;
@@ -435,14 +439,16 @@ export default {
       if (res.code == 200) {
         const isStaute = (self.state = res.data.isOrgMember);
         self.isState = isStaute;
-        if (isStaute == 0) {
-          self.getMembershipFee();
+        // if (isStaute == 0) {
+        //   self.getMembershipFee();
+        //   self.queryAssociationLists();
+        // } else {
+        //   // console.log(2);
+        // }
+        self.getMembershipFee();
           self.queryAssociationLists();
-        } else {
-          // console.log(2);
-        }
       } else {
-        self.$toast(res.msg);
+        self.$message(res.msg);
         setTimeout(() => {
           self.$router.push("/login");
         }, 3000);
@@ -572,7 +578,7 @@ export default {
           // self.MemParms.memberId = res.data[0].id
           // self.getCustomForms();
         } else {
-          self.$toast(res.msg);
+          self.$message(res.msg);
         }
       });
     },
@@ -609,7 +615,7 @@ export default {
         if (res.code == 200) {
           self.associationList = res.data;
         } else {
-          self.$toast(res.msg);
+          self.$message(res.msg);
         }
       });
     },
@@ -714,4 +720,8 @@ export default {
     object-fit: cover;
   }
 }
+
+//::v-deep.el-popper .el-cascader__dropdown{
+//
+//}
 </style>

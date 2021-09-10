@@ -207,6 +207,7 @@
               <li v-for="(img,index) in newSightList" :key="index">
                 <router-link :to="{ path:'/member-detail/'+img.id }">
                   <img :src="loadUrl(img.logo)" :alt="img.title">
+                  <span>{{img.title}}</span>
                 </router-link>
               </li>
             </ul>
@@ -216,6 +217,7 @@
               <li v-for="(img,index) in newSightList" :key="index">
                 <router-link :to="{ path:'/member-detail/'+img.id }">
                   <img :src="loadUrl(img.logo)" :alt="img.title">
+                  <span>{{img.title}}</span>
                 </router-link>
               </li>
             </ul>
@@ -552,9 +554,10 @@ body {
     }
 
     > .content {
-      height: 242px;
+      height: 280px;
       margin-top: 8px;
       background-color: #fff;
+      padding: 0px 16px;
       a {
         color: #545454;
 
@@ -736,6 +739,7 @@ body {
             width: 300px;
             height: 190px;
             margin-right: 15px;
+            position: relative;
             img {
               //width: 300px;
               //height: 190px;
@@ -744,6 +748,18 @@ body {
               height: 100%;
               object-fit: cover;
 
+            }
+            span{
+              position: absolute;
+              bottom: -4px;
+              width: 300px;
+              left: 0;
+              color: #fff;
+              overflow: hidden;
+              white-space: nowrap;
+              text-overflow: ellipsis;
+              padding: 12px;
+              font-size: 14px;
             }
           }
         }
@@ -783,7 +799,7 @@ body {
 .friend-link {
   background-color: #f0f0f0;
   width: 1200px;
-  height: 100px;
+  height: 114px;
   margin: 0 auto;
   margin-top: 20px;
   margin-bottom: 40px;
@@ -815,11 +831,11 @@ body {
       margin-right: 4px;
 
       img {
-        width: 160px;
-        height: 46px;
-        //width: 100%;
-        //height: 100%;
-        //object-fit: fill;
+        //width: 160px;
+        //height: 46px;
+        width: 100%;
+        height: 100%;
+        object-fit: fill;
       }
     }
   }

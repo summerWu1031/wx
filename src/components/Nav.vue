@@ -67,7 +67,7 @@ import {getUserProfile} from "@/api/user";
 export default {
   data(){
     return{
-      userInfo:{}
+      userInfo:{userName:'',avatar:''}
     }
   },
   mounted() {
@@ -140,6 +140,7 @@ export default {
       height: 100px;
       justify-content: right;
       align-items: center;
+      cursor: pointer;
       ::v-deep .el-avatar {
         width: 60px !important;
         height: 60px !important;

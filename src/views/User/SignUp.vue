@@ -16,18 +16,18 @@
             <el-form-item label="手机号码" prop="phone">
               <el-input v-model="personinfo.phone"></el-input>
             </el-form-item>
-<!--            <el-form-item label="短信验证码" prop="code" class="mes">-->
-<!--              <el-input class="mesInput" v-model="personinfo.code"></el-input>-->
-<!--              <el-button-->
-<!--                  size="small"-->
-<!--                  class="btn-send"-->
-<!--                  native-type="button"-->
-<!--                  @click="getRegisterSmsCode(1)"-->
-<!--                  :disabled="!disabledCodeBtn"-->
-<!--              >-->
-<!--                {{ codeText }}-->
-<!--              </el-button>-->
-<!--            </el-form-item>-->
+            <el-form-item label="短信验证码" prop="code" class="mes">
+              <el-input class="mesInput" v-model="personinfo.code" placeholder="请输入验证码"></el-input>
+              <el-button
+                  size="small"
+                  class="btn-send"
+                  native-type="button"
+                  @click="getRegisterSmsCode(1)"
+                  :disabled="!disabledCodeBtn"
+              >
+                {{ codeText }}
+              </el-button>
+            </el-form-item>
 
             <el-form-item label="用户密码" prop="password">
               <el-input show-password type="password" v-model="personinfo.password" autocomplete="off"></el-input>
@@ -37,8 +37,7 @@
             </el-form-item>
 
             <el-form-item class="btn">
-              <el-button @click="submitForm('ruleForm')" :disabled="!checked">注册</el-button>
-<!--              <el-button @click="resetForm('ruleForm')">重置</el-button>-->
+              <el-button type="info" @click="submitForm('ruleForm')" :disabled="!checked">注册</el-button>
             </el-form-item>
           </el-form>
         </div>
@@ -126,7 +125,7 @@ export default {
         name: "",
         // identityCode: "",
         phone: "",
-        code: "123",
+        code: "",
         password: "",
         passwordt: "",
         userInfo: {
@@ -335,8 +334,8 @@ export default {
     width: 480px;
     margin: 0 auto;
     background-color: #fff;
-    padding-top: 20px;
-    box-shadow: 0 8px 29px 0 #b8b8c4 ;
+    padding-top: 34px;
+    box-shadow: 0 8px 29px 0 #ececec ;
     border-radius: 10px;
     .loginText{
       text-align: center;
@@ -407,6 +406,11 @@ export default {
     span{
       color: #fff;
     }
+  }
+  ::v-deep  .el-button--info.is-disabled, .el-button--info.is-disabled:active, .el-button--info.is-disabled:focus, .el-button--info.is-disabled:hover {
+    //color: #fff;
+    border-color: #fcb6b6;
+    background-color: #fcb6b6;
   }
 }
 .demo-ruleForm{

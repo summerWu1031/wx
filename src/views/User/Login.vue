@@ -184,9 +184,9 @@ export default {
   width: 426px;
   margin: 0 auto;
   background-color: #fff;
-  padding-top: 20px;
+  padding-top: 34px;
   //box-shadow: -6px 6px 10px #b8b8c4;
-  box-shadow: 0 8px 29px 0 #b8b8c4 ;
+  box-shadow: 0 8px 29px 0 #ececec ;
   border-radius: 10px;
   .loginText{
     text-align: center;
