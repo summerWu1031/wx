@@ -131,18 +131,24 @@ export default {
           display: flex;
           justify-content: space-between;
           align-items: center;
-          i {
-            font-size: 18px;
-            color: #DB261D;
-            padding: 0 5px;
-          }
+         .left{
+           :hover{
+             color: #DB261D;
+           }
+           i {
+             font-size: 18px;
+             color: #DB261D;
+             padding: 0 5px;
+           }
 
-          a {
-            color: #545454;
-            font-size: 14px;
-            line-height: 30px;
+           a {
+             color: #545454;
+             font-size: 14px;
+             line-height: 30px;
 
-          }
+           }
+         }
+
           .right{
             padding-bottom: 4px;
           }

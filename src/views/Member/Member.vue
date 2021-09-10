@@ -153,13 +153,19 @@ main {
 
       .title {
         position: absolute;
-        bottom: 4px;
-        left: 4px;
-
+        bottom: 0;
+        left: 0;
         font-size: 14px;
-
         font-weight: 400;
         color: #FFFFFF;
+        background: linear-gradient(180deg, rgba(0, 0, 0, 0.5), rgba(31, 40, 105, 0));
+        width: 386px;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        padding: 6px 12px 8px 12px;
+        font-size: 14px;
+        text-align: center;
       }
     }
 

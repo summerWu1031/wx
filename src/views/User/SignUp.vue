@@ -2,7 +2,10 @@
   <div>
     <div class="container">
       <div class="login-top">
-        <img class="image-round" alt="" src="../../assets/image/home-logo.png" />
+        <router-link class="forgot-password" to="/">
+          <img class="image-round" alt="" src="../../assets/image/home-logo.png" />
+        </router-link>
+
 <!--        <p>填写详细信息并创建您的帐户</p>-->
       </div>
       <div class="wrapper">

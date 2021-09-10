@@ -1,6 +1,7 @@
 <template>
   <div class="myuser">
     <div class="content">
+      <span class="back"> <router-link to="/">&lt; 返回首页</router-link>   </span>
       <div class="user-head">
         <div class="block">
           <el-avatar :size="50" v-model="basic.avatars" :src="basic.avatars[0].url"></el-avatar>
@@ -9,6 +10,7 @@
         <span class="tel">{{ userInfo.phonenumber }}</span>
       </div>
       <div class="wrapper">
+
         <el-form :model="basic" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
           <el-form-item label="真实姓名" prop="userName">
             <el-input v-model="basic.userName" placeholder="请输入真实姓名"></el-input>
@@ -48,7 +50,8 @@
           </el-form-item>
           <el-form-item label="推荐单位" v-show="basic.sourceOrgType=='1'">
             <el-select v-model="basic.sourceOrgName" placeholder="请选择活动区域" :disabled="isState !== 0">
-              <el-option v-for="(item,index) in filterAssociationList" :key="index" :label="item.name" :value="item.name"></el-option>
+              <el-option v-for="(item,index) in filterAssociationList" :key="index" :label="item.name"
+                         :value="item.name"></el-option>
             </el-select>
           </el-form-item>
           <el-form-item label="证件照" prop="avatar" class="upload">
@@ -355,7 +358,7 @@ export default {
     },
     filterAssociationList() {
       const self = this
-      let newAssociationList= self.associationList.filter((item) => {
+      let newAssociationList = self.associationList.filter((item) => {
         return item.name
       })
       return newAssociationList
@@ -446,7 +449,7 @@ export default {
         //   // console.log(2);
         // }
         self.getMembershipFee();
-          self.queryAssociationLists();
+        self.queryAssociationLists();
       } else {
         self.$message(res.msg);
         setTimeout(() => {
@@ -632,6 +635,12 @@ export default {
   //padding-top: 20px;
   //box-shadow: 0 8px 29px 0 #b8b8c4;
   //border-radius: 10px;
+  .back {
+    padding: 20px 0 0 20px;
+    display: inline-block;
+    color: #555;
+  }
+
   .user-head {
     text-align: center;
     padding: 16px 0;

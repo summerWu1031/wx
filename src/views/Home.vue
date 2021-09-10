@@ -1,6 +1,6 @@
 <template>
   <div>
-    <Nav >
+    <Nav>
       <div class="navImg">
         <img src="../assets/image/nav-img.png" alt="">
       </div>
@@ -70,9 +70,9 @@
           <div class="title">
             协会概况
           </div>
-<!--          <div class="more">-->
-<!--            <a href="">更多>></a>-->
-<!--          </div>-->
+          <!--          <div class="more">-->
+          <!--            <a href="">更多>></a>-->
+          <!--          </div>-->
         </div>
         <div class="content">
           <router-link to="/introduce">
@@ -80,7 +80,7 @@
               <img :src="loadUrl(this.introductionLogo)" alt="武术协会大图标">
             </div>
             <div class="introl">
-              {{ this.introduction.slice(0, 255) }}......
+              {{ this.introduction.slice(0, 273) }}......
             </div>
           </router-link>
 
@@ -207,7 +207,7 @@
               <li v-for="(img,index) in newSightList" :key="index">
                 <router-link :to="{ path:'/member-detail/'+img.id }">
                   <img :src="loadUrl(img.logo)" :alt="img.title">
-                  <span>{{img.title}}</span>
+                  <span>{{ img.title }}</span>
                 </router-link>
               </li>
             </ul>
@@ -217,7 +217,7 @@
               <li v-for="(img,index) in newSightList" :key="index">
                 <router-link :to="{ path:'/member-detail/'+img.id }">
                   <img :src="loadUrl(img.logo)" :alt="img.title">
-                  <span>{{img.title}}</span>
+                  <span>{{ img.title }}</span>
                 </router-link>
               </li>
             </ul>
@@ -232,7 +232,7 @@
         <div>友情链接</div>
       </div>
       <ul class="content">
-        <li  v-for="(item,index) in friendLink" :key="index">
+        <li v-for="(item,index) in friendLink" :key="index">
           <a :href="item.linkUrl" target="_blank">
             <img :src="loadUrl(item.logo)" alt="友情链接1">
           </a>
@@ -245,14 +245,14 @@
 </template>
 
 <script>
-import {getHome, getqueryOrgInfo,friendLink} from '@/api/index'
+import {getHome, getqueryOrgInfo, friendLink} from '@/api/index'
 import {getUserProfile} from "@/api/user";
 
 export default {
   data() {
     return {
       current: 0,
-      tabTitle: [ '通知公告', '政策法规','新闻动态'],
+      tabTitle: ['通知公告', '政策法规', '新闻动态'],
       bannerList: [],
       newsList: [],
       noticeList: [],
@@ -262,17 +262,17 @@ export default {
       ulWidth: null,
       introductionLogo: null,
       introduction: '',
-      queryParamsInfo : {
+      queryParamsInfo: {
         pageSize: 10,
         pageNum: 1,
-        sign:"wx"
+        sign: "wx"
       },
-      queryParamsFriendLink : {
+      queryParamsFriendLink: {
         pageSize: 10,
         pageNum: 1,
-        sign:"wx"
+        sign: "wx"
       },
-      friendLink:[],
+      friendLink: [],
     }
 
   },
@@ -313,14 +313,14 @@ export default {
           self.$message(res.msg);
         }
       });
-      getUserProfile().then((res)=>{
+      getUserProfile().then((res) => {
         if (res.code == 200) {
           window.sessionStorage.setItem("user", JSON.stringify(res.data));
           self.$store.dispatch("saveUserInfo", res.data);
           self.userInfo = res.data.userInfo
           self.userInfo.avatar = self.loadUrl(self.userInfo.avatar)
-          console.log(self.userInfo+'userInfo')
-        }else {
+          console.log(self.userInfo + 'userInfo')
+        } else {
           console.log(res.mes)
         }
       })
@@ -391,6 +391,7 @@ export default {
 body {
   background-image: url("../assets/image/bgc.png");
 }
+
 //轮播图+新闻动态切换
 .main {
   width: 1200px;
@@ -403,14 +404,17 @@ body {
     width: 576px;
     height: 277px;
     position: relative;
-    .luoboImgWrapper{
+
+    .luoboImgWrapper {
       width: 576px;
       height: 300px;
-      img{
+
+      img {
         width: 100%;
         height: 100%;
         object-fit: cover;
       }
+
       .introl {
         background-color: rgba(0, 0, 0, 0.5);
         color: white;
@@ -418,7 +422,7 @@ body {
         top: 262px;
         width: 576px;
         height: 38px;
-        font-size: 18px;
+        font-size: 14px;
         font-weight: bold;
         text-align: center;
         padding: 6px 0 6px 6px;
@@ -434,6 +438,7 @@ body {
     display: flex;
     flex-direction: column;
     background-color: #fff;
+
     > .tabs-bar {
       display: flex;
       justify-content: space-between;
@@ -488,7 +493,13 @@ body {
           flex-wrap: nowrap;
           justify-content: space-between;
           border-bottom: 1px dashed #e0e0e0;
-          padding: 0 6px;
+          padding: 0 6px 0 16px;
+          //:hover{
+          //  color: #DB261D !important;
+          //  .time{
+          //    color: #DB261D !important;
+          //  }
+          //}
           > .neirong {
             font-size: 14px;
             width: 450px;
@@ -498,8 +509,13 @@ body {
             white-space: nowrap;
             line-height: 50px;
 
+            :hover {
+              color: #DB261D;
+            }
+
             a {
               color: #545454;
+
             }
           }
 
@@ -525,6 +541,7 @@ body {
   > .left {
     width: 576px;
     background-color: #fff;
+
     > .topNav {
       display: flex;
       justify-content: space-between;
@@ -558,6 +575,7 @@ body {
       margin-top: 8px;
       background-color: #fff;
       padding: 0px 16px;
+
       a {
         color: #545454;
 
@@ -582,10 +600,12 @@ body {
 
     }
   }
+
   //惠民服务
   > .right {
     width: 600px;
     background-color: #fff;
+
     > .topNav {
       display: flex;
       justify-content: space-between;
@@ -608,6 +628,7 @@ body {
     > .content {
       background-color: #fff;
       height: 242px;
+
       li {
         display: flex;
         padding: 10px 16px 0 16px;
@@ -630,6 +651,7 @@ body {
     }
   }
 }
+
 //赛事服务
 .competition-service {
   display: block;
@@ -686,6 +708,7 @@ body {
     }
   }
 }
+
 //会员风采
 .banner {
   width: 1200px;
@@ -708,7 +731,8 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    .last{
+
+    .last {
       color: #fff;
       font-size: 10px;
       border-left: none;
@@ -721,6 +745,7 @@ body {
     margin-top: 0;
     background: #FFF;
     overflow: hidden;
+
     .stadium_images {
       float: left;
       width: 800%;
@@ -740,6 +765,7 @@ body {
             height: 190px;
             margin-right: 15px;
             position: relative;
+
             img {
               //width: 300px;
               //height: 190px;
@@ -749,17 +775,20 @@ body {
               object-fit: cover;
 
             }
-            span{
+
+            span {
+              background: linear-gradient(180deg, rgba(0, 0, 0, 0.5), rgba(31, 40, 105, 0));
               position: absolute;
-              bottom: -4px;
+              bottom: 0;
               width: 300px;
               left: 0;
               color: #fff;
               overflow: hidden;
               white-space: nowrap;
               text-overflow: ellipsis;
-              padding: 12px;
+              padding: 6px 12px 8px 12px;
               font-size: 14px;
+              //text-align: left;
             }
           }
         }
@@ -795,6 +824,7 @@ body {
     }
   }
 }
+
 //友情链接
 .friend-link {
   background-color: #f0f0f0;

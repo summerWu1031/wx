@@ -21,7 +21,7 @@
       </div>
 
       <div class="block" v-else>
-        <el-dropdown  trigger="click">
+        <el-dropdown  >
           <el-avatar :size="50" :src="userInfo.avatar"></el-avatar>
           <el-dropdown-menu slot="dropdown" >
             <el-dropdown-item @click.native="$router.push('/myuser')">我的信息</el-dropdown-item>
@@ -142,9 +142,9 @@ export default {
       align-items: center;
       cursor: pointer;
       ::v-deep .el-avatar {
-        width: 60px !important;
-        height: 60px !important;
-        //border: solid 8px #fff;
+        width: 40px !important;
+        height: 40px !important;
+        border: solid 1px #ececec;
         //box-shadow: -6px 6px 20px #eee;
 
         img {
