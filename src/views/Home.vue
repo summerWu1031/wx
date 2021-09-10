@@ -1,6 +1,6 @@
 <template>
   <div>
-    <Nav>
+    <Nav >
       <div class="navImg">
         <img src="../assets/image/nav-img.png" alt="">
       </div>
@@ -244,6 +244,7 @@
 
 <script>
 import {getHome, getqueryOrgInfo,friendLink} from '@/api/index'
+import {getUserProfile} from "@/api/user";
 
 export default {
   data() {
@@ -269,7 +270,7 @@ export default {
         pageNum: 1,
         sign:"wx"
       },
-      friendLink:[]
+      friendLink:[],
     }
 
   },
@@ -310,6 +311,17 @@ export default {
           self.$message(res.msg);
         }
       });
+      getUserProfile().then((res)=>{
+        if (res.code == 200) {
+          window.sessionStorage.setItem("user", JSON.stringify(res.data));
+          self.$store.dispatch("saveUserInfo", res.data);
+          self.userInfo = res.data.userInfo
+          self.userInfo.avatar = self.loadUrl(self.userInfo.avatar)
+          console.log(self.userInfo+'userInfo')
+        }else {
+          console.log(res.mes)
+        }
+      })
     },
     linkban(item) {
       //ckType:(1:站内，2：站外)；linkType:(1:赛事，2：新闻)；nodeType:(1:通知公告，2:政策法规，3:新闻动态)
@@ -419,14 +431,14 @@ body {
     height: 310px;
     display: flex;
     flex-direction: column;
-
+    background-color: #fff;
     > .tabs-bar {
       display: flex;
       justify-content: space-between;
       align-items: center;
       //border: 1px solid red;
       margin-bottom: 0;
-
+      //background-color: #fff;
       > .tabs-bar-title {
         display: flex;
         justify-content: center;
@@ -465,13 +477,16 @@ body {
     }
 
     > .tabs-content {
+
+
       > ul {
+
         > .tabs-content-item {
           display: flex;
           flex-wrap: nowrap;
           justify-content: space-between;
           border-bottom: 1px dashed #e0e0e0;
-
+          padding: 0 6px;
           > .neirong {
             font-size: 14px;
             width: 450px;
@@ -507,7 +522,7 @@ body {
   //协会介绍
   > .left {
     width: 576px;
-
+    background-color: #fff;
     > .topNav {
       display: flex;
       justify-content: space-between;
@@ -539,7 +554,7 @@ body {
     > .content {
       height: 242px;
       margin-top: 8px;
-
+      background-color: #fff;
       a {
         color: #545454;
 
@@ -567,7 +582,7 @@ body {
   //惠民服务
   > .right {
     width: 600px;
-
+    background-color: #fff;
     > .topNav {
       display: flex;
       justify-content: space-between;
@@ -588,6 +603,8 @@ body {
     }
 
     > .content {
+      background-color: #fff;
+      height: 242px;
       li {
         display: flex;
         padding: 10px 16px 0 16px;

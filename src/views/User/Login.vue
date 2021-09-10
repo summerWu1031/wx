@@ -91,7 +91,7 @@ export default {
     let token = window.sessionStorage.getItem("token");
     // let token = window.localStorage.getItem("token");
     if (token) {
-      this.$router.push("/my");
+      this.$router.push("/");
     }
   },
   methods: {
@@ -150,7 +150,7 @@ export default {
             self.$message("请先完善用户基本信息！");
             self.$router.push("/myuser");
           }else {
-            self.$router.push("/my");
+            self.$router.push("/");
           }
         } else {
           self.$message("登录失败！");

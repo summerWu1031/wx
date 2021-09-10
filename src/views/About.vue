@@ -2,48 +2,107 @@
   <div>
     <Nav/>
     <Nav2>关于我们</Nav2>
-    <main>
-      <div class="introl">
-        <h2>广东省武术协会</h2>
-        <p>{{introduction}}</p>
-      </div>
-      <div class="company-intro">
-        <div class="struct">
-            <div class="title">
-              <span>机构设置：</span>
-            </div>
-          <ul>
-            <li v-for="(item,index) in structure" :key="index">
-              <span class="grade">{{item.orgRole}}:</span>
-              <span class="uname">{{item.personnel}}</span>
-            </li>
-          </ul>
+    <div class="main">
+      <div class="aside">
+        <div class="top">
+          <span>关于我们</span>
         </div>
-        <div class="about-us">
-            <div class="title">
-              <span>联系我们：</span>
-            </div>
+        <div class="aside-menu">
           <ul>
-            <li>
-              <span class="grade" >联系人：</span>
-              <span class="uname">{{contact.person}}</span>
-            </li>
-            <li>
-              <span class="grade" >电话：</span>
-              <span class="uname">{{contact.phone}}</span>
-            </li>
-            <li>
-              <span class="grade" >邮件：</span>
-              <span class="uname">{{contact.email}}</span>
-            </li>
-            <li>
-              <span class="grade" >地址：</span>
-              <span class="uname">{{contact.adress}}</span>
+            <li v-for="(t,index) in title" :key=index @click="change(index,t.name)">
+              <span :class="{selected: current.title===t.name}">{{ t.name }}</span>
             </li>
           </ul>
         </div>
       </div>
-    </main>
+      <div class="list_box">
+        <div class="title">
+          <p>
+            {{ current.title }}
+          </p>
+        </div>
+        <div class="list_content" v-show="current.index===2">
+          <div class="introl">
+            <h2>广东省武术协会</h2>
+            <p>{{ introduction }}</p>
+          </div>
+        </div>
+        <div class="list_content" v-show="current.index===0">
+          <div class="struct">
+            <ul>
+              <li v-for="(item,index) in structure" :key="index">
+                <span class="grade">{{ item.orgRole }}:</span>
+                <span class="uname">{{ item.personnel }}</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div class="list_content" v-show="current.index===1">
+          <div class="link">
+            <ul>
+              <li>
+                <span class="grade">联系人：</span>
+                <span class="uname">{{ contact.person }}</span>
+              </li>
+              <li>
+                <span class="grade">电话：</span>
+                <span class="uname">{{ contact.phone }}</span>
+              </li>
+              <li>
+                <span class="grade">邮件：</span>
+                <span class="uname">{{ contact.email }}</span>
+              </li>
+              <li>
+                <span class="grade">地址：</span>
+                <span class="uname">{{ contact.adress }}</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!--    <main>-->
+    <!--      <div class="introl">-->
+    <!--        <h2>广东省武术协会</h2>-->
+    <!--        <p>{{introduction}}</p>-->
+    <!--      </div>-->
+    <!--      <div class="company-intro">-->
+    <!--        <div class="struct">-->
+    <!--            <div class="title">-->
+    <!--              <span>机构设置：</span>-->
+    <!--            </div>-->
+    <!--          <ul>-->
+    <!--            <li v-for="(item,index) in structure" :key="index">-->
+    <!--              <span class="grade">{{item.orgRole}}:</span>-->
+    <!--              <span class="uname">{{item.personnel}}</span>-->
+    <!--            </li>-->
+    <!--          </ul>-->
+    <!--        </div>-->
+    <!--        <div class="about-us">-->
+    <!--            <div class="title">-->
+    <!--              <span>联系我们：</span>-->
+    <!--            </div>-->
+    <!--          <ul>-->
+    <!--            <li>-->
+    <!--              <span class="grade" >联系人：</span>-->
+    <!--              <span class="uname">{{contact.person}}</span>-->
+    <!--            </li>-->
+    <!--            <li>-->
+    <!--              <span class="grade" >电话：</span>-->
+    <!--              <span class="uname">{{contact.phone}}</span>-->
+    <!--            </li>-->
+    <!--            <li>-->
+    <!--              <span class="grade" >邮件：</span>-->
+    <!--              <span class="uname">{{contact.email}}</span>-->
+    <!--            </li>-->
+    <!--            <li>-->
+    <!--              <span class="grade" >地址：</span>-->
+    <!--              <span class="uname">{{contact.adress}}</span>-->
+    <!--            </li>-->
+    <!--          </ul>-->
+    <!--        </div>-->
+    <!--      </div>-->
+    <!--    </main>-->
     <Footer/>
   </div>
 </template>
@@ -61,7 +120,13 @@ export default {
         email: '',
         adress: ''
       },
-      structure:[]
+      structure: [],
+      title: [
+        {name: '机构设置'},
+        {name: '联系我们'},
+        {name: '协会介绍'}
+      ],
+      current: {index: 0, title: '机构设置'}
     }
   },
   created() {
@@ -73,6 +138,10 @@ export default {
     this.init()
   },
   methods: {
+    change(index, name) {
+      this.current.index = index
+      this.current.title = name
+    },
     init() {
       const self = this;
       getqueryOrgInfo({sign: 'wx'}).then((res) => {
@@ -93,100 +162,119 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-main{
+.main {
   width: 1200px;
-  margin: 0 auto;
-  .introl{
+  margin: 20px auto;
+  min-height: 455px;
+  display: flex;
+  justify-content: space-between;
 
-    margin-bottom: 20px;
-  }
-  h2 {
-    font-weight: normal;
-    height: 80px;
-    color: #5C5C5C;
-    font-size: 26px;
-    text-align: center;
-    line-height: 80px;
-    padding: 0 60px;
-  }
-  p{
-    font-size: 14px;
-    text-align:left;
-    text-indent:32pt;
-    margin-bottom: 16px;
-    line-height: 24px;
-  }
-  .company-intro{
-    display: flex;
-    margin-top: 12px;
-    border-top: 1px solid #d2d2d2;
-    >.struct{
-      margin-right: 36px;
-      width: 600px;
-      .title{
-        margin: 20px 0 14px 0;
-        span{
-          background-color: #DB261D;
-          color: #fff;
-          display: flex;
-          width: 80px;
-          height: 30px;
-          align-items: center;
-          padding-left: 4px;
-        }
-      }
-      ul{
-        margin-left: 4px;
-      }
-      li{
-        display: flex;
-        margin-bottom: 16px;
-        font-size: 14px;
-        .grade{
-          display: inline-block;
-          padding-right: 16px;
-        }
-        .uname{
-          display: inline-block;
-          -webkit-box-flex: 1;
-          flex: 1;
-          //color: #999;
-        }
+  > .aside {
+    width: 275px;
+    height: 248px;
+
+    > .top {
+      width: 275px;
+      background-color: #DB261D;
+      height: 40px;
+
+      > span {
+        color: #fff;
+        font-size: 16px;
+        line-height: 40px;
+        padding: 0 16px;
       }
     }
-    >.about-us{
-      width: 600px;
-      .title{
-        margin: 20px 0 14px 0;
-        span{
-          background-color: #DB261D;
-          color: #fff;
-          display: flex;
-          width: 80px;
-          height: 30px;
-          align-items: center;
-          padding-left: 4px;
+
+    > .aside-menu {
+      width: 275px;
+      border: 1px #DB261D solid;
+      padding: 0 20px 20px 20px;
+      background-color: #fff;
+
+      > ul {
+        margin: 0 auto;
+
+        > li {
+          width: 224px;
+          margin-top: 20px;
+          height: 38px;
+
+          span {
+            display: inline-block;
+            width: 224px;
+            line-height: 40px;
+            color: #DB261D;
+            font-size: 14px;
+            border: 1px #dddddd solid;
+            padding: 0 16px;
+
+            &.selected {
+              border-left: 5px solid #DB261D;
+              background-color: #f5f5f5;
+            }
+          }
+
         }
       }
-      ul{
-        margin-left: 4px;
-      }
-      li{
-        display: flex;
-        margin-bottom: 16px;
-        font-size: 14px;
-        .grade{
-          display: inline-block;
-          padding-right: 16px;
-        }
-        .uname{
-          display: inline-block;
-          -webkit-box-flex: 1;
-          flex: 1;
-          //color: #999;
-        }
-      }
+
     }
   }
+
+  > .list_box {
+    width: 905px;
+    margin-left: 20px;
+
+    > .title {
+      border-bottom: 1px #d7d7d7 solid;
+      height: 40px;
+
+      p {
+        float: left;
+        border-bottom: 1px #DB261D solid;
+        padding: 0 16px;
+        line-height: 39px;
+        font-size: 16px;
+        color: #DB261D;
+        text-indent: 0;
+      }
+    }
+
+    > .list_content {
+      padding: 20px;
+
+      ul {
+        border-bottom: 1px #d7d7d7 solid;
+        padding-bottom: 10px;
+
+        > li {
+          height: 40px;
+
+          span {
+            color: #545454;
+            font-size: 14px;
+            line-height: 30px;
+
+            &.uname {
+              padding-left: 20px;
+            }
+          }
+        }
+      }
+      .introl{
+        border-bottom: 1px #d7d7d7 solid;
+        padding-bottom: 10px;
+        h2 {
+          text-align: center;
+        }
+
+        p {
+          line-height: 26px;
+        }
+      }
+
+    }
+  }
+
 }
 </style>

@@ -494,30 +494,30 @@ export default {
 
     },
     beforeAvatarUpload(file) {
-      const isSize = new Promise(function (resolve, reject) {
-        let width = 300
-        let height = 420
-        let _URL = window.URL || window.webkitURL
-        let img = new Image()
-        img.onload = function () {
-          let valid = img.width == width && img.height == height;
-          valid ? resolve() : reject();
-        }
-        img.src = _URL.createObjectURL(file);
-      })
-          .then(
-              () => {
-                return file;
-              },
-              () => {
-                this.$message({
-                  message: '图片尺寸只能是300*420px!请重新选择!',
-                  type: 'warning'
-                })
-                return Promise.reject()
-                return false
-              })
-      return isSize
+      // const isSize = new Promise(function (resolve, reject) {
+      //   let width = 300
+      //   let height = 420
+      //   let _URL = window.URL || window.webkitURL
+      //   let img = new Image()
+      //   img.onload = function () {
+      //     let valid = img.width == width && img.height == height;
+      //     valid ? resolve() : reject();
+      //   }
+      //   img.src = _URL.createObjectURL(file);
+      // })
+      //     .then(
+      //         () => {
+      //           return file;
+      //         },
+      //         () => {
+      //           this.$message({
+      //             message: '图片尺寸只能是300*420px!请重新选择!',
+      //             type: 'warning'
+      //           })
+      //           return Promise.reject()
+      //           return false
+      //         })
+      // return isSize
     },
 
     // 提交表单
@@ -547,7 +547,7 @@ export default {
           updUserInfo(param).then((res) => {
             if (res.code === 200) {
               self.$message(res.msg)
-              self.$router.push('/my')
+              self.$router.push('/')
             } else {
               self.$message(res.msg)
             }

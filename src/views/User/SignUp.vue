@@ -233,8 +233,8 @@ export default {
     },
     onlogin(_type) {
       var self = this;
-      // let getOpenid = window.sessionStorage.getItem("openid");
-      let getOpenid = window.localStorage.getItem("openid");
+      let getOpenid = window.sessionStorage.getItem("openid");
+      // let getOpenid = window.localStorage.getItem("openid");
 
       //这里写登录的操作
       let param = {
@@ -247,11 +247,11 @@ export default {
 
       login(param).then((res) => {
         if (res.token) {
-          // window.sessionStorage.setItem("token", res.token);
-          window.localStorage.setItem("token", res.token);
+          window.sessionStorage.setItem("token", res.token);
+          // window.localStorage.setItem("token", res.token);
           self.getUserProfiles();
 
-            self.$router.push("/myuser");
+            self.$router.push("/");
 
         } else {
           this.$message(res.msg);
