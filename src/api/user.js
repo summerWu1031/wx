@@ -161,7 +161,7 @@ export const uploadImage = data => {
  *证书编号：certCode ,
  *核发机构：certSource ,
  *证书时间：certTime ,
- *履历：certResume }
+ *履历：resumes [certResumeTime:'', certResumeName:''] }
  *
  *  若新增裁判则多增加参数：一级类别categoryOne二级类别categoryTwo,三级类别categoryThree
  */

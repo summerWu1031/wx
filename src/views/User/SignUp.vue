@@ -3,7 +3,7 @@
     <div class="container">
       <div class="login-top">
         <router-link class="forgot-password" to="/">
-          <img class="image-round" alt="" src="../../assets/image/home-logo.png" />
+          <img class="image-round" alt="" src="../../assets/image/home-logo1.png" />
         </router-link>
 
 <!--        <p>填写详细信息并创建您的帐户</p>-->
@@ -12,7 +12,10 @@
         <div class="loginText"><span>注 册</span></div>
         <div class="signUpForm">
           <el-form :model="personinfo" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm"
-                   @submit="onResigter(1)">
+                   @submit="onResigter(1)"
+                   @keyup.enter.native="submitForm('ruleForm')"
+                   hide-required-asterisk="true"
+          >
             <el-form-item label="姓名" prop="name">
               <el-input v-model="personinfo.name"></el-input>
             </el-form-item>

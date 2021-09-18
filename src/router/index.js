@@ -14,82 +14,119 @@ import Dan from '@/views/Dan.vue'
 import SignUp from "@/views/User/SignUp";
 import Login from "@/views/User/Login";
 import Agreement from "@/components/Agreement";
-import My from "@/views/User/My";
 import MyUser from "@/views/User/MyUser";
 import ForgetPassword from "@/views/User/ForgetPassword";
+import Coach from "@/views/User/Coach";
+import Referee from "@/views/User/Referee";
+import CoachList from "@/views/User/CoachList";
+
+//获取原型对象上的push函数
+const originalPush = VueRouter.prototype.push
+//修改原型对象中的push方法
+VueRouter.prototype.push = function push(location) {
+  return originalPush.call(this, location).catch(err => err)
+}
+
+
 Vue.use(VueRouter)
 
 const routes = [
   {
     path: '/',
+    name: '/',
     component: Home
   },
   {
     path: '/introduce',
+    name: 'introduce',
     component: Introduce
   },
   {
     path: '/news',
+    name: 'news',
     component: News
   }, {
     path: '/detail/:id',
+    name:'detail',
     props:true,
     component: Detail
   },
   {
     path: '/notice',
+    name: 'notice',
     component: Notice
   },
   {
     path: '/policy',
+    name:'policy',
     component: Policy
   },
   {
     path: '/member',
+    name: 'member',
     component: Member
   },
   {
     path: '/member-detail/:id',
+    name:'member-datail',
     props:true,
     component: MemberDetail
   },
   {
     path: '/about',
+    name:'about',
     component: About
   },
   {
     path: '/download',
+    name:'download',
     component: Download
   },
   {
     path: '/dan',
+    name: 'dan',
     component: Dan
   },
   {
     path: '/signup',
+    name:'signup',
     component: SignUp
   },
   {
     path: '/login',
+    name: 'login',
     component: Login
   },
   {
     path: '/agreement',
+    name: 'agreement',
     component: Agreement
   },
   {
-    path: '/my',
-    component: My
-  },
-  {
     path: '/myuser',
+    name: 'myuser',
     component: MyUser
   },
   {
     path: '/forgot-password',
+    name: 'forgot-password',
     component: ForgetPassword
+  }, {
+    path: '/coach',
+    name: 'coach',
+    component: Coach
   },
-
+  {
+    path: '/referee',
+    name: 'referee',
+    component: Referee
+  },
+  {
+    path: '/coachlist',
+    name: 'coachlist',
+    props: true,
+    component: CoachList
+  },
 
 ]
 

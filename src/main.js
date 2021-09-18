@@ -12,10 +12,15 @@ import base from "@/util/base";
 import Nav from '@/components/Nav.vue';
 import Nav2 from '@/components/Nav2.vue';
 import Footer from '@/components/Footer.vue';
+
+import iView from 'iview';
+import 'iview/dist/styles/iview.css';
 Vue.use(base);
 Vue.config.productionTip = false
 
 Vue.use(ElementUI)
+
+Vue.use(iView)
 Vue.use(VueAxios,axios)
 Vue.component('Nav',Nav)
 Vue.component('Nav2',Nav2)

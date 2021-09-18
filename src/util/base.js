@@ -1,13 +1,11 @@
 const baseURL = process.env.VUE_APP_BASE_API
 //全局根路径
-//var basePath ="http://www.gzsundo.com";
-let basePath = "http://wushu.sportsit.com";
-
+let basePath = "http://wushu.sportsit.cn";
 export default {
     install(Vue) {
         //加载图片路径渲染图片 +"/upload",图片加载路径
         Vue.prototype.loadUrl = function loadUrl(url) {
-            return "http://wushu.sportsit.cn" + url;
+            return basePath + url;
         }
         // 日期格式化（全）
         Vue.prototype.formatNumber = function formatNumber(n) {

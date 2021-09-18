@@ -10,98 +10,193 @@
         <span class="tel">{{ userInfo.phonenumber }}</span>
       </div>
       <div class="wrapper">
+        <el-tabs type="card" v-model="activeName" class="formTab">
+          <el-tab-pane label="基本信息" name="1">
+            <el-form :model="basic" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm"  @keyup.enter.native="submitForm('ruleForm')">
+              <el-form-item label="真实姓名" prop="userName">
+                <el-input v-model="basic.userName" placeholder="请输入真实姓名"></el-input>
+              </el-form-item>
+              <el-form-item label="身份证" prop="identityCode">
+                <el-input :disabled="isState !== 0" v-model="basic.identityCode" placeholder="请输入身份证"></el-input>
+              </el-form-item>
+              <el-form-item label="性别" prop="sex">
+                <el-radio-group v-model="basic.sex" :disabled="isState !== 0">
+                  <el-radio label="1">男</el-radio>
+                  <el-radio label="2">女</el-radio>
+                </el-radio-group>
+              </el-form-item>
+              <el-form-item label="手机号码" prop="phonenumber">
+                <el-input v-model="basic.phonenumber" placeholder="请输入手机号码"></el-input>
+              </el-form-item>
+              <el-form-item label="会员类型" prop="memberName">
+                <el-radio-group v-model="basic.memberName" @change="onMemType">
+                  <!--              <el-radio label="普通会员">普通会员</el-radio>-->
+                  <!--              <el-radio label="学生会员">学生会员</el-radio>-->
+                  <el-radio v-for="(item,index) in MemTypeColumns" :label="item" :key="index">{{ item }}</el-radio>
+                </el-radio-group>
+              </el-form-item>
+              <el-form-item label="所在区域" prop="province">
+                <el-cascader
+                    size="large"
+                    :options="options"
+                    v-model="selectedOptions"
+                    @change="handleChange">
+                </el-cascader>
+              </el-form-item>
+              <el-form-item label="入会类型" prop="sourceOrgType">
+                <el-radio-group v-model="basic.sourceOrgType" :disabled="isState !== 0">
+                  <el-radio label="0">自主入会</el-radio>
+                  <el-radio label="1">推荐入会</el-radio>
+                </el-radio-group>
+              </el-form-item>
+              <el-form-item label="推荐单位" v-show="basic.sourceOrgType=='1'">
+                <el-select v-model="basic.sourceOrgName" placeholder="请选择活动区域" :disabled="isState !== 0">
+                  <el-option v-for="(item,index) in filterAssociationList" :key="index" :label="item.name"
+                             :value="item.name"></el-option>
+                </el-select>
+              </el-form-item>
+              <el-form-item label="证件照" prop="avatar" class="upload">
+                <el-upload
+                    @click="getType('basic')"
+                    v-model="basic.avatars"
+                    class="avatar-uploader"
+                    action="http://wushu.sportsit.cn:8080/upload/uploadImage"
+                    :show-file-list="false"
+                    :on-success="handleAvatarSuccess"
+                    :before-upload="beforeAvatarUpload">
+                  <img v-if="basic.avatar" :src="basic.avatars[0].url" class="avatar">
+                  <img v-else src="../../assets/image/upload.png" alt="" class="uploadIcon">
+                  <!--              <i v-else class="el-icon-plus avatar-uploader-icon"></i>-->
+                  <div slot="tip" class="el-upload__tip">(本照片将用于制作证件300*420 px)</div>
+                </el-upload>
+              </el-form-item>
+              <el-form-item label="详细地址">
+                <el-input v-model="basic.area" placeholder="请输入详细地址"></el-input>
+              </el-form-item>
+              <el-form-item label="电子邮箱">
+                <el-input v-model="basic.email" placeholder="请输入电子邮箱"></el-input>
+              </el-form-item>
+              <el-form-item label="民族">
+                <el-select v-model="basic.nation" placeholder="选择您的民族">
+                  <el-option
+                      v-for="item in nationActions"
+                      :key="item.value"
+                      :label="item.label"
+                      :value="item.value">
+                  </el-option>
+                </el-select>
+              </el-form-item>
+              <el-form-item label="武术专长">
+                <el-input v-model="basic.speciality" placeholder="请输入武术专长"></el-input>
+              </el-form-item>
+              <el-form-item label="文化程度">
+                <el-select v-model="basic.culture" placeholder="选择您民族">
+                  <el-option
+                      v-for="item in cultureActions"
+                      :key="item.value"
+                      :label="item.label"
+                      :value="item.value">
+                  </el-option>
+                </el-select>
+              </el-form-item>
+              <el-form-item class="btn">
+                <el-button type="primary" @click="submitForm('ruleForm')">保存</el-button>
+              </el-form-item>
+            </el-form>
+          </el-tab-pane>
 
-        <el-form :model="basic" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
-          <el-form-item label="真实姓名" prop="userName">
-            <el-input v-model="basic.userName" placeholder="请输入真实姓名"></el-input>
-          </el-form-item>
-          <el-form-item label="身份证" prop="identityCode">
-            <el-input :disabled="isState !== 0" v-model="basic.identityCode" placeholder="请输入身份证"></el-input>
-          </el-form-item>
-          <el-form-item label="性别" prop="sex">
-            <el-radio-group v-model="basic.sex" :disabled="isState !== 0">
-              <el-radio label="1">男</el-radio>
-              <el-radio label="2">女</el-radio>
-            </el-radio-group>
-          </el-form-item>
-          <el-form-item label="手机号码" prop="phonenumber">
-            <el-input v-model="basic.phonenumber" placeholder="请输入手机号码"></el-input>
-          </el-form-item>
-          <el-form-item label="会员类型" prop="memberName">
-            <el-radio-group v-model="basic.memberName" @change="onMemType">
-              <!--              <el-radio label="普通会员">普通会员</el-radio>-->
-              <!--              <el-radio label="学生会员">学生会员</el-radio>-->
-              <el-radio v-for="(item,index) in MemTypeColumns" :label="item" :key="index">{{ item }}</el-radio>
-            </el-radio-group>
-          </el-form-item>
-          <el-form-item label="所在区域" prop="province">
-            <el-cascader
-                size="large"
-                :options="options"
-                v-model="selectedOptions"
-                @change="handleChange">
-            </el-cascader>
-          </el-form-item>
-          <el-form-item label="入会类型" prop="sourceOrgType">
-            <el-radio-group v-model="basic.sourceOrgType" :disabled="isState !== 0">
-              <el-radio label="0">自主入会</el-radio>
-              <el-radio label="1">推荐入会</el-radio>
-            </el-radio-group>
-          </el-form-item>
-          <el-form-item label="推荐单位" v-show="basic.sourceOrgType=='1'">
-            <el-select v-model="basic.sourceOrgName" placeholder="请选择活动区域" :disabled="isState !== 0">
-              <el-option v-for="(item,index) in filterAssociationList" :key="index" :label="item.name"
-                         :value="item.name"></el-option>
-            </el-select>
-          </el-form-item>
-          <el-form-item label="证件照" prop="avatar" class="upload">
-            <el-upload
-                @click="getType('basic')"
-                v-model="basic.avatars"
-                class="avatar-uploader"
-                action="http://wushu.sportsit.cn:8080/upload/uploadImage"
-                :show-file-list="false"
-                :on-success="handleAvatarSuccess"
-                :before-upload="beforeAvatarUpload">
-              <img v-if="basic.avatar" :src="basic.avatars[0].url" class="avatar">
-              <img v-else src="../../assets/image/upload.png" alt="" class="uploadIcon">
-              <!--              <i v-else class="el-icon-plus avatar-uploader-icon"></i>-->
-              <div slot="tip" class="el-upload__tip">(本照片将用于制作证件300*420 px)</div>
-            </el-upload>
-          </el-form-item>
-          <el-form-item label="详细地址">
-            <el-input v-model="basic.area" placeholder="请输入详细地址"></el-input>
-          </el-form-item>
-          <el-form-item label="电子邮箱">
-            <el-input v-model="basic.email" placeholder="请输入电子邮箱"></el-input>
-          </el-form-item>
-          <el-form-item label="民族">
-            <el-select v-model="basic.nation" placeholder="选择您的民族">
-              <el-option
-                  v-for="item in nationActions"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value">
-              </el-option>
-            </el-select>
-          </el-form-item>
-          <el-form-item label="武术专长">
-            <el-input v-model="basic.speciality" placeholder="请输入武术专长"></el-input>
-          </el-form-item>
-          <el-form-item label="文化程度">
-            <el-select v-model="basic.culture" placeholder="选择您民族">
-              <el-option
-                  v-for="item in cultureActions"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value">
-              </el-option>
-            </el-select>
-          </el-form-item>
-          <el-form-item class="btn">
-            <el-button type="primary" @click="submitForm('ruleForm')">保存</el-button>
-          </el-form-item>
-        </el-form>
+          <el-tab-pane label="段位信息" name="2">
+            <el-form :model="dan" :rules="rules" ref="dan" label-width="100px" class="demo-ruleForm"  @keyup.enter.native="submitForm('rules')">
+              <el-form-item label="考试项目">
+                <el-select v-model="dan.item" placeholder="请输入考试项目">
+                  <el-option v-for="(item,index) in danItemColumns" :key="index" :label="item"
+                             :value="item"></el-option>
+                </el-select>
+              </el-form-item>
+              <el-form-item label="考试点">
+                <el-select v-model="dan.name" placeholder="请输入考评点">
+                  <el-option v-for="(item,index) in filteredAssociationList" :key="index" :label="item.name"
+                             :value="item.name"></el-option>
+                </el-select>
+              </el-form-item>
+              <el-form-item label="等级">
+                <el-select v-model="dan.level" placeholder="请选择您的级别">
+                  <el-option v-for="(item,index) in danGradeColumns" :key="index" :label="item"
+                             :value="item"></el-option>
+                </el-select>
+              </el-form-item>
+              <el-form-item label="段位编号">
+                <el-input v-model="dan.certCode" placeholder="请输入段位编号"></el-input>
+              </el-form-item>
+              <el-form-item label="履历">
+                <el-input type="textarea" v-model="dan.certResume" placeholder="请输履历"></el-input>
+              </el-form-item>
+              <el-form-item label="证书上传" class="upload">
+                <el-upload
+                    @click="getType('dan')"
+                    v-model="dan.certImg"
+                    class="avatar-uploader"
+                    action="http://wushu.sportsit.cn:8080/upload/uploadImage"
+                    :show-file-list="false"
+                    :on-success="handleAvatarSuccessDan"
+                    :before-upload="beforeAvatarUpload">
+                  <img v-if="dan.certImg" :src="dan.certImgs[0].url" class="avatar">
+                  <img v-else src="../../assets/image/upload.png" alt="" class="uploadIcon">
+                  <!--              <i v-else class="el-icon-plus avatar-uploader-icon"></i>-->
+                  <!--                  <div slot="tip" class="el-upload__tip">(本照片将用于制作证件300*420 px)</div>-->
+                </el-upload>
+              </el-form-item>
+              <el-form-item class="btn">
+                <el-button type="primary" @click="onSubmitCert('dan','dan')">保存</el-button>
+              </el-form-item>
+            </el-form>
+          </el-tab-pane>
+
+          <el-tab-pane label="运动员等级信息" name="3">
+            <el-form :model="player" :rules="rules" ref="player" label-width="100px" class="demo-ruleForm"  @keyup.enter.native="submitForm('player')">
+              <el-form-item label="运动员等级">
+                <el-select v-model="player.level" placeholder="请选择您的级别">
+                  <el-option v-for="(item,index) in athletesGradeColumns" :key="index" :label="item"
+                             :value="item"></el-option>
+                </el-select>
+              </el-form-item>
+              <el-form-item label="审批单位">
+                <el-input v-model="player.certSource" placeholder="请输入审批单位"></el-input>
+              </el-form-item>
+              <el-form-item label="审批日期">
+                <el-col :span="11">
+                  <el-date-picker type="date" placeholder="选择审批日期" v-model="player.certTime" style="width: 100%;"
+                                  format="yyyy 年 MM 月 dd 日"
+                                  value-format="yyyy-MM-dd"></el-date-picker>
+                </el-col>
+              </el-form-item>
+              <el-form-item label="履历">
+                <el-input type="textarea" v-model="player.certResume" placeholder="请输履历"></el-input>
+              </el-form-item>
+              <el-form-item label="证书上传" class="upload">
+                <el-upload
+                    @click="getType('player')"
+                    v-model="player.certImg"
+                    class="avatar-uploader"
+                    action="http://wushu.sportsit.cn:8080/upload/uploadImage"
+                    :show-file-list="false"
+                    :on-success="handleAvatarSuccessPlayer"
+                    :before-upload="beforeAvatarUpload">
+                  <img v-if="player.certImg" :src="player.certImgs[0].url" class="avatar">
+                  <img v-else src="../../assets/image/upload.png" alt="" class="uploadIcon">
+                  <!--              <i v-else class="el-icon-plus avatar-uploader-icon"></i>-->
+                  <!--                  <div slot="tip" class="el-upload__tip">(本照片将用于制作证件300*420 px)</div>-->
+                </el-upload>
+              </el-form-item>
+              <el-form-item class="btn">
+                <el-button type="primary" @click="onSubmitCert('player','player')">保存</el-button>
+              </el-form-item>
+            </el-form>
+          </el-tab-pane>
+
+
+        </el-tabs>
+
 
       </div>
     </div>
@@ -110,6 +205,7 @@
 
 <script>
 import {regionData, CodeToText} from 'element-china-area-data'
+
 import {
   updUserInfo,
   uploadImage,
@@ -134,6 +230,7 @@ export default {
       }
     }
     return {
+      activeName: '1',
       options: regionData,
       selectedOptions: [],
       user: {},
@@ -312,8 +409,111 @@ export default {
       showculture: false,
       // cultureActions: [],
 
-      // 图片上传尺寸限制
-      flag: false,
+      //段位信息
+      dan: {
+        type: 2,
+        id: "",
+        item: "",
+        level: "",
+        certCode: "",
+        certSource: "",
+        certTime: "",
+        certResume: "",
+        certImg: "",
+        certImgs: [],
+        name: "",
+        value: "",
+        searchEvalValue: "",
+      },
+      danShowItem: false,
+      danItemColumns: [
+        "陈式太极拳",
+        "杨式太极拳",
+        "吴式太极拳",
+        "武式太极拳",
+        "孙式太极拳",
+        "长拳",
+        "南拳",
+        "咏春拳",
+        "少林拳",
+        "形意拳",
+        "八卦拳",
+        "通臂拳",
+        "翻子拳",
+        "八极拳",
+        "螳螂拳",
+        "五祖拳",
+        "自卫防身术",
+        "趣味武术",
+        "散打",
+      ],
+
+      danShowGrade: false,
+      danGradeColumns: [
+        "段前一段",
+        "段前二段",
+        "段前三段",
+        "段前四段",
+        "段前五段",
+        "段前六段",
+        "段前七段",
+        "段前八段",
+        "段前九段",
+        "一段",
+        "二段",
+        "三段",
+        "四段",
+        "五段",
+        "六段",
+        "七段",
+        "八段",
+        "九段",
+      ],
+      showDan: false,
+      danAppraisal: [],
+      showAppraisal: false,
+      errorTextid: "",
+
+      checkbox: true,
+      // 考评点
+      itemValue: "",
+      itemName: "",
+
+      // 运动员信息
+      player: {
+        type: 3,
+        id: "",
+        item: "",
+        playerLv: "",
+        level: "",
+        certSource: "",
+        certTime: "",
+        certResume: "",
+        certImg: "",
+        certImgs: [],
+      },
+      athletesGradeColumns: [
+        "国际级运动健将",
+        "运动健将",
+        "一级",
+        "二级",
+        "三级",
+      ],
+
+      //注册教练信息
+      coach: {
+        type: 0,
+        id: "",
+        item: "",
+        level: "",
+        certCode: "",
+        certSource: "",
+        certTime: "",
+        certResume: "",
+        certImg: "",
+        certImgs: [],
+      },
+      coachGradeColumns: ["国家级", "高级", "一级", "二级", "三级"],
     }
   },
   computed: {
@@ -373,6 +573,7 @@ export default {
         self.$store.dispatch("saveUserInfo", res.data);
         if (res.data.userType == 1) {
           self.userInfo = res.data.userInfo
+
           if (!self.userInfo.updateTime) {
             self.basic.userName = self.userInfo.userName;
             self.basic.phonenumber = self.userInfo.phonenumber;
@@ -386,6 +587,7 @@ export default {
             self.$set(self.basic, "memberName", self.userInfo.memberName);
             self.$set(self.basic, "sourceOrgType", self.userInfo.sourceOrgType.toString());
           } else {
+
             self.basic = self.userInfo;
             self.$set(
                 self.basic,
@@ -410,7 +612,22 @@ export default {
             self.$set(self.basic, "avatars", [
               {url: self.loadUrl(self.basic.avatar)},
             ]);
-            console.log(self.basic.avatars)
+          }
+          if (res.data.rankInfo.length > 0) {
+            self.dan = res.data.rankInfo[0];
+            self.itemValue = self.dan.value;
+            self.$set(self.dan, "certImgs", [
+              {url: self.loadUrl(self.dan.certImg)},
+            ]);
+
+            console.log(2)
+          }
+          if (res.data.playerInfo.length > 0) {
+            self.player = res.data.playerInfo[0];
+            self.$set(self.player, "certImgs", [
+              {url: self.loadUrl(self.player.certImg)},
+            ]);
+
           }
         } else {
           self.userInfo = res.data.userInfo
@@ -435,7 +652,7 @@ export default {
         self.$message(res.mes)
       }
     })
-    // this.queryDictListByTypeLists();
+    this.queryDictListByTypeLists();
 
     // hysq
     checkUserIsOrgMember({sign: "wx"}).then((res) => {
@@ -485,14 +702,11 @@ export default {
       formData.append('file', file.raw)
       uploadImage(formData).then((res) => {
         if (res.code == 200) {
-          console.log(res)
           setTimeout(() => {
             let str = res.fileName
             file.name = str
             self.basic.avatar = str;
             self.basic.avatars[0] = {url: self.loadUrl(str)};
-            console.log(self.basic.avatar)
-            console.log(self.basic.avatars[0].url)
             file.status = "done";
             file.message = "上传成功";
           }, 1000)
@@ -501,6 +715,47 @@ export default {
         }
       })
 
+    },
+    handleAvatarSuccessDan(res, file) {
+      this.dan.certImg = URL.createObjectURL(file.raw);
+      let self = this
+      let formData = new FormData()
+      formData.append('file', file.raw)
+      uploadImage(formData).then((res) => {
+        if (res.code == 200) {
+          setTimeout(() => {
+            let str = res.fileName
+            file.name = str
+            self.dan.certImg = str;
+            self.dan.certImgs[0] = {url: self.loadUrl(str)};
+            file.status = "done";
+            file.message = "上传成功";
+          }, 1000)
+        } else {
+          self.$message(res.msg);
+        }
+      })
+
+    },
+    handleAvatarSuccessPlayer(res, file) {
+      this.player.certImg = URL.createObjectURL(file.raw);
+      let self = this
+      let formData = new FormData()
+      formData.append('file', file.raw)
+      uploadImage(formData).then((res) => {
+        if (res.code == 200) {
+          setTimeout(() => {
+            let str = res.fileName
+            file.name = str
+            self.player.certImg = str;
+            self.player.certImgs[0] = {url: self.loadUrl(str)};
+            file.status = "done";
+            file.message = "上传成功";
+          }, 1000)
+        } else {
+          self.$message(res.msg);
+        }
+      })
     },
     beforeAvatarUpload(file) {
       // const isSize = new Promise(function (resolve, reject) {
@@ -568,6 +823,66 @@ export default {
         }
       });
     },
+    onSubmitCert(formName, strType) {
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          let self = this;
+
+          let parms = strType == "dan" ? self.dan : self.player;
+          if (parms === self.dan) {
+            setTimeout(() => {
+              if (parms.certImgs.length == 0) {
+                self.$message("证书不能为空！");
+                return false;
+              } else if (parms.item == '') {
+                self.$message("考试项目不能为空！");
+                return false
+              } else if (parms.name == '') {
+                self.$message("考评点不能为空！");
+                return false
+              } else if (parms.level == '') {
+                self.$message("等级不能为空！");
+                return false
+              } else if (parms.certCode == '') {
+                self.$message("段位编号不能为空！");
+                return false
+              }
+            }, 30);
+          } else if (parms === self.player) {
+            setTimeout(() => {
+              if (parms.certImgs.length == 0) {
+                self.$message("证书不能为空！");
+                return false;
+              } else if (parms.certSource == '') {
+                self.$message("审批单位不能为空！");
+                return false
+              } else if (parms.certTime == '') {
+                self.$message("审批日期不能为空！");
+                return false
+              } else if (parms.level == '') {
+                self.$message("等级不能为空！");
+                return false
+              }
+            }, 30);
+          }
+
+
+          addOrUpdUserCert(parms).then((res) => {
+            parms = "";
+            if (res.code == 200) {
+              self.$message(res.msg);
+              self.$router.push("/");
+            } else {
+              self.$message(res.msg);
+            }
+          });
+        } else {
+          console.log('error submit!!');
+          return false;
+        }
+      });
+
+    },
     // 会员申请部分
     getMembershipFee() {
       let self = this;
@@ -622,6 +937,31 @@ export default {
         }
       });
     },
+
+    // 段位信息-- 考评点
+    queryDictListByTypeLists() {
+      let self = this;
+      queryDictListByTypeList([{type: "rankEval"}]).then((res) => {
+        self.$nextTick(() => {
+        });
+        // console.log("self.itemValue", self.itemValue);
+        if (res.code == 200) {
+          let _rankEvalList = res.data.rankEvalList;
+          _rankEvalList.map((item, index) => {
+            if (item.value === self.itemValue) {
+              self.dan.name = item.label;
+            }
+            self.danAppraisal.push(
+                Object.assign({}, item, {name: item.label})
+            );
+          });
+        } else {
+          self.$message(res.msg);
+        }
+      });
+    },
+
+
   }
 
 }
@@ -639,6 +979,10 @@ export default {
     padding: 20px 0 0 20px;
     display: inline-block;
     color: #555;
+    a{
+      color: #555;
+      font-size: 14px;
+    }
   }
 
   .user-head {
@@ -690,6 +1034,20 @@ export default {
         display: inline-block;
         width: 80%;
       }
+
+      .el-textarea {
+        position: relative;
+        display: inline-block;
+        width: 80%;
+        vertical-align: bottom;
+        font-size: 14px;
+      }
+    }
+    ::v-deep .el-tabs--card>.el-tabs__header .el-tabs__item.is-active {
+     color: #DB261D;
+    }
+    ::v-deep .el-tabs__item:hover {
+      color: #DB261D;
     }
   }
 }
@@ -727,6 +1085,15 @@ export default {
     width: 60px;
     height: 60px;
     object-fit: cover;
+  }
+}
+
+.formTab {
+  ::v-deep .el-tabs__header {
+    padding: 0;
+    position: relative;
+    margin: 0 0 15px 110px;
+    width: 621px;
   }
 }
 

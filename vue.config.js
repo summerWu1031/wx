@@ -11,6 +11,8 @@ module.exports = {
       '/api': {
         target: 'http://8.134.12.113:8080',//黄
         // target: 'http://192.168.1.133:8081',//有
+        //target: 'http://192.168.1.106:8080', //旦
+        //target: 'http://192.168.1.22:8080', //富强
         // 允许跨域
         changeOrigin: true,
         ws: true,

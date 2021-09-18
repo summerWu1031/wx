@@ -14,7 +14,7 @@
               <div class="introl">{{ item.title }}</div>
               <img :src="loadUrl(item.ckImg)" :alt="item.title">
             </div>
-            <a v-else :href="item.ckUrl" target="_blank">
+            <a v-else :href="item.ckUrl" target="_blank" class="luoboImgWrapper">
               <div class="introl">{{ item.title }}</div>
               <img :src="loadUrl(item.ckImg)" :alt="item.title">
             </a>

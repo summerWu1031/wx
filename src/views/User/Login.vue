@@ -3,13 +3,13 @@
     <div class="container">
       <div class="login-top">
         <router-link class="forgot-password" to="/"
-        ><img class="image-round" alt="" src="../../assets/image/home-logo.png"
+        ><img class="image-round" alt="" src="../../assets/image/home-logo1.png"
         /></router-link>
       </div>
       <div class="wrapper">
         <div class="loginText"><span>登 录</span></div>
         <div class="loginForm">
-          <el-form :model="personinfo"  :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
+          <el-form :model="personinfo"  :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm" @keyup.enter.native="submitForm('ruleForm')">
             <el-form-item label="账号" prop="username">
               <el-input v-model="personinfo.username" placeholder="请输入账号（手机号码）"></el-input>
             </el-form-item>

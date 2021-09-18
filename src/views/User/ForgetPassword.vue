@@ -19,8 +19,8 @@
             <el-form-item label="确认密码" prop="passwordt">
               <el-input type="password" v-model="params.passwordt" autocomplete="off" placeholder="请再次确认密码"></el-input>
             </el-form-item>
-            <el-form-item label="短信验证码" prop="sms" class="mes">
-              <el-input class="mesInput" v-model="params.sms"></el-input>
+            <el-form-item label="短信验证码" prop="code" class="mes">
+              <el-input class="mesInput" v-model="params.code"></el-input>
               <el-button
                   size="small"
                   class="btn-send"
@@ -56,7 +56,7 @@
 import { forgetPassword, forgetSmsCode } from "@/api/user";
 export default {
   data(){
-    let sms = (rule, value, callback)=>{
+    let code = (rule, value, callback)=>{
       if (value === '') {
         callback(new Error('请填写验证码!'))
       }else {
@@ -98,7 +98,7 @@ export default {
         phonenumber: "",
         password: "",
         passwordt: "",
-        sms: "",
+        code: "",
         sign:'mobile'
       },
       codeText: "获取验证码",
@@ -107,8 +107,8 @@ export default {
         phonenumber: [
           {validator: formatter, trigger: 'blur'}
         ],
-        sms: [
-          {validator: sms, trigger: 'blur'}
+        code: [
+          {validator: code, trigger: 'blur'}
         ],
         password: [
           {validator: validatePass, trigger: 'blur'}
@@ -123,9 +123,9 @@ export default {
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          console.log(this.params)
           forgetPassword(this.params).then((res) => {
-            console.log(res);
+            this.$message('修改成功')
+            this.$router.push('/login')
           });
         } else {
          self.$message('请正确填写表格内容');

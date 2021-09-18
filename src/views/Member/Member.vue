@@ -142,13 +142,13 @@ main {
       width: 386px;
       height: 250px;
       overflow: hidden;
-
       img {
         //width: 386px;
         //height: 250px;
         width: 100%;
         height: 100%;
         object-fit: cover;
+
       }
 
       .title {

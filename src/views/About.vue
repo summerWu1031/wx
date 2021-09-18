@@ -1,11 +1,11 @@
 <template>
   <div>
     <Nav/>
-    <Nav2>关于我们</Nav2>
+    <Nav2>联系我们</Nav2>
     <div class="main">
       <div class="aside">
         <div class="top">
-          <span>关于我们</span>
+          <span>联系我们</span>
         </div>
         <div class="aside-menu">
           <ul>
@@ -21,20 +21,10 @@
             {{ current.title }}
           </p>
         </div>
-        <div class="list_content" v-show="current.index===2">
+        <div class="list_content" v-show="current.index===0">
           <div class="introl">
             <h2>广东省武术协会</h2>
             <p>{{ introduction }}</p>
-          </div>
-        </div>
-        <div class="list_content" v-show="current.index===0">
-          <div class="struct">
-            <ul>
-              <li v-for="(item,index) in structure" :key="index">
-                <span class="grade">{{ item.orgRole }}:</span>
-                <span class="uname">{{ item.personnel }}</span>
-              </li>
-            </ul>
           </div>
         </div>
         <div class="list_content" v-show="current.index===1">
@@ -61,48 +51,6 @@
         </div>
       </div>
     </div>
-    <!--    <main>-->
-    <!--      <div class="introl">-->
-    <!--        <h2>广东省武术协会</h2>-->
-    <!--        <p>{{introduction}}</p>-->
-    <!--      </div>-->
-    <!--      <div class="company-intro">-->
-    <!--        <div class="struct">-->
-    <!--            <div class="title">-->
-    <!--              <span>机构设置：</span>-->
-    <!--            </div>-->
-    <!--          <ul>-->
-    <!--            <li v-for="(item,index) in structure" :key="index">-->
-    <!--              <span class="grade">{{item.orgRole}}:</span>-->
-    <!--              <span class="uname">{{item.personnel}}</span>-->
-    <!--            </li>-->
-    <!--          </ul>-->
-    <!--        </div>-->
-    <!--        <div class="about-us">-->
-    <!--            <div class="title">-->
-    <!--              <span>联系我们：</span>-->
-    <!--            </div>-->
-    <!--          <ul>-->
-    <!--            <li>-->
-    <!--              <span class="grade" >联系人：</span>-->
-    <!--              <span class="uname">{{contact.person}}</span>-->
-    <!--            </li>-->
-    <!--            <li>-->
-    <!--              <span class="grade" >电话：</span>-->
-    <!--              <span class="uname">{{contact.phone}}</span>-->
-    <!--            </li>-->
-    <!--            <li>-->
-    <!--              <span class="grade" >邮件：</span>-->
-    <!--              <span class="uname">{{contact.email}}</span>-->
-    <!--            </li>-->
-    <!--            <li>-->
-    <!--              <span class="grade" >地址：</span>-->
-    <!--              <span class="uname">{{contact.adress}}</span>-->
-    <!--            </li>-->
-    <!--          </ul>-->
-    <!--        </div>-->
-    <!--      </div>-->
-    <!--    </main>-->
     <Footer/>
   </div>
 </template>
@@ -122,11 +70,11 @@ export default {
       },
       structure: [],
       title: [
-        {name: '机构设置'},
+        {name: '协会介绍'},
         {name: '联系我们'},
-        {name: '协会介绍'}
+
       ],
-      current: {index: 0, title: '机构设置'}
+      current: {index: 0, title: '协会介绍'}
     }
   },
   created() {
