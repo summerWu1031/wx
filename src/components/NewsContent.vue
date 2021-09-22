@@ -14,15 +14,122 @@
         </ul>
       </div>
     </div>
-    <slot/>
+
+    <div class="list_box">
+      <div class="title">
+        <p v-show="type==1">
+          通知公告
+        </p>
+        <p v-show="type==2">
+          政策法规
+        </p>
+        <p v-show="type==3">
+          新闻动态
+        </p>
+      </div>
+      <div class="list_content" >
+        <ul>
+          <li v-for="(item,index) in news" :key="index">
+            <div class="left">
+              <i>•</i>
+              <router-link :to="{ path: '/detail/' + item.id }">
+                {{ item.noticeTitle }}
+              </router-link>
+            </div>
+            <div class="right">
+              <span>{{item.releaseTime}}</span>
+            </div>
+
+
+          </li>
+        </ul>
+      </div>
+      <div class="page">
+        <div class="pageTotal">共<span>{{total}}</span>条</div>
+        <div  @click="firstPage" class="firstPage">首页</div>
+        <div @click="pervious" class="per">上一页</div>
+        <el-pagination
+            @size-change="handleSizeChange"
+            @current-change="handleCurrentChange"
+            :current-page="queryParams.pageNum"
+            :page-sizes="[10, 20]"
+            :page-size="queryParams.pageSize"
+            layout=" pager"
+            background
+            :total="total"
+            ref="pageGroup"
+        >
+        </el-pagination>
+        <div @click="next" class="next">下一页</div>
+        <div @click="lastPage" class="lastPage">末页</div>
+        <!--          <input class="jumperInput" type="text" value="" ref="jumperInput">-->
+        <el-input v-model="input" type="text" ref="jumper"></el-input>
+        <div @click="jumper()" class="jumper">
+          跳转
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script >
-
+import {getNoticeList} from '@/api'
 export default {
-
+  props:['type'],
+  data() {
+    return {
+      queryParams: {
+        noticeClass: this.type,
+        sign:"wx",
+        pageSize: 10,
+        pageNum: 1,
+      },
+      news: [],
+      total: 0,
+      input:''
+    };
+  },
+  mounted() {
+    this.init();
+  },
   methods: {
+    init() {
+      const self = this;
+      getNoticeList(self.queryParams).then((res) => {
+        if (res.code == 200) {
+          self.news = res.rows;
+          self.total = res.total;
+        } else {
+          self.$message(res.msg);
+        }
+      })
+    },
+    handleCurrentChange(val) {
+      this.queryParams.pageNum = val;
+      this.init();
+    },
+    handleSizeChange(val) {
+      this.queryParams.pageSize = val;
+      this.init();
+    },
+    pervious() {
+      this.$refs.pageGroup.prev()
+    },
+    next() {
+      this.$refs.pageGroup.next()
+    },
+    firstPage(){
+      this.handleCurrentChange(1)
+    },
+    lastPage(){
+      let last = Math.ceil(this.total/10)
+      this.handleCurrentChange(last)
+    },
+    jumper(){
+      let jump =parseInt(this.input)
+      console.log(jump)
+      this.handleCurrentChange(jump)
+    },
     pick(t) {
       this.$store.commit('updateSelected', t)
     },
