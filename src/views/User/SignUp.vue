@@ -191,7 +191,6 @@ export default {
   methods: {
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {
-        console.log(valid)
         if (valid) {
           this.onResigter(1)
         } else {
@@ -269,8 +268,8 @@ export default {
 
       getUserProfile().then((res) => {
         if (res.code == 200) {
-          // window.sessionStorage.setItem("user", JSON.stringify(res.data));
-          window.localStorage.setItem("user", JSON.stringify(res.data));
+           window.sessionStorage.setItem("user", JSON.stringify(res.data));
+          //window.localStorage.setItem("user", JSON.stringify(res.data));
           self.$store.dispatch("saveUserInfo", res.data);
         } else {
           self.$message("登录失败！");

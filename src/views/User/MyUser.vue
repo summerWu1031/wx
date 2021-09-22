@@ -620,7 +620,7 @@ export default {
               {url: self.loadUrl(self.dan.certImg)},
             ]);
 
-            console.log(2)
+
           }
           if (res.data.playerInfo.length > 0) {
             self.player = res.data.playerInfo[0];
@@ -807,7 +807,7 @@ export default {
             self.basic.memberApply.sourceOrgId = self.basic.sourceOrgId;
           }
           param.sign = "wx";
-          console.log(param)
+
           updUserInfo(param).then((res) => {
             if (res.code === 200) {
               self.$message(res.msg)
@@ -889,7 +889,6 @@ export default {
       queryCenterApplyMemberList({sign: "wx"}).then((res) => {
         if (res.code == 200) {
           self.MemberList = res.data;
-          console.log(self.MemberList + 'Memberlist')
           res.data.map((item) => {
             self.MemTypeColumns.push(item.memberName);
           });
@@ -904,7 +903,6 @@ export default {
     onMemType(value) {
       let self = this;
       let cItem = self.MemberList.filter((item) => item.memberName == value);
-      console.log(cItem + 'cItem')
       if (cItem[0].goodsPrice) {
         self.MemPrice = self.float_calculator(
             "add",
@@ -944,7 +942,6 @@ export default {
       queryDictListByTypeList([{type: "rankEval"}]).then((res) => {
         self.$nextTick(() => {
         });
-        // console.log("self.itemValue", self.itemValue);
         if (res.code == 200) {
           let _rankEvalList = res.data.rankEvalList;
           _rankEvalList.map((item, index) => {

@@ -9,6 +9,7 @@ let service = axios.create({
 service.interceptors.request.use(
     request => {
         let token = window.sessionStorage.getItem('token')
+
         if (token) {
             // 设置请求的头信息
             request.headers = {

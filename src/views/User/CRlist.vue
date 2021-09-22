@@ -177,25 +177,18 @@ export default {
   created() {
     this.queryParams.type = this.$route.query.crType
   },
-watch:{
-    $route(){
-      this.queryParams.type=this.$route.query.crType
-      if(this.queryParams.type=='0' || this.queryParams.type=='1'){
+  watch: {
+    $route() {
+      this.queryParams.type = this.$route.query.crType
+      if (this.queryParams.type == '0' || this.queryParams.type == '1') {
         this.init()
       }
-
     }
-    //   if(to.query.rcType != from.query.rcType)
-    //     console.log(to.query.rcType)
-    //   console.log(from.query.rcType)
-    //     this.queryParams.type=to.query.rcType
-    //   this.init()
-    // }
-},
+  },
   mounted() {
     this.init()
     this.format()
-    this.checkUserMembers()
+    // this.checkUserMembers()
     // this.rcType = this.$router.query.rcType
     // console.log(this.queryParams.type)
 
@@ -209,7 +202,6 @@ watch:{
       this.newCRtime = ''
       this.popList = ''
       this.popTotal = 0
-      console.log(1)
     },
     checkDetail() {
       const self = this;
@@ -337,6 +329,8 @@ main {
         display: flex;
         align-items: center;
         justify-content: start;
+        color: rgba(0,0,0,.65);
+        font-size: 14px;
       }
 
       ::v-deep .el-input {
@@ -359,6 +353,8 @@ main {
         display: flex;
         align-items: center;
         justify-content: start;
+        color: rgba(0,0,0,.65);
+        font-size: 14px;
       }
 
       ::v-deep .el-input {
@@ -386,6 +382,7 @@ main {
     width: 1200px;
     margin-bottom: 80px;
     min-height: 455px;
+
     ::v-deep.el-table th {
       width: 60px;
     }
@@ -431,7 +428,7 @@ main {
   display: flex;
   border: 1px solid #dddddd;
   float: right;
-  margin-right: 20px;
+  //margin-right: 20px;
   margin-top: 20px;
 
   ::v-deep.el-input {

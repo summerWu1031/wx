@@ -19,13 +19,15 @@ h1, h2, h3, h4, h5, h6 {
 a{
   text-decoration: none;
   color: #848484;
+
 }
 ul,ol,li{
   list-style: none;
   margin: 0;
 }
 p{
-  text-indent: 30pt;;
+  text-indent: 30pt;
+  font-size: 14px;
 }
 img{
   display: block;
@@ -36,6 +38,7 @@ video{
   display: block;
   margin: 0 auto;
 }
+
 body{
   margin: 0;
   color: rgba(0, 0, 0, 0.65);

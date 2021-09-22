@@ -242,6 +242,7 @@
 
     <Footer/>
   </div>
+
 </template>
 
 <script>
@@ -317,9 +318,10 @@ export default {
         if (res.code == 200) {
           window.sessionStorage.setItem("user", JSON.stringify(res.data));
           self.$store.dispatch("saveUserInfo", res.data);
-          self.userInfo = res.data.userInfo
-          self.userInfo.avatar = self.loadUrl(self.userInfo.avatar)
-          console.log(self.userInfo + 'userInfo')
+          if(res.data.userInfo){
+            self.userInfo = res.data.userInfo
+            self.userInfo.avatar = self.loadUrl(self.userInfo.avatar)
+          }
         } else {
           console.log(res.mes)
         }
@@ -350,7 +352,6 @@ export default {
     },
     changeUlWidth() {
       this.newSightList = this.sightList
-      console.log(this.sightList.length)
       if (this.sightList.length < 4) {
         let arr = this.sightList.copyWithin()
         this.newSightList = this.sightList.concat(arr)
@@ -593,7 +594,9 @@ body {
           height: 190px;
 
           > img {
-            max-height: 190px;
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
           }
         }
       }

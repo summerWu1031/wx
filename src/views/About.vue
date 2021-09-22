@@ -77,11 +77,7 @@ export default {
       current: {index: 0, title: '协会介绍'}
     }
   },
-  created() {
-    getqueryOrgInfo({sign: 'wx'}).then((res) => {
-      console.log(res);
-    })
-  },
+
   mounted() {
     this.init()
   },
@@ -214,6 +210,7 @@ export default {
         padding-bottom: 10px;
         h2 {
           text-align: center;
+          margin-bottom: .5em;
         }
 
         p {

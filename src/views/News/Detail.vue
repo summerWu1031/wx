@@ -37,11 +37,7 @@ export default {
       title:'',
     }
   },
-  created() {
-    getNoticeDetail({sign:'wx',id:this.id}).then((res) => {
-      console.log(res)
-    })
-  },
+
   mounted() {
     this.init()
 

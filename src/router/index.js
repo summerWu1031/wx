@@ -18,7 +18,8 @@ import MyUser from "@/views/User/MyUser";
 import ForgetPassword from "@/views/User/ForgetPassword";
 import Coach from "@/views/User/Coach";
 import Referee from "@/views/User/Referee";
-import CoachList from "@/views/User/CoachList";
+import CRlist from "@/views/User/CRlist";
+import CoachReferee from "@/views/User/CoachReferee";
 
 //获取原型对象上的push函数
 const originalPush = VueRouter.prototype.push
@@ -122,10 +123,15 @@ const routes = [
     component: Referee
   },
   {
-    path: '/coachlist',
-    name: 'coachlist',
+    path: '/coachreferee',
+    name: 'coachreferee',
+    component: CoachReferee
+  },
+  {
+    path: '/crlist',
+    name: 'crlist',
     props: true,
-    component: CoachList
+    component: CRlist
   },
 
 ]

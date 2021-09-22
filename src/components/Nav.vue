@@ -10,17 +10,7 @@
       <!--          <input class="input_1" id="keyword" type="text" placeholder="请输入您想查找的内容" autocomplete="off">-->
       <!--          <input type="button" id="" class="input_2" >-->
       <!--        </div>-->
-      <div class="loginWrapper" v-if="!userInfo.userName">
-        <div class="login">
-          <router-link to="/login">登录</router-link>
-        </div>
-        <span>|</span>
-        <div class="signup">
-          <router-link to="/signup">注册</router-link>
-        </div>
-      </div>
-
-      <div class="block" v-else>
+      <div class="block" v-if="userInfo.userName">
         <el-dropdown>
           <el-avatar :size="50" :src="userInfo.avatar"></el-avatar>
           <el-dropdown-menu slot="dropdown">
@@ -29,10 +19,17 @@
           </el-dropdown-menu>
         </el-dropdown>
       </div>
-
+      <div class="loginWrapper" v-else>
+        <div class="login">
+          <router-link to="/login">登录</router-link>
+        </div>
+        <span>|</span>
+        <div class="signup">
+          <router-link to="/signup">注册</router-link>
+        </div>
+      </div>
     </div>
-    <slot/>
-
+    <slot name="nav"></slot>
     <div class="navBar">
       <ul class="navUl">
         <li v-for="(t,index) in title" :key=index @click="pick(t)" :class="{selected: current[0]===t.name}">
@@ -41,9 +38,9 @@
           </a>
           <router-link :to="t.link" v-else-if="t.pop">
             <div id="components-dropdown-demo-placement" class="dropdownWrapper">
-              <Dropdown trigger="click" style="margin-left: 20px">
+              <Dropdown trigger="hover" style="margin-left: 20px">
                 裁判教练
-                <Icon type="arrow-down-b"></Icon>
+                <Icon type="ios-arrow-down"></Icon>
 
                 <Dropdown-menu slot="list">
                   <Dropdown-item v-for="(item,index) in  popList" :key="index"
@@ -61,7 +58,17 @@
         </li>
       </ul>
     </div>
-
+    <div class="nav2" v-show="!current[0]=='首页'">
+      <ul>
+        <li>
+          <router-link to="/">首页</router-link>
+        </li>
+        <li>/</li>
+        <li class="red">
+          <slot name="nav2"></slot>
+        </li>
+      </ul>
+    </div>
   </div>
 </template>
 
@@ -74,10 +81,10 @@ export default {
       userInfo: {userName: '', avatar: ''},
       popShow: 'notShow',
       popList: [
-        {name: '裁判注册', link: 'referee', type: null},
-        {name: '裁判列表', link: 'coachlist', type: '1'},
-        {name: '教练注册', link: 'coach', type: null},
-        {name: '教练列表', link: 'coachlist', type: '0'},
+        {name: '裁判注册', link: 'coachreferee', type: '1'},
+        {name: '裁判列表', link: 'crlist', type: '1'},
+        {name: '教练注册', link: 'coachreferee', type: '0'},
+        {name: '教练列表', link: 'crlist', type: '0'},
       ],
     }
   },
@@ -87,8 +94,11 @@ export default {
       if (res.code == 200) {
         window.sessionStorage.setItem("user", JSON.stringify(res.data));
         self.$store.dispatch("saveUserInfo", res.data);
-        self.userInfo = res.data.userInfo
-        self.userInfo.avatar = self.loadUrl(self.userInfo.avatar)
+        if(res.data.userInfo){
+          self.userInfo = res.data.userInfo
+          self.userInfo.avatar = self.loadUrl(self.userInfo.avatar)
+        }
+
       } else {
         console.log(res.mes)
       }
@@ -251,7 +261,7 @@ export default {
           position: absolute;
           background-color: #fff;
           width: 146px;
-          left: -71px;
+          left: -84px;
           border-radius: 4px;
           outline: none;
           box-shadow: 0 2px 8px rgb(0 0 0 / 15%);
@@ -259,12 +269,41 @@ export default {
         }
         ::v-deep .ivu-dropdown-item{
           font-size: 14px !important;
+          padding: 10px 16px;
+          :hover{
+            color: #DB261D;
+          }
         }
       }
 
     }
 
   }
+}
+.nav2{
+  background-color: #f7f7f7;
+  border-bottom: 1px #d2d2d2 solid;
+  margin-top: 8px;
+  >ul{
+    width: 1200px;
+    margin: 0 auto;
+    height: 40px;
+    display: flex;
+    //padding-left: 47px;
+    >li{
+      line-height: 40px;
+      font-size: 14px;
+      width: 60px;
+      height: 40px;
+      >a{
+        color: #848484;
+      }
+      &.red{
+        color: #DB261D;
+      }
+    }
+  }
+
 }
 </style>
 <style lang="scss" scoped>

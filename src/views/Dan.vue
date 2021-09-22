@@ -119,8 +119,6 @@ export default {
             self.list =  res.rows
             self.total = res.total
             this.format()
-            console.log(self.queryParams.userName)
-            console.log(self.list)
           } else {
             self.$message(res.msg);
           }
@@ -165,15 +163,17 @@ main{
         display: flex;
         align-items: center;
         justify-content: start;
+        color: rgba(0,0,0,.65);
+        font-size: 14px;
       }
       ::v-deep .el-input{
         width: 260px;
         display: flex;
         align-items: center;
       }
-      //::v-deep .el-input__inner{
-      //  height: 32px;
-      //}
+      ::v-deep .el-input__inner{
+        height: 32px;
+      }
     }
     .id{
       display: flex;
@@ -183,6 +183,8 @@ main{
         display: flex;
         align-items: center;
         justify-content: start;
+        color: rgba(0,0,0,.65);
+        font-size: 14px;
       }
       ::v-deep .el-input{
         width: 260px;

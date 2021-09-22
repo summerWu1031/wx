@@ -93,10 +93,8 @@ export default {
   },
   methods: {
     changeQuery(tab) {
-      console.log('value', tab.name);
       this.queryParams.memberType = tab.name;
       this.init();
-      console.log(this.list);
     },
     init() {
       const self = this;

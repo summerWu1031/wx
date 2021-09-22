@@ -100,7 +100,7 @@ export default {
         if (valid) {
           this.onSubmit()
         } else {
-          console.log('请正确填写表格内容');
+          this.$message('请正确填写表格内容');
           return false;
         }
       })
@@ -131,7 +131,6 @@ export default {
     getUserProfiles() {
       const self = this;
       getUserProfile().then((res) => {
-        console.log(res.data)
         if (res.code == 200) {
           window.sessionStorage.setItem("user", JSON.stringify(res.data));
           // window.localStorage.setItem("user", JSON.stringify(res.data));
@@ -144,8 +143,6 @@ export default {
             // self.personinfo.user.avatar = res.data.orgInfo.img;
             // self.personinfo.user.updateTime = res.data.orgInfo.updateTime;
           }
-          console.log(self.personinfo.user.updateTime)
-          console.log(self.personinfo.user)
           if (!self.personinfo.user.updateTime) {
             self.$message("请先完善用户基本信息！");
             self.$router.push("/myuser");

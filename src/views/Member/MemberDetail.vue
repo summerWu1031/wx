@@ -46,11 +46,7 @@ export default {
       video:''
     }
   },
-  created() {
-    querySysNetMemberSightDetail({sign:'wx',id:this.id}).then((res) => {
-      console.log(res)
-    })
-  },
+
   mounted() {
     this.init()
 
@@ -89,6 +85,12 @@ main{
       text-align: center;
       line-height: 80px;
       padding: 0 60px;
+    }
+    .memberVideo{
+      video{
+        display: block;
+        margin: 0 auto;
+      }
     }
     >.source-time{
       text-align: center;
