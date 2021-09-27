@@ -4,15 +4,18 @@
     <Nav2>段位查询</Nav2>
     <main>
       <div class="danSearch">
-        <div class="name">
-          <span class="nameTitle">姓名：</span>
-          <el-input class="nameInput" v-model="name" placeholder="请输入姓名"></el-input>
-        </div>
-        <div class="id">
-          <div class="idTitle">身份证：</div>
-          <el-input class="idInput" v-model="id" placeholder="请输入身份证号码"></el-input>
-        </div>
-        <el-button class="nameButton" @click="onSubmit" >查询</el-button>
+        <el-form :model="queryParams" ref="ruleForm" label-width="100px" class="demo-ruleForm"
+                 @keyup.enter.native="onSubmit">
+          <el-form-item label="姓名：" class="search-name">
+            <el-input class="nameInput" v-model="queryParams.userName" placeholder="请输入姓名"></el-input>
+          </el-form-item>
+          <el-form-item label="身份证：" class="search-level">
+            <el-input class="nameInput" v-model="queryParams.identityCode" placeholder="请输入姓名"></el-input>
+          </el-form-item>
+          <el-form-item class="search-btn">
+            <el-button class="nameButton" @click="onSubmit">查询</el-button>
+          </el-form-item>
+        </el-form>
       </div>
       <div class="danDetail">
             <el-table
@@ -83,12 +86,15 @@
     </main>
     <Footer/>
   </div>
+
 </template>
 
 <script>
 import { queryUserRank} from '@/api'
 import {pagination} from '@/mixins/mixin'
+
 export default {
+
   mixins:[pagination],
   data() {
     return {
@@ -116,9 +122,14 @@ export default {
       if(self.queryParams.userName || self.queryParams.identityCode){
         queryUserRank(self.queryParams).then((res) => {
           if (res.code == 200 ) {
-            self.list =  res.rows
-            self.total = res.total
-            this.format()
+            if (res.rows.length==0){
+              self.$message('没有查找到数据')
+            }else {
+              self.list =  res.rows
+              self.total = res.total
+              this.format()
+            }
+
           } else {
             self.$message(res.msg);
           }
@@ -126,8 +137,6 @@ export default {
       }
     },
     onSubmit() {
-      this.queryParams.userName = this.name
-      this.queryParams.identityCode = this.id
       this.init()
     },
     format(){
@@ -151,52 +160,46 @@ main{
   margin: 20px auto;
   min-height: 455px;
 
-  .danSearch{
+  .danSearch {
     display: flex;
     height: 42px;
     margin-bottom: 30px;
-    .name{
+
+    ::v-deep .el-form {
       display: flex;
-      padding-right: 16px;
-      .nameTitle{
-        padding: 4px;
-        display: flex;
-        align-items: center;
-        justify-content: start;
-        color: rgba(0,0,0,.65);
-        font-size: 14px;
-      }
-      ::v-deep .el-input{
-        width: 260px;
-        display: flex;
-        align-items: center;
-      }
-      ::v-deep .el-input__inner{
-        height: 32px;
-      }
+      flex-wrap: nowrap;
+      margin-left: -49px;
     }
-    .id{
+
+    ::v-deep .el-input {
+      width: 260px;
       display: flex;
-      padding-right: 16px;
-      .idTitle{
-        padding: 4px;
-        display: flex;
-        align-items: center;
-        justify-content: start;
-        color: rgba(0,0,0,.65);
-        font-size: 14px;
-      }
-      ::v-deep .el-input{
-        width: 260px;
-        display: flex;
-        align-items: center;
-      }
+      align-items: center;
     }
-    ::v-deep .el-button{
+
+    ::v-deep .el-form-item__label {
+      padding-right: 4px;
+    }
+
+    .search-btn {
+      margin-left: -86px;
+    }
+
+    .search-level {
+      margin-left: -32px;
+    }
+
+    ::v-deep .el-button {
       height: 40px;
       align-items: center;
       background-color: #DB261D;
       color: #fff;
+
+      &.reset {
+        background-color: transparent;
+        color: #DB261D;
+        border: 1px solid #DB261D;
+      }
     }
   }
   .danDetail{
@@ -213,32 +216,37 @@ main{
 </style>
 <style lang="scss" scoped>
 .page {
-  display:flex;
-  border:1px solid #dddddd;
+  display: flex;
+  border: 1px solid #dddddd;
   float: right;
-  margin-right: 20px;
-  margin-top:20px;
-  ::v-deep.el-input{
+  //margin-right: 20px;
+  margin-top: 20px;
+
+  ::v-deep.el-input {
     width: 40px;
     padding: 0;
     border: none;
   }
-  ::v-deep .el-input__inner{
+
+  ::v-deep .el-input__inner {
     border-radius: 0;
     padding: 0 6px;
   }
-  .pageTotal{
+
+  .pageTotal {
     border-right: 1px solid #dddddd;
     padding: 6px 12px;
     display: flex;
     justify-content: center;
     align-items: center;
     background-color: #fff;
-    &:hover{
+
+    &:hover {
       background-color: #fff;
     }
   }
-  .jumper,.per,.next,.firstPage,.lastPage{
+
+  .jumper, .per, .next, .firstPage, .lastPage {
     border-right: 1px solid #dddddd;
     padding: 6px 12px;
     display: flex;
@@ -246,19 +254,24 @@ main{
     align-items: center;
     background-color: #fff;
     cursor: pointer;
-    &:hover{
+
+    &:hover {
       background-color: #fff;
     }
   }
-  ::v-deep .el-pagination{
+
+  ::v-deep .el-pagination {
     display: flex;
     justify-content: center;
     align-items: center;
   }
+
   ::v-deep .el-pagination.is-background .el-pager li:not(.disabled).active {
     background-color: #DB261D;
     color: #fff;
   }
 
 }
+
+
 </style>

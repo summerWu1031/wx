@@ -180,12 +180,8 @@ export default {
             self.show = true;
           }
         } else {
-          console.log(1)
           self.$message(res.msg);
-          console.log(2)
-          setTimeout(() => {
-            self.$router.push("/login");
-          }, 3000);
+          self.$router.push("/login");
         }
       });
     },

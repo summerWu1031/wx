@@ -305,7 +305,18 @@ export const getOrderById = data => {
         data
     })
 }
-
+/**
+ * pc微信支付：
+ * @param {*} params
+ * 参数JSON：{id:订单id}
+ */
+export const wxPay = data => {
+    return request({
+        url: '/app/wxpay/pay',
+        method: 'post',
+        data
+    })
+}
 /**
  * 支付宝支付：
  * @param {*} params

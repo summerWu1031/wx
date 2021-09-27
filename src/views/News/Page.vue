@@ -115,7 +115,18 @@ export default {
       background-color: #fff;
     }
   }
-  .jumper,.per,.next,.firstPage,.lastPage{
+  .jumper{
+    padding: 6px 12px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #fff;
+    cursor: pointer;
+    &:hover{
+      background-color: #fff;
+    }
+  }
+  .per,.next,.firstPage,.lastPage{
     border-right: 1px solid #dddddd;
     padding: 6px 12px;
     display: flex;

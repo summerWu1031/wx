@@ -27,7 +27,7 @@
           新闻动态
         </p>
       </div>
-      <div class="list_content" >
+      <div class="list_content">
         <ul>
           <li v-for="(item,index) in news" :key="index">
             <div class="left">
@@ -37,7 +37,7 @@
               </router-link>
             </div>
             <div class="right">
-              <span>{{item.releaseTime}}</span>
+              <span>{{ item.releaseTime }}</span>
             </div>
 
 
@@ -45,8 +45,8 @@
         </ul>
       </div>
       <div class="page">
-        <div class="pageTotal">共<span>{{total}}</span>条</div>
-        <div  @click="firstPage" class="firstPage">首页</div>
+        <div class="pageTotal">共<span>{{ total }}</span>条</div>
+        <div @click="firstPage" class="firstPage">首页</div>
         <div @click="pervious" class="per">上一页</div>
         <el-pagination
             @size-change="handleSizeChange"
@@ -72,21 +72,22 @@
   </div>
 </template>
 
-<script >
+<script>
 import {getNoticeList} from '@/api'
+
 export default {
-  props:['type'],
+  props: ['type'],
   data() {
     return {
       queryParams: {
         noticeClass: this.type,
-        sign:"wx",
+        sign: "wx",
         pageSize: 10,
         pageNum: 1,
       },
       news: [],
       total: 0,
-      input:''
+      input: ''
     };
   },
   mounted() {
@@ -118,15 +119,15 @@ export default {
     next() {
       this.$refs.pageGroup.next()
     },
-    firstPage(){
+    firstPage() {
       this.handleCurrentChange(1)
     },
-    lastPage(){
-      let last = Math.ceil(this.total/10)
+    lastPage() {
+      let last = Math.ceil(this.total / 10)
       this.handleCurrentChange(last)
     },
-    jumper(){
-      let jump =parseInt(this.input)
+    jumper() {
+      let jump = parseInt(this.input)
       console.log(jump)
       this.handleCurrentChange(jump)
     },
@@ -137,13 +138,12 @@ export default {
   },
   computed: {
     title() {
-      return this.$store.state.title.slice(2,5)
+      return this.$store.state.title.slice(2, 5)
     },
     current() {
       return this.$store.state.current
     }
   },
-
 
 
 }
@@ -238,25 +238,27 @@ export default {
           display: flex;
           justify-content: space-between;
           align-items: center;
-         .left{
-           :hover{
-             color: #DB261D;
-           }
-           i {
-             font-size: 18px;
-             color: #DB261D;
-             padding: 0 5px;
-           }
 
-           a {
-             color: #545454;
-             font-size: 14px;
-             line-height: 30px;
+          .left {
+            :hover {
+              color: #DB261D;
+            }
 
-           }
-         }
+            i {
+              font-size: 18px;
+              color: #DB261D;
+              padding: 0 5px;
+            }
 
-          .right{
+            a {
+              color: #545454;
+              font-size: 14px;
+              line-height: 30px;
+
+            }
+          }
+
+          .right {
             padding-bottom: 4px;
           }
         }
@@ -271,47 +273,69 @@ export default {
 </style>
 <style lang="scss" scoped>
 .page {
-  display:flex;
-  border:1px solid #dddddd;
+  display: flex;
+  border: 1px solid #dddddd;
   float: right;
   margin-right: 20px;
-  ::v-deep.el-input{
+
+  ::v-deep.el-input {
     width: 40px;
     padding: 0;
     border: none;
   }
-  ::v-deep .el-input__inner{
+
+  ::v-deep .el-input__inner {
     border-radius: 0;
     padding: 0 6px;
   }
-  .pageTotal{
+
+  .pageTotal {
     border-right: 1px solid #dddddd;
     padding: 6px 12px;
     display: flex;
     justify-content: center;
     align-items: center;
     background-color: #fff;
-    &:hover{
+
+    &:hover {
       background-color: #fff;
     }
   }
-  .jumper,.per,.next,.firstPage,.lastPage{
-    border-right: 1px solid #dddddd;
+
+  .jumper {
     padding: 6px 12px;
     display: flex;
     justify-content: center;
     align-items: center;
     background-color: #fff;
     cursor: pointer;
-    &:hover{
+
+    &:hover {
       background-color: #fff;
     }
   }
-  ::v-deep .el-pagination{
+
+
+ .per, .next, .firstPage, .lastPage {
+  border-right: 1px solid #dddddd;
+  padding: 6px 12px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #fff;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #fff;
+  }
+}
+
+  ::v-deep .el-pagination {
     display: flex;
     justify-content: center;
     align-items: center;
   }
+
   ::v-deep .el-pagination.is-background .el-pager li:not(.disabled).active {
     background-color: #DB261D;
     color: #fff;

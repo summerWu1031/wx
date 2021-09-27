@@ -22,18 +22,18 @@
             <el-form-item label="手机号码" prop="phone">
               <el-input v-model="personinfo.phone"></el-input>
             </el-form-item>
-            <el-form-item label="短信验证码" prop="code" class="mes">
-              <el-input class="mesInput" v-model="personinfo.code" placeholder="请输入验证码"></el-input>
-              <el-button
-                  size="small"
-                  class="btn-send"
-                  native-type="button"
-                  @click="getRegisterSmsCode(1)"
-                  :disabled="!disabledCodeBtn"
-              >
-                {{ codeText }}
-              </el-button>
-            </el-form-item>
+<!--            <el-form-item label="短信验证码" prop="code" class="mes">-->
+<!--              <el-input class="mesInput" v-model="personinfo.code" placeholder="请输入验证码"></el-input>-->
+<!--              <el-button-->
+<!--                  size="small"-->
+<!--                  class="btn-send"-->
+<!--                  native-type="button"-->
+<!--                  @click="getRegisterSmsCode(1)"-->
+<!--                  :disabled="!disabledCodeBtn"-->
+<!--              >-->
+<!--                {{ codeText }}-->
+<!--              </el-button>-->
+<!--            </el-form-item>-->
 
             <el-form-item label="用户密码" prop="password">
               <el-input show-password type="password" v-model="personinfo.password" autocomplete="off"></el-input>
@@ -176,7 +176,7 @@ export default {
           {validator: formatter, trigger: 'blur'}
         ],
         code: [
-          {required: true, message: '请输入验证码!', trigger: 'blur'},
+          // {required: true, message: '请输入验证码!', trigger: 'blur'},
           // {validator: code, trigger: 'blur'}
         ],
         password: [
@@ -237,8 +237,8 @@ export default {
     },
     onlogin(_type) {
       var self = this;
-      let getOpenid = window.sessionStorage.getItem("openid");
-      // let getOpenid = window.localStorage.getItem("openid");
+      // let getOpenid = window.sessionStorage.getItem("openid");
+      let getOpenid = window.localStorage.getItem("openid");
 
       //这里写登录的操作
       let param = {
@@ -251,8 +251,8 @@ export default {
 
       login(param).then((res) => {
         if (res.token) {
-          window.sessionStorage.setItem("token", res.token);
-          // window.localStorage.setItem("token", res.token);
+          // window.sessionStorage.setItem("token", res.token);
+          window.localStorage.setItem("token", res.token);
           self.getUserProfiles();
 
             self.$router.push("/");
@@ -268,9 +268,9 @@ export default {
 
       getUserProfile().then((res) => {
         if (res.code == 200) {
-           window.sessionStorage.setItem("user", JSON.stringify(res.data));
-          //window.localStorage.setItem("user", JSON.stringify(res.data));
-          self.$store.dispatch("saveUserInfo", res.data);
+           // window.sessionStorage.setItem("user", JSON.stringify(res.data));
+          window.localStorage.setItem("user", JSON.stringify(res.data));
+          //self.$store.dispatch("saveUserInfo", res.data);
         } else {
           self.$message("登录失败！");
         }

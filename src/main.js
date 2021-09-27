@@ -14,6 +14,9 @@ import Footer from '@/components/Footer.vue';
 import iView from 'iview';
 import 'iview/dist/styles/iview.css';
 import '@/assets/base.scss'
+// 检测用户操作时间长久
+import Automatic from '@/util/automatic'
+Vue.use(Automatic)
 
 Vue.use(base);
 Vue.config.productionTip = false

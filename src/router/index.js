@@ -20,6 +20,9 @@ import Coach from "@/views/User/Coach";
 import Referee from "@/views/User/Referee";
 import CRlist from "@/views/User/CRlist";
 import CoachReferee from "@/views/User/CoachReferee";
+import Trains from "@/views/Trains/Trains";
+import TrainsDetailList from "@/views/Trains/TrainsDetailList";
+import MemberPay from "@/views/User/MemberPay";
 
 //获取原型对象上的push函数
 const originalPush = VueRouter.prototype.push
@@ -95,7 +98,6 @@ const routes = [
   },
   {
     path: '/login',
-    name: 'login',
     component: Login
   },
   {
@@ -133,6 +135,19 @@ const routes = [
     props: true,
     component: CRlist
   },
+  {
+    path: '/trains',
+    name: 'trains',
+    props: true,
+    component: Trains
+  },
+  {
+    path: '/memberpay',
+    name: 'memberpay',
+    props: true,
+    component: MemberPay
+  },
+
 
 ]
 

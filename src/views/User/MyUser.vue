@@ -12,7 +12,8 @@
       <div class="wrapper">
         <el-tabs type="card" v-model="activeName" class="formTab">
           <el-tab-pane label="基本信息" name="1">
-            <el-form :model="basic" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm"  @keyup.enter.native="submitForm('ruleForm')">
+            <el-form :model="basic" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm"
+                     @keyup.enter.native="submitForm('ruleForm')">
               <el-form-item label="真实姓名" prop="userName">
                 <el-input v-model="basic.userName" placeholder="请输入真实姓名"></el-input>
               </el-form-item>
@@ -38,6 +39,7 @@
               <el-form-item label="所在区域" prop="province">
                 <el-cascader
                     size="large"
+                    :placeholder="selectedOptions==[]? '请选择所在区域': `${basic.province}/ ${basic.city}/${basic.county}`"
                     :options="options"
                     v-model="selectedOptions"
                     @change="handleChange">
@@ -50,7 +52,7 @@
                 </el-radio-group>
               </el-form-item>
               <el-form-item label="推荐单位" v-show="basic.sourceOrgType=='1'">
-                <el-select v-model="basic.sourceOrgName" placeholder="请选择活动区域" :disabled="isState !== 0">
+                <el-select v-model="basic.sourceOrgName" :placeholder="basic.sourceOrgName==''? '请选择推荐单位':basic.sourceOrgName" :disabled="isState !== 0">
                   <el-option v-for="(item,index) in filterAssociationList" :key="index" :label="item.name"
                              :value="item.name"></el-option>
                 </el-select>
@@ -90,7 +92,7 @@
                 <el-input v-model="basic.speciality" placeholder="请输入武术专长"></el-input>
               </el-form-item>
               <el-form-item label="文化程度">
-                <el-select v-model="basic.culture" placeholder="选择您民族">
+                <el-select v-model="basic.culture" placeholder="请选择">
                   <el-option
                       v-for="item in cultureActions"
                       :key="item.value"
@@ -106,32 +108,33 @@
           </el-tab-pane>
 
           <el-tab-pane label="段位信息" name="2">
-            <el-form :model="dan" :rules="rules" ref="dan" label-width="100px" class="demo-ruleForm"  @keyup.enter.native="submitForm('rules')">
-              <el-form-item label="考试项目">
-                <el-select v-model="dan.item" placeholder="请输入考试项目">
+            <el-form :model="dan" :rules="rules" ref="dan" label-width="100px" class="demo-ruleForm"
+                     @keyup.enter.native="submitForm('dan')">
+              <el-form-item label="考试项目" prop="item">
+                <el-select v-model="dan.item" placeholder="请输入考试项目" >
                   <el-option v-for="(item,index) in danItemColumns" :key="index" :label="item"
                              :value="item"></el-option>
                 </el-select>
               </el-form-item>
-              <el-form-item label="考试点">
-                <el-select v-model="dan.name" placeholder="请输入考评点">
-                  <el-option v-for="(item,index) in filteredAssociationList" :key="index" :label="item.name"
-                             :value="item.name"></el-option>
+              <el-form-item label="考试点" prop="value">
+                <el-select v-model="dan.value" placeholder="请输入考评点">
+                  <el-option v-for="(item,index) in filteredAssociationList" :key="index" :label="item.label"
+                             :value="item.value"></el-option>
                 </el-select>
               </el-form-item>
-              <el-form-item label="等级">
+              <el-form-item label="等级" prop="level">
                 <el-select v-model="dan.level" placeholder="请选择您的级别">
                   <el-option v-for="(item,index) in danGradeColumns" :key="index" :label="item"
                              :value="item"></el-option>
                 </el-select>
               </el-form-item>
-              <el-form-item label="段位编号">
+              <el-form-item label="段位编号" prop="certCode">
                 <el-input v-model="dan.certCode" placeholder="请输入段位编号"></el-input>
               </el-form-item>
               <el-form-item label="履历">
                 <el-input type="textarea" v-model="dan.certResume" placeholder="请输履历"></el-input>
               </el-form-item>
-              <el-form-item label="证书上传" class="upload">
+              <el-form-item label="证书上传" class="upload" >
                 <el-upload
                     @click="getType('dan')"
                     v-model="dan.certImg"
@@ -153,17 +156,18 @@
           </el-tab-pane>
 
           <el-tab-pane label="运动员等级信息" name="3">
-            <el-form :model="player" :rules="rules" ref="player" label-width="100px" class="demo-ruleForm"  @keyup.enter.native="submitForm('player')">
-              <el-form-item label="运动员等级">
-                <el-select v-model="player.level" placeholder="请选择您的级别">
+            <el-form :model="player" :rules="rules" ref="player" label-width="100px" class="demo-ruleForm"
+                     @keyup.enter.native="submitForm('player')">
+              <el-form-item label="运动员等级"  prop="playerLv">
+                <el-select v-model="player.playerLv" placeholder="请选择您的级别" @change="selectedPlayerLevel">
                   <el-option v-for="(item,index) in athletesGradeColumns" :key="index" :label="item"
                              :value="item"></el-option>
                 </el-select>
               </el-form-item>
-              <el-form-item label="审批单位">
+              <el-form-item label="审批单位" prop="certSource">
                 <el-input v-model="player.certSource" placeholder="请输入审批单位"></el-input>
               </el-form-item>
-              <el-form-item label="审批日期">
+              <el-form-item label="审批日期" prop="certTime">
                 <el-col :span="11">
                   <el-date-picker type="date" placeholder="选择审批日期" v-model="player.certTime" style="width: 100%;"
                                   format="yyyy 年 MM 月 dd 日"
@@ -173,7 +177,7 @@
               <el-form-item label="履历">
                 <el-input type="textarea" v-model="player.certResume" placeholder="请输履历"></el-input>
               </el-form-item>
-              <el-form-item label="证书上传" class="upload">
+              <el-form-item label="证书上传" class="upload" prop="certImg">
                 <el-upload
                     @click="getType('player')"
                     v-model="player.certImg"
@@ -322,75 +326,99 @@ export default {
         ],
         avatar: [
           {required: true, message: '证件照不能为空！'}
-        ]
+        ],
+        item:[
+          {required: true, message: '考试项目不能为空！'}
+        ],
+        value:[
+          {required: true, message: '考试点不能为空！'}
+        ],
+        level:[
+          {required: true, message: '等级不能为空！'}
+        ],
+        certCode:[
+          {required: true, message: '段位编号不能为空！'}
+        ],
+        certImg:[
+          {required: true, message: '请上传证书！'}
+        ],
+        certSource:[
+          {required: true, message: '审批单位不能为空！'}
+        ],
+        certTime:[
+          {required: true, message: '审批时间不能为空！'}
+        ],
+        playerLv:[
+          {required: true, message: '等级不能为空！'}
+        ],
       },
       nationActions: [
-        {label: "汉族", value: "01"},
-        {label: "蒙古族", value: "02"},
-        {label: "回族", value: "03"},
-        {label: "藏族", value: "04"},
-        {label: "维吾尔族", value: "05"},
-        {label: "苗族", value: "06"},
-        {label: "彝族", value: "07"},
-        {label: "壮族", value: "08"},
-        {label: "布依族", value: "09"},
-        {label: "朝鲜族", value: "10"},
-        {label: "满族", value: "11"},
-        {label: "侗族", value: "12"},
-        {label: "瑶族", value: "13"},
-        {label: "白族", value: "14"},
-        {label: "土家族", value: "15"},
-        {label: "哈尼族", value: "16"},
-        {label: "哈萨克族", value: "17"},
-        {label: "傣族", value: "18"},
-        {label: "黎族", value: "19"},
-        {label: "傈僳族", value: "20"},
-        {label: "佤族", value: "21"},
-        {label: "畲族", value: "22"},
-        {label: "高山族", value: "23"},
-        {label: "拉祜族", value: "24"},
-        {label: "水族", value: "25"},
-        {label: "东乡族", value: "26"},
-        {label: "纳西族", value: "27"},
-        {label: "景颇族", value: "28"},
-        {label: "柯尔克孜族", value: "29"},
-        {label: "土族", value: "30"},
-        {label: "达斡尔族", value: "31"},
-        {label: "仫佬族", value: "32"},
-        {label: "羌族", value: "33"},
-        {label: "布朗族", value: "34"},
-        {label: "毛难族", value: "36"},
-        {label: "仡佬族", value: "37"},
-        {label: "锡伯族", value: "38"},
-        {label: "阿昌族", value: "39"},
-        {label: "普米族", value: "40"},
-        {label: "塔吉克族", value: "41"},
-        {label: "怒族", value: "42"},
-        {label: "乌孜别克族", value: "43"},
-        {label: "俄罗斯族", value: "44"},
-        {label: "鄂温克族", value: "45"},
-        {label: "崩龙族", value: "46"},
-        {label: "保安族", value: "47"},
-        {label: "裕固族", value: "48"},
-        {label: "京族", value: "49"},
-        {label: "塔塔尔族", value: "50"},
-        {label: "独龙族", value: "51"},
-        {label: "鄂伦春族", value: "52"},
-        {label: "赫哲族", value: "53"},
-        {label: "门巴族", value: "54"},
-        {label: "珞巴族", value: "55"},
-        {label: "基诺族", value: "56"},
-        {label: "其他", value: "57"},
-        {label: "外国血统中国人士", value: "58"},
+        {label: "汉族", value: "汉族"},
+        {label: "蒙古族", value: "蒙古族"},
+        {label: "回族", value: "回族"},
+        {label: "藏族", value: "藏族"},
+        {label: "维吾尔族", value: "维吾尔族"},
+        {label: "苗族", value: "苗族"},
+        {label: "彝族", value: "彝族"},
+        {label: "壮族", value: "壮族"},
+        {label: "布依族", value: "布依族"},
+        {label: "朝鲜族", value: "朝鲜族"},
+        {label: "满族", value: "满族"},
+        {label: "侗族", value: "侗族"},
+        {label: "瑶族", value: "瑶族"},
+        {label: "白族", value: "白族"},
+        {label: "土家族", value: "土家族"},
+        {label: "哈尼族", value: "哈尼族"},
+        {label: "哈萨克族", value: "哈萨克族"},
+        {label: "傣族", value: "傣族"},
+        {label: "黎族", value: "黎族"},
+        {label: "傈僳族", value: "傈僳族"},
+        {label: "佤族", value: "佤族"},
+        {label: "畲族", value: "畲族"},
+        {label: "高山族", value: "高山族"},
+        {label: "拉祜族", value: "拉祜族"},
+        {label: "水族", value: "水族"},
+        {label: "东乡族", value: "东乡族"},
+        {label: "纳西族", value: "纳西族"},
+        {label: "景颇族", value: "景颇族"},
+        {label: "柯尔克孜族", value: "柯尔克孜族"},
+        {label: "土族", value: "土族"},
+        {label: "达斡尔族", value: "达斡尔族"},
+        {label: "仫佬族", value: "仫佬族"},
+        {label: "羌族", value: "羌族"},
+        {label: "布朗族", value: "布朗族"},
+        {label: "毛难族", value: "毛难族"},
+        {label: "仡佬族", value: "仡佬族"},
+        {label: "锡伯族", value: "锡伯族"},
+        {label: "阿昌族", value: "阿昌族"},
+        {label: "普米族", value: "普米族"},
+        {label: "塔吉克族", value: "塔吉克族"},
+        {label: "怒族", value: "怒族"},
+        {label: "乌孜别克族", value: "乌孜别克族"},
+        {label: "俄罗斯族", value: "俄罗斯族"},
+        {label: "鄂温克族", value: "鄂温克族"},
+        {label: "崩龙族", value: "崩龙族"},
+        {label: "保安族", value: "保安族"},
+        {label: "裕固族", value: "裕固族"},
+        {label: "京族", value: "京族"},
+        {label: "塔塔尔族", value: "塔塔尔族"},
+        {label: "独龙族", value: "独龙族"},
+        {label: "鄂伦春族", value: "鄂伦春族"},
+        {label: "赫哲族", value: "赫哲族"},
+        {label: "门巴族", value: "门巴族"},
+        {label: "珞巴族", value: "珞巴族"},
+        {label: "基诺族", value: "基诺族"},
+        {label: "其他", value: "其他"},
+        {label: "外国血统中国人士", value: "外国血统中国人士"},
       ],
       cultureActions: [
-        {label: "博士", value: "01"},
-        {label: "硕士", value: "02"},
-        {label: "本科", value: "03"},
-        {label: "大专", value: "04"},
-        {label: "高中", value: "05"},
-        {label: "初中", value: "06"},
-        {label: "小学", value: "07"},
+        {label: "博士", value: "博士"},
+        {label: "硕士", value: "硕士"},
+        {label: "本科", value: "本科"},
+        {label: "大专", value: "大专"},
+        {label: "高中", value: "高中"},
+        {label: "初中", value: "初中"},
+        {label: "小学", value: "小学"},
       ],
       // 会员申请元素
       MemTypeShow: false,
@@ -569,8 +597,11 @@ export default {
     // self.userInfo = self.userinfo.userInfo;
     getUserProfile().then((res) => {
       if (res.code == 200) {
-        window.sessionStorage.setItem("user", JSON.stringify(res.data));
-        self.$store.dispatch("saveUserInfo", res.data);
+        // window.sessionStorage.setItem("user", JSON.stringify(res.data));
+        window.localStorage.setItem("user", JSON.stringify(res.data));
+
+        // self.$store.dispatch("saveUserInfo", res.data);
+
         if (res.data.userType == 1) {
           self.userInfo = res.data.userInfo
 
@@ -624,6 +655,7 @@ export default {
           }
           if (res.data.playerInfo.length > 0) {
             self.player = res.data.playerInfo[0];
+            self.player.playerLv=self.player.level
             self.$set(self.player, "certImgs", [
               {url: self.loadUrl(self.player.certImg)},
             ]);
@@ -651,8 +683,9 @@ export default {
       } else {
         self.$message(res.mes)
       }
+      this.queryDictListByTypeLists();
     })
-    this.queryDictListByTypeLists();
+    // this.queryDictListByTypeLists();
 
     // hysq
     checkUserIsOrgMember({sign: "wx"}).then((res) => {
@@ -682,16 +715,19 @@ export default {
     getType(type) {
       this.cType = type;
     },
+    selectedPlayerLevel(value){
+      this.player.level=value
+    },
     //选择地区
     handleChange(value) {
       let self = this;
-      let provinceCode = self.selectedOptions[0];
-      let cityCode = self.selectedOptions[1];
-      let countyCode = self.selectedOptions[2]
+
       // CodeToText属性是区域码，属性值是汉字 CodeToText['110000']输出北京市
-      self.basic.province = CodeToText[provinceCode];
-      self.basic.city = CodeToText[cityCode];
-      self.basic.county = CodeToText[countyCode];
+      self.basic.province = CodeToText[self.selectedOptions[0]]
+      self.basic.city = CodeToText[self.selectedOptions[1]]
+      self.basic.county = CodeToText[self.selectedOptions[2]];
+
+
     },
 
     // 上传头像
@@ -868,7 +904,7 @@ export default {
 
 
           addOrUpdUserCert(parms).then((res) => {
-            parms = "";
+            // parms = "";
             if (res.code == 200) {
               self.$message(res.msg);
               self.$router.push("/");
@@ -941,16 +977,24 @@ export default {
       let self = this;
       queryDictListByTypeList([{type: "rankEval"}]).then((res) => {
         self.$nextTick(() => {
+
         });
         if (res.code == 200) {
-          let _rankEvalList = res.data.rankEvalList;
-          _rankEvalList.map((item, index) => {
+         let _rankEvalList= res.data.rankEvalList;
+          console.log(1)
+          console.log(self.itemValue)
+          _rankEvalList.map((item) => {
+
             if (item.value === self.itemValue) {
               self.dan.name = item.label;
+              console.log(3)
+              console.log(self.dan.name)
             }
+
             self.danAppraisal.push(
                 Object.assign({}, item, {name: item.label})
             );
+
           });
         } else {
           self.$message(res.msg);
@@ -976,7 +1020,8 @@ export default {
     padding: 20px 0 0 20px;
     display: inline-block;
     color: #555;
-    a{
+
+    a {
       color: #555;
       font-size: 14px;
     }
@@ -1039,10 +1084,34 @@ export default {
         vertical-align: bottom;
         font-size: 14px;
       }
+
+      ::v-deep .el-radio__input {
+        :hover {
+          border-color: rgb(219, 38, 29);
+        }
+      }
+
+      ::v-deep .el-radio__input.is-checked .el-radio__inner {
+        border-color: rgb(219, 38, 29);
+        background-color: #fff;
+
+      }
+
+      ::v-deep .el-radio__inner::after {
+        width: 6px;
+        height: 6px;
+        background-color: rgb(219, 38, 29);
+      }
+
+      ::v-deep .el-radio__input.is-checked + .el-radio__label {
+        color: #606266;
+      }
     }
-    ::v-deep .el-tabs--card>.el-tabs__header .el-tabs__item.is-active {
-     color: #DB261D;
+
+    ::v-deep .el-tabs--card > .el-tabs__header .el-tabs__item.is-active {
+      color: #DB261D;
     }
+
     ::v-deep .el-tabs__item:hover {
       color: #DB261D;
     }

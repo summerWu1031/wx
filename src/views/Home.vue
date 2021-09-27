@@ -94,7 +94,7 @@
           <div class="title">惠民服务</div>
         </div>
         <ul class="content">
-          <router-link to="/login">
+          <router-link to="/memberpay">
             <li>
               <img src="../assets/image/huimin1.png" alt="会员服务">
               <div>
@@ -316,8 +316,9 @@ export default {
       });
       getUserProfile().then((res) => {
         if (res.code == 200) {
-          window.sessionStorage.setItem("user", JSON.stringify(res.data));
-          self.$store.dispatch("saveUserInfo", res.data);
+          // window.sessionStorage.setItem("user", JSON.stringify(res.data));
+          window.localStorage.setItem("user", JSON.stringify(res.data));
+          //self.$store.dispatch("saveUserInfo", res.data);
           if(res.data.userInfo){
             self.userInfo = res.data.userInfo
             self.userInfo.avatar = self.loadUrl(self.userInfo.avatar)

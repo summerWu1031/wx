@@ -8,7 +8,7 @@ let service = axios.create({
 // 添加请求拦截器,
 service.interceptors.request.use(
     request => {
-        let token = window.sessionStorage.getItem('token')
+        let token = window.localStorage.getItem('token')
 
         if (token) {
             // 设置请求的头信息

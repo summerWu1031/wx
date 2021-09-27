@@ -72,8 +72,9 @@
 <script lang="js">
 import {querySysNetMemberSightList} from '@/api';
 import {pagination} from '@/mixins/mixin'
+
 export default {
-  mixins:[pagination],
+  mixins: [pagination],
   data() {
     return {
       activeName: '0',
@@ -140,6 +141,7 @@ main {
       width: 386px;
       height: 250px;
       overflow: hidden;
+
       img {
         //width: 386px;
         //height: 250px;
@@ -216,7 +218,20 @@ main {
     }
   }
 
-  .jumper, .per, .next, .firstPage, .lastPage {
+  .jumper {
+    padding: 6px 12px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #fff;
+    cursor: pointer;
+
+    &:hover {
+      background-color: #fff;
+    }
+  }
+
+  .per, .next, .firstPage, .lastPage {
     border-right: 1px solid #dddddd;
     padding: 6px 12px;
     display: flex;

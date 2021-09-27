@@ -92,8 +92,9 @@ export default {
     getUserProfile().then((res) => {
       const self = this
       if (res.code == 200) {
-        window.sessionStorage.setItem("user", JSON.stringify(res.data));
-        self.$store.dispatch("saveUserInfo", res.data);
+        window.localStorage.setItem("user", JSON.stringify(res.data));
+        // window.sessionStorage.setItem("user", JSON.stringify(res.data));
+        //self.$store.dispatch("saveUserInfo", res.data);
         if(res.data.userInfo){
           self.userInfo = res.data.userInfo
           self.userInfo.avatar = self.loadUrl(self.userInfo.avatar)
@@ -115,10 +116,10 @@ export default {
 
 
     logout() {
-      window.sessionStorage.removeItem("token");
-      window.sessionStorage.removeItem("user");
-      // window.localStorage.removeItem("token");
-      // window.localStorage.removeItem("user");
+      // window.sessionStorage.removeItem("token");
+      // window.sessionStorage.removeItem("user");
+      window.localStorage.removeItem("token");
+      window.localStorage.removeItem("user");
       this.$store.dispatch("saveUserInfo", {});
       this.userInfo = {}
     },

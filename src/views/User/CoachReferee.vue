@@ -164,7 +164,8 @@ export default {
     getUserProfile().then((res) => {
       let self = this
       if (res.code == 200) {
-        window.sessionStorage.setItem("user", JSON.stringify(res.data));
+        // window.sessionStorage.setItem("user", JSON.stringify(res.data));
+        window.localStorage.setItem("user", JSON.stringify(res.data));
         if (res.data.userType == 1) {
           self.userInfo = res.data.userInfo
           if (self.userInfo.identityCode == null) {

@@ -88,8 +88,8 @@ export default {
     }
   },
   mounted() {
-    let token = window.sessionStorage.getItem("token");
-    // let token = window.localStorage.getItem("token");
+    // let token = window.sessionStorage.getItem("token");
+    let token = window.localStorage.getItem("token");
     if (token) {
       this.$router.push("/");
     }
@@ -119,8 +119,8 @@ export default {
       };
       login(param).then((res) => {
         if (res.token) {
-          window.sessionStorage.setItem("token", res.token);
-          // window.localStorage.setItem("token", res.token);
+          // window.sessionStorage.setItem("token", res.token);
+          window.localStorage.setItem("token", res.token);
           self.getUserProfiles();
           // self.$router.push("/helloworld");
         } else {
@@ -132,9 +132,9 @@ export default {
       const self = this;
       getUserProfile().then((res) => {
         if (res.code == 200) {
-          window.sessionStorage.setItem("user", JSON.stringify(res.data));
-          // window.localStorage.setItem("user", JSON.stringify(res.data));
-          self.$store.dispatch("saveUserInfo", res.data);
+          // window.sessionStorage.setItem("user", JSON.stringify(res.data));
+          window.localStorage.setItem("user", JSON.stringify(res.data));
+          //self.$store.dispatch("saveUserInfo", res.data);
           self.personinfo.user = res.data.userInfo;
           if (res.data.userType == 1) {
             self.personinfo.user = res.data.userInfo;

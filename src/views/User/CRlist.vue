@@ -7,23 +7,26 @@
     </Nav2>
     <main>
       <div class="danSearch">
-        <div class="name">
-          <span class="nameTitle">姓名：</span>
-          <el-input class="nameInput" v-model="userName" placeholder="请输入姓名"></el-input>
-        </div>
-        <div class="id">
-          <div class="idTitle">等级：</div>
-          <el-select v-model="level" placeholder="请选择等级">
-            <el-option
-                v-for="item in levelOptions"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value">
-            </el-option>
-          </el-select>
-        </div>
-        <el-button class="nameButton" @click="onSubmit">查询</el-button>
-        <el-button @click="resetForm()" class="reset">重置</el-button>
+        <el-form :model="queryParams" ref="ruleForm" label-width="100px" class="demo-ruleForm"
+                 @keyup.enter.native="onSubmit">
+          <el-form-item label="姓名：" class="search-name">
+            <el-input class="nameInput" v-model="queryParams.userName" placeholder="请输入姓名"></el-input>
+          </el-form-item>
+          <el-form-item label="等级：" class="search-level">
+            <el-select v-model="queryParams.level" placeholder="请选择等级">
+              <el-option
+                  v-for="item in levelOptions"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value">
+              </el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item class="search-btn">
+            <el-button class="nameButton" @click="onSubmit">查询</el-button>
+            <el-button @click="resetForm()" class="reset">重置</el-button>
+          </el-form-item>
+        </el-form>
       </div>
       <div class="danDetail">
         <el-table
@@ -139,9 +142,7 @@ import {pagination} from '@/mixins/mixin'
 
 export default {
   mixins: [pagination],
-  // props: {
-  //   rcType: String,
-  // },
+
   data() {
     return {
       levelOptions: [
@@ -158,13 +159,7 @@ export default {
         type: '',
       },
       list: [],
-      // 查询
-      userName: "",
-      level: "",
       total: 0,
-      input: '',
-      detail: {},
-
       // 弹窗
       newCRtime: "",
       id: '',
@@ -181,6 +176,8 @@ export default {
     $route() {
       this.queryParams.type = this.$route.query.crType
       if (this.queryParams.type == '0' || this.queryParams.type == '1') {
+        this.queryParams.level = ''
+        this.queryParams.userName = ''
         this.init()
       }
     }
@@ -188,10 +185,6 @@ export default {
   mounted() {
     this.init()
     this.format()
-    // this.checkUserMembers()
-    // this.rcType = this.$router.query.rcType
-    // console.log(this.queryParams.type)
-
     this.queryParams.type = this.$route.query.crType
 
   },
@@ -265,8 +258,8 @@ export default {
 
     },
     onSubmit() {
-      this.queryParams.userName = this.userName
-      this.queryParams.level = this.level
+      // this.queryParams.userName = this.userName
+      // this.queryParams.level = this.level
       const self = this;
       if (self.queryParams.userName || self.queryParams.level) {
         queryCertList(self.queryParams).then((res) => {
@@ -320,48 +313,28 @@ main {
     height: 42px;
     margin-bottom: 30px;
 
-    .name {
+    ::v-deep .el-form {
       display: flex;
-      padding-right: 16px;
-
-      .nameTitle {
-        padding: 4px;
-        display: flex;
-        align-items: center;
-        justify-content: start;
-        color: rgba(0,0,0,.65);
-        font-size: 14px;
-      }
-
-      ::v-deep .el-input {
-        width: 260px;
-        display: flex;
-        align-items: center;
-      }
-
-      //::v-deep .el-input__inner{
-      //  height: 32px;
-      //}
+      flex-wrap: nowrap;
+      margin-left: -49px;
     }
 
-    .id {
+    ::v-deep .el-input {
+      width: 260px;
       display: flex;
-      padding-right: 16px;
+      align-items: center;
+    }
 
-      .idTitle {
-        padding: 4px;
-        display: flex;
-        align-items: center;
-        justify-content: start;
-        color: rgba(0,0,0,.65);
-        font-size: 14px;
-      }
+    ::v-deep .el-form-item__label {
+      padding-right: 4px;
+    }
 
-      ::v-deep .el-input {
-        width: 260px;
-        display: flex;
-        align-items: center;
-      }
+    .search-btn {
+      margin-left: -86px;
+    }
+
+    .search-level {
+      margin-left: -32px;
     }
 
     ::v-deep .el-button {
@@ -455,7 +428,20 @@ main {
     }
   }
 
-  .jumper, .per, .next, .firstPage, .lastPage {
+  .jumper {
+    padding: 6px 12px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #fff;
+    cursor: pointer;
+
+    &:hover {
+      background-color: #fff;
+    }
+  }
+
+  .per, .next, .firstPage, .lastPage {
     border-right: 1px solid #dddddd;
     padding: 6px 12px;
     display: flex;
