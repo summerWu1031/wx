@@ -77,7 +77,12 @@
             <el-button @click="payOrder">确认支付</el-button>
           </span>
         </div>
-        <div class="codeUrl" v-if="members.codeUrl && userType == 1">
+        <div class="memberCard" v-if="members.codeUrl && userType == 1">
+          <el-image fit="cover" :src="loadUrl(members.codeUrl)">
+          </el-image>
+        </div>
+        <div class="codeUrl" v-if="isShowQrcode">
+          <i class="el-icon-circle-close" @click="isShowQrcode=false"></i>
           <VueQr draggable="false"
                  :correctLevel="3"
                  :logoSrc="require('@/assets/image/logo1.png')"
@@ -85,7 +90,7 @@
                  :logoScale=".2"
                  :logoMargin="5"
                  logoBackgroundColor="white"
-                 :margin="10" :size="190" :text="members.codeUrl"/>
+                 :margin="10" :size="190" :text="qrcode"/>
           <h2>请用微信扫码支付</h2>
           <h2 class="payPrice">{{ members.goodsPrice }}元</h2>
         </div>
@@ -118,6 +123,9 @@ export default {
       members: {},
       id: null,
       makeCard: true,
+      qrcode: '',
+      isShowQrcode: false,
+      websock: undefined
     }
   },
   mounted() {
@@ -155,9 +163,13 @@ export default {
       }
     })
   },
+  destroyed() {
+    this.websock.close()//离开路由之后断开websocket连接
+  },
   methods: {
     queryOrgMemberInfos() {
       let self = this;
+      self.$store.commit("showLoading");
       queryOrgMemberInfo({sign: "wx", isOrgMember: self.isOrgMember}).then(
           (res) => {
             if (res.code == 200) {
@@ -169,12 +181,15 @@ export default {
             } else {
               self.$message(res.msg);
             }
+            self.$store.commit("hideLoading");
           }
       )
     },
     getOrderByIds(id) {
       const self = this;
+      self.$store.commit("showLoading");
       getOrderById({id}).then((res) => {
+        self.$store.commit("hideLoading");
         if (res.code == 200) {
           self.order = res.data;
           self.orderId = res.data.backOrder;
@@ -185,22 +200,75 @@ export default {
     },
     payOrder() {
       const self = this;
-      // let id = self.id;
-      // let type = self.payType;
+      self.$store.commit("showLoading");
+      self.initWebSocket()
       wxPay({id: self.id}).then((res) => {
-        self.members.codeUrl = res.data.qrcode
+        self.$store.commit("hideLoading");
+        self.qrcode = res.data.qrcode
+
       })
+      this.isShowQrcode = true
+
     },
     // 生成会员证
     lookMemberCards() {
       const self = this;
+      self.$store.commit("showLoading");
+
       lookMemberCard({sign: "wx"}).then((res) => {
+        self.$store.commit("hideLoading");
         if (res.code == 200) {
           self.$set(self.members, "codeUrl", res.data);
         } else {
           self.$message(res.msg);
         }
       });
+    },
+
+    //webSocket
+    initWebSocket() {
+      if (typeof (WebSocket) === "undefined") {
+        alert("您的浏览器不支持socket")
+      } else {
+        const wsurl = 'ws://8.134.12.113:8889/webSocket'
+        this.websock = new WebSocket(wsurl)
+        this.websock.onmessage = this.onMessage
+        this.websock.onopen = this.onOpen
+        this.websock.onerror = this.onError
+        this.websock.onclose = this.onClose
+      }
+    },
+    onOpen() {//连接建立之后执行send方法发送数据
+      let userId = this.userInfo.userId
+      let actions = {"uid": userId};
+      this.onSend(JSON.stringify(actions));
+    },
+    onError() {//连接建立失败重连
+      this.initWebSocket();
+    },
+    onMessage(e) {//数据接收
+      let self = this
+      if (e.data == '服务器连接成功！') {
+        console.log(e.data)
+      } else {
+        let redata = JSON.parse(e.data)
+        if (redata.message == '支付成功') {
+          console.log(1)
+          self.isShowQrcode = false
+          self.$message('支付成功')
+          // self.$router.push('/')
+          self.queryOrgMemberInfos()
+          this.websock.close()
+        }
+      }
+
+    },
+    onSend(Data) {//数据发送
+      console.log(Data, 111)
+      this.websock.send(Data);
+    },
+    onClose(e) {//关闭
+      console.log('断开连接', e);
     },
   }
 }
@@ -446,6 +514,10 @@ export default {
       }
     }
 
+    .memberCard {
+
+    }
+
     .codeUrl {
       //margin-top: 20px;
       padding-top: 16px;
@@ -455,11 +527,22 @@ export default {
       top: 480px;
       left: 634px;
       box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
-      img{
+
+      i {
+        position: absolute;
+        top: 6px;
+        right: 6px;
+        font-size: 20px;
+        cursor: pointer;
+      }
+
+      img {
         padding-left: 30px;
       }
-      h2{
+
+      h2 {
         text-align: center;
+
         &.payPrice {
           color: #db261d;
           //font-size: 20px;

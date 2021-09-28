@@ -105,12 +105,10 @@
 
           <router-link to="/dan">
             <li>
-
               <img src="../assets/image/huimin2.png" alt="段位查询">
               <div>
                 <span>段位登记、段位查阅</span>
               </div>
-
             </li>
           </router-link>
           <li>
@@ -119,12 +117,14 @@
               <span>报名申请、段位考评、报名查询、成绩查询</span>
             </div>
           </li>
-          <li>
-            <img src="../assets/image/huimin4.png" alt="教学服务">
-            <div>
-              <span>视频教学</span>
-            </div>
-          </li>
+          <router-link to="/trains">
+            <li>
+              <img src="../assets/image/huimin4.png" alt="教学服务">
+              <div>
+                <span>视频教学</span>
+              </div>
+            </li>
+          </router-link>
           <li>
             <img src="../assets/image/huimin5.png" alt="多媒体区">
             <div>
@@ -285,7 +285,10 @@ export default {
   methods: {
     init() {
       const self = this;
+      self.$store.commit("showLoading");
+
       getHome({sign: 'wx'}).then((res) => {
+        self.$store.commit("showLoading");
         if (res.code == 200) {
           self.bannerList = res.data.bannerList;
           self.newsList = res.data.newsList;
@@ -297,8 +300,11 @@ export default {
         } else {
           self.$message(res.msg);
         }
+        self.$store.commit("hideLoading");
+
       });
       getqueryOrgInfo(this.queryParamsInfo).then((res) => {
+        self.$store.commit("showLoading");
         if (res.code == 200) {
           self.introduction = res.data.introduction
           self.introductionLogo = res.data.logo;
@@ -306,15 +312,21 @@ export default {
         } else {
           self.$message(res.msg);
         }
+        self.$store.commit("hideLoading");
+
       });
       friendLink(this.queryParamsFriendLink).then((res) => {
+        self.$store.commit("showLoading");
         if (res.code == 200) {
           self.friendLink = res.rows
         } else {
           self.$message(res.msg);
         }
+        self.$store.commit("hideLoading");
+
       });
       getUserProfile().then((res) => {
+        self.$store.commit("showLoading");
         if (res.code == 200) {
           // window.sessionStorage.setItem("user", JSON.stringify(res.data));
           window.localStorage.setItem("user", JSON.stringify(res.data));
@@ -326,7 +338,11 @@ export default {
         } else {
           console.log(res.mes)
         }
+        self.$store.commit("hideLoading");
+
       })
+      self.$store.commit("hideLoading");
+
     },
     linkban(item) {
       //ckType:(1:站内，2：站外)；linkType:(1:赛事，2：新闻)；nodeType:(1:通知公告，2:政策法规，3:新闻动态)

@@ -248,7 +248,7 @@ export default {
         password: _type == 1 ? self.personinfo.password : self.orginfo.password,
         openId: getOpenid,
       };
-
+      self.$store.commit("showLoading");
       login(param).then((res) => {
         if (res.token) {
           // window.sessionStorage.setItem("token", res.token);
@@ -260,13 +260,15 @@ export default {
         } else {
           this.$message(res.msg);
         }
-
+        self.$store.commit("hideLoading");
       });
     },
     getUserProfiles() {
       const self = this;
 
       getUserProfile().then((res) => {
+        self.$store.commit("showLoading");
+
         if (res.code == 200) {
            // window.sessionStorage.setItem("user", JSON.stringify(res.data));
           window.localStorage.setItem("user", JSON.stringify(res.data));
@@ -274,6 +276,7 @@ export default {
         } else {
           self.$message("登录失败！");
         }
+        self.$store.commit("hideLoading");
 
       });
     },

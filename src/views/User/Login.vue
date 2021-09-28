@@ -117,6 +117,7 @@ export default {
         phone: self.personinfo.username,
         password: self.personinfo.password,
       };
+      self.$store.commit("showLoading");
       login(param).then((res) => {
         if (res.token) {
           // window.sessionStorage.setItem("token", res.token);
@@ -126,10 +127,14 @@ export default {
         } else {
           this.$message(res.msg);
         }
+        self.$store.commit("hideLoading");
+
       })
     },
     getUserProfiles() {
       const self = this;
+      self.$store.commit("showLoading");
+
       getUserProfile().then((res) => {
         if (res.code == 200) {
           // window.sessionStorage.setItem("user", JSON.stringify(res.data));
@@ -152,6 +157,8 @@ export default {
         } else {
           self.$message("登录失败！");
         }
+        self.$store.commit("hideLoading");
+
       });
     },
   },
