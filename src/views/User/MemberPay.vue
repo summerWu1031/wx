@@ -114,6 +114,7 @@ export default {
   components: {
     VueQr,
   },
+  inject:['reload'],
   data() {
     return {
       payType: 2,
@@ -135,7 +136,6 @@ export default {
         self.isOrgMember = res.data.isOrgMember;
         self.queryOrgMemberInfos();
       } else {
-        console.log(1)
         self.$message(res.msg);
         setTimeout(() => {
           self.$router.push("login");
@@ -145,8 +145,8 @@ export default {
     getUserProfile().then((res) => {
       let self = this
       if (res.code == 200) {
-        // window.sessionStorage.setItem("user", JSON.stringify(res.data));
-        window.localStorage.setItem("user", JSON.stringify(res.data));
+        window.sessionStorage.setItem("user", JSON.stringify(res.data));
+        // window.localStorage.setItem("user", JSON.stringify(res.data));
         if (res.data.userType == 1) {
           self.userInfo = res.data.userInfo
           if (self.userInfo.identityCode == null) {
@@ -184,6 +184,11 @@ export default {
             self.$store.commit("hideLoading");
           }
       )
+      // wxPay({id: self.id}).then((res) => {
+      //   self.$store.commit("hideLoading");
+      //   self.qrcode = res.data.qrcode
+      //
+      // })
     },
     getOrderByIds(id) {
       const self = this;
@@ -222,6 +227,7 @@ export default {
         } else {
           self.$message(res.msg);
         }
+        self.$store.commit("hideLoading");
       });
     },
 
@@ -248,21 +254,23 @@ export default {
     },
     onMessage(e) {//数据接收
       let self = this
-      if (e.data == '服务器连接成功！') {
+      console.log(e.data)
+
+      if (e.data == '服务器连接成功！' ) {
         console.log(e.data)
       } else {
         let redata = JSON.parse(e.data)
         if (redata.message == '支付成功') {
-          console.log(1)
           self.isShowQrcode = false
           self.$message('支付成功')
           // self.$router.push('/')
-          self.queryOrgMemberInfos()
+          self.reload()
           this.websock.close()
         }
       }
-
     },
+
+
     onSend(Data) {//数据发送
       console.log(Data, 111)
       this.websock.send(Data);

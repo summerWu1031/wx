@@ -88,10 +88,16 @@ export default {
     }
   },
   mounted() {
-    // let token = window.sessionStorage.getItem("token");
-    let token = window.localStorage.getItem("token");
+    console.log(this.$route.query.redirect)
+    let token = window.sessionStorage.getItem("token");
+    // let token = window.localStorage.getItem("token");
     if (token) {
-      this.$router.push("/");
+      if( self.$route.query.redirect){
+        let redirect = self.$route.query.redirect;
+        self.$router.push(redirect);
+      }else {
+        this.$router.push("/");
+      }
     }
   },
   methods: {
@@ -106,7 +112,7 @@ export default {
       })
     },
     onSubmit() {
-      var self = this;
+      let self = this;
       //  let getOpenid = window.sessionStorage.getItem("openid");
       // let getOpenid = window.localStorage.getItem("openid");
       // console.log(getOpenid+'getOpenid')
@@ -120,10 +126,9 @@ export default {
       self.$store.commit("showLoading");
       login(param).then((res) => {
         if (res.token) {
-          // window.sessionStorage.setItem("token", res.token);
-          window.localStorage.setItem("token", res.token);
+          window.sessionStorage.setItem("token", res.token);
+          // window.localStorage.setItem("token", res.token);
           self.getUserProfiles();
-          // self.$router.push("/helloworld");
         } else {
           this.$message(res.msg);
         }
@@ -137,8 +142,8 @@ export default {
 
       getUserProfile().then((res) => {
         if (res.code == 200) {
-          // window.sessionStorage.setItem("user", JSON.stringify(res.data));
-          window.localStorage.setItem("user", JSON.stringify(res.data));
+          window.sessionStorage.setItem("user", JSON.stringify(res.data));
+          // window.localStorage.setItem("user", JSON.stringify(res.data));
           //self.$store.dispatch("saveUserInfo", res.data);
           self.personinfo.user = res.data.userInfo;
           if (res.data.userType == 1) {
@@ -152,7 +157,12 @@ export default {
             self.$message("请先完善用户基本信息！");
             self.$router.push("/myuser");
           }else {
-            self.$router.push("/");
+            if( self.$route.query.redirect){
+              let redirect = self.$route.query.redirect;
+              self.$router.push(redirect);
+            }else {
+              this.$router.push("/");
+            }
           }
         } else {
           self.$message("登录失败！");

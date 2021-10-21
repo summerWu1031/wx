@@ -111,13 +111,15 @@
               </div>
             </li>
           </router-link>
-          <li>
-            <img src="../assets/image/huimin3.png" alt="赛事服务">
-            <div>
-              <span>报名申请、段位考评、报名查询、成绩查询</span>
-            </div>
-          </li>
-          <router-link to="/trains">
+          <router-link to="/apply-list">
+            <li>
+              <img src="../assets/image/huimin3.png" alt="赛事服务">
+              <div>
+                <span>报名申请、段位考评、报名查询、成绩查询</span>
+              </div>
+            </li>
+          </router-link>
+          <router-link to="/course">
             <li>
               <img src="../assets/image/huimin4.png" alt="教学服务">
               <div>
@@ -136,59 +138,59 @@
     </div>
 
     <!--赛事服务-->
-    <!--    <div class="competition-service">-->
-    <!--      <div class="topNav">-->
-    <!--        <span>赛事服务</span>-->
-    <!--        <span class="more">更多>></span>-->
-    <!--      </div>-->
-    <!--      <div class="competition-main">-->
-    <!--        <div class="competition-list">-->
-    <!--          <div class="competition-list-img">-->
-    <!--            <img src="../assets/image/competition1.png" alt="赛事服务1">-->
-    <!--          </div>-->
-    <!--          <div class="competition-list-info">-->
-    <!--            <ul>-->
-    <!--              <li>广东省武术精英大赛“武”动中山</li>-->
-    <!--              <li>报名时间：2021-04-13至2021-04-16</li>-->
-    <!--              <li>地点：中山市小榄镇芙兰路</li>-->
-    <!--              <li>-->
-    <!--                <button>我要报名</button>-->
-    <!--              </li>-->
-    <!--            </ul>-->
-    <!--          </div>-->
-    <!--        </div>-->
-    <!--        <div class="competition-list">-->
-    <!--          <div class="competition-list-img">-->
-    <!--            <img src="../assets/image/competition2.png" alt="赛事服务2">-->
-    <!--          </div>-->
-    <!--          <div class="competition-list-info">-->
-    <!--            <ul>-->
-    <!--              <li>广东省武术精英大赛首站赛事打响</li>-->
-    <!--              <li>报名时间：2021-04-15至2021-04-19</li>-->
-    <!--              <li>地点：佛山市岭南明珠体育馆</li>-->
-    <!--              <li>-->
-    <!--                <button>我要报名</button>-->
-    <!--              </li>-->
-    <!--            </ul>-->
-    <!--          </div>-->
-    <!--        </div>-->
-    <!--        <div class="competition-list">-->
-    <!--          <div class="competition-list-img">-->
-    <!--            <img src="../assets/image/competition3.png" alt="赛事服务3">-->
-    <!--          </div>-->
-    <!--          <div class="competition-list-info">-->
-    <!--            <ul>-->
-    <!--              <li>广东省武术协会网络赛事活动经验交流</li>-->
-    <!--              <li>报名时间：2021-04-19至2021-04-26</li>-->
-    <!--              <li>地点：自由选址</li>-->
-    <!--              <li>-->
-    <!--                <button>我要报名</button>-->
-    <!--              </li>-->
-    <!--            </ul>-->
-    <!--          </div>-->
-    <!--        </div>-->
-    <!--      </div>-->
-    <!--    </div>-->
+<!--        <div class="competition-service">-->
+<!--          <div class="topNav">-->
+<!--            <span>赛事服务</span>-->
+<!--            <span class="more">更多>></span>-->
+<!--          </div>-->
+<!--          <div class="competition-main">-->
+<!--            <div class="competition-list">-->
+<!--              <div class="competition-list-img">-->
+<!--                <img src="../assets/image/competition1.png" alt="赛事服务1">-->
+<!--              </div>-->
+<!--              <div class="competition-list-info">-->
+<!--                <ul>-->
+<!--                  <li>广东省武术精英大赛“武”动中山</li>-->
+<!--                  <li>报名时间：2021-04-13至2021-04-16</li>-->
+<!--                  <li>地点：中山市小榄镇芙兰路</li>-->
+<!--                  <li>-->
+<!--                    <button>我要报名</button>-->
+<!--                  </li>-->
+<!--                </ul>-->
+<!--              </div>-->
+<!--            </div>-->
+<!--            <div class="competition-list">-->
+<!--              <div class="competition-list-img">-->
+<!--                <img src="../assets/image/competition2.png" alt="赛事服务2">-->
+<!--              </div>-->
+<!--              <div class="competition-list-info">-->
+<!--                <ul>-->
+<!--                  <li>广东省武术精英大赛首站赛事打响</li>-->
+<!--                  <li>报名时间：2021-04-15至2021-04-19</li>-->
+<!--                  <li>地点：佛山市岭南明珠体育馆</li>-->
+<!--                  <li>-->
+<!--                    <button>我要报名</button>-->
+<!--                  </li>-->
+<!--                </ul>-->
+<!--              </div>-->
+<!--            </div>-->
+<!--            <div class="competition-list">-->
+<!--              <div class="competition-list-img">-->
+<!--                <img src="../assets/image/competition3.png" alt="赛事服务3">-->
+<!--              </div>-->
+<!--              <div class="competition-list-info">-->
+<!--                <ul>-->
+<!--                  <li>广东省武术协会网络赛事活动经验交流</li>-->
+<!--                  <li>报名时间：2021-04-19至2021-04-26</li>-->
+<!--                  <li>地点：自由选址</li>-->
+<!--                  <li>-->
+<!--                    <button>我要报名</button>-->
+<!--                  </li>-->
+<!--                </ul>-->
+<!--              </div>-->
+<!--            </div>-->
+<!--          </div>-->
+<!--        </div>-->
 
     <!--会员风采-->
     <div class="banner">
@@ -285,7 +287,7 @@ export default {
   methods: {
     init() {
       const self = this;
-      self.$store.commit("showLoading");
+      // self.$store.commit("showLoading");
 
       getHome({sign: 'wx'}).then((res) => {
         self.$store.commit("showLoading");
@@ -325,23 +327,23 @@ export default {
         self.$store.commit("hideLoading");
 
       });
-      getUserProfile().then((res) => {
-        self.$store.commit("showLoading");
-        if (res.code == 200) {
-          // window.sessionStorage.setItem("user", JSON.stringify(res.data));
-          window.localStorage.setItem("user", JSON.stringify(res.data));
-          //self.$store.dispatch("saveUserInfo", res.data);
-          if(res.data.userInfo){
-            self.userInfo = res.data.userInfo
-            self.userInfo.avatar = self.loadUrl(self.userInfo.avatar)
-          }
-        } else {
-          console.log(res.mes)
-        }
-        self.$store.commit("hideLoading");
-
-      })
-      self.$store.commit("hideLoading");
+      // getUserProfile().then((res) => {
+      //   // self.$store.commit("showLoading");
+      //   if (res.code == 200) {
+      //     window.sessionStorage.setItem("user", JSON.stringify(res.data));
+      //     // window.localStorage.setItem("user", JSON.stringify(res.data));
+      //     //self.$store.dispatch("saveUserInfo", res.data);
+      //     if(res.data.userInfo){
+      //       self.userInfo = res.data.userInfo
+      //       self.userInfo.avatar = self.loadUrl(self.userInfo.avatar)
+      //     }
+      //   } else {
+      //     console.log(res.mes)
+      //   }
+      //   // self.$store.commit("hideLoading");
+      //
+      // })
+      // self.$store.commit("hideLoading");
 
     },
     linkban(item) {

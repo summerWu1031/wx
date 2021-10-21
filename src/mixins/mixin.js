@@ -1,4 +1,9 @@
 export const pagination = {
+    data(){
+        return{
+            input:''
+        }
+    },
     methods:{
         handleCurrentChange(val) {
             this.queryParams.pageNum = val;
@@ -23,7 +28,6 @@ export const pagination = {
         },
         jumper(){
             let jump =parseInt(this.input)
-            console.log(jump)
             this.handleCurrentChange(jump)
         }
     }

@@ -6,7 +6,7 @@
       <template v-slot:0>
         <div class="introl">
           <h2>广东省武术协会</h2>
-          <p>{{ introduction }}</p>
+          <p v-html="introduction"></p>
         </div>
       </template>
       <template v-slot:1>

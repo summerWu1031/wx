@@ -20,13 +20,13 @@ function checkTimeout() {
   if (currentTime - lastTime > timeOut) { //判断是否超时
     // 清除storage的数据(登陆信息和token)
     storage.clear()
-    // window.sessionStorage.removeItem("token");
-    // window.sessionStorage.removeItem("user");
+    window.sessionStorage.removeItem("token");
+    window.sessionStorage.removeItem("user");
     window.sessionStorage.removeItem("store");
 
-    window.localStorage.removeItem("token");
-    window.localStorage.removeItem("user");
-    window.localStorage.removeItem("store");
+    // window.localStorage.removeItem("token");
+    // window.localStorage.removeItem("user");
+    // window.localStorage.removeItem("store");
 
 
 

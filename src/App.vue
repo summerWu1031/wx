@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <router-view />
+    <router-view v-if="isRouterAlive"></router-view>
     <Loading v-if="LOADING" />
   </div>
 </template>
@@ -16,6 +16,33 @@ export default {
   computed: {
     ...mapState(["LOADING"]),
   },
+  provide () {
+    return {
+      reload: this.reload
+    }
+  },
+  data () {
+    return {
+      isRouterAlive: true
+    }
+  },
+  mounted () {
+    // 检测浏览器路由改变页面不刷新问题,hash模式的工作原理是hashchange事件
+    window.addEventListener('hashchange', () => {
+      let currentPath = window.location.hash.slice(1)
+      if (this.$route.path !== currentPath) {
+        this.$router.push(currentPath)
+      }
+    }, false)
+  },
+  methods: {
+    reload () {
+      this.isRouterAlive = false
+      this.$nextTick(function () {
+        this.isRouterAlive = true
+      })
+    }
+  }
 }
 </script>
 

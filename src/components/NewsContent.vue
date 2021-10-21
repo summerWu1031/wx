@@ -97,12 +97,16 @@ export default {
     init() {
       const self = this;
       getNoticeList(self.queryParams).then((res) => {
+        self.$store.commit("showLoading");
+
         if (res.code == 200) {
           self.news = res.rows;
           self.total = res.total;
         } else {
           self.$message(res.msg);
         }
+        self.$store.commit("hideLoading");
+
       })
     },
     handleCurrentChange(val) {

@@ -83,6 +83,7 @@ export default {
       popList: [
         {name: '裁判注册', link: 'coachreferee', type: '1'},
         {name: '裁判列表', link: 'crlist', type: '1'},
+        {name:'裁判打分',link:'rc-score-list',type:'1'},
         {name: '教练注册', link: 'coachreferee', type: '0'},
         {name: '教练列表', link: 'crlist', type: '0'},
       ],
@@ -91,9 +92,10 @@ export default {
   mounted() {
     getUserProfile().then((res) => {
       const self = this
+      // self.$store.commit("showLoading");
       if (res.code == 200) {
-        window.localStorage.setItem("user", JSON.stringify(res.data));
-        // window.sessionStorage.setItem("user", JSON.stringify(res.data));
+        // window.localStorage.setItem("user", JSON.stringify(res.data));
+        window.sessionStorage.setItem("user", JSON.stringify(res.data));
         //self.$store.dispatch("saveUserInfo", res.data);
         if(res.data.userInfo){
           self.userInfo = res.data.userInfo
@@ -103,6 +105,8 @@ export default {
       } else {
         console.log(res.mes)
       }
+      // self.$store.commit("hideLoading");
+
     })
 
   },
@@ -116,10 +120,10 @@ export default {
 
 
     logout() {
-      // window.sessionStorage.removeItem("token");
-      // window.sessionStorage.removeItem("user");
-      window.localStorage.removeItem("token");
-      window.localStorage.removeItem("user");
+      window.sessionStorage.removeItem("token");
+      window.sessionStorage.removeItem("user");
+      // window.localStorage.removeItem("token");
+      // window.localStorage.removeItem("user");
       this.$store.dispatch("saveUserInfo", {});
       this.userInfo = {}
     },

@@ -62,7 +62,7 @@
 <!--      </div>-->
 <!--    </div>-->
     <AsideMenu name="机构设置" :title="this.title" :current="this.current">
-      <template v-slot:0>
+      <template v-slot:1>
         <div class="introl">
           <h2>广东省武术协会</h2>
           <div class="intro-content">
@@ -90,7 +90,7 @@
           </div>
         </div>
       </template>
-      <template v-slot:1>
+      <template v-slot:0>
         <div class="struct">
           <ul>
             <li v-for="(item,index) in structure" :key="index">

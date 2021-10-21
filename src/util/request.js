@@ -2,16 +2,16 @@ import axios from 'axios'
 // 创建axios对象
 let service = axios.create({
     baseURL: '/api',
+    // withCredentials:true, //允许跨域
     timeout: 20000 // 请求的超时
 })
 
 // 添加请求拦截器,
 service.interceptors.request.use(
     request => {
-        let token = window.localStorage.getItem('token')
-
+        // let token = window.localStorage.getItem('token')
+        let token = window.sessionStorage.getItem('token')
         if (token) {
-            // 设置请求的头信息
             request.headers = {
                 'token': token, // 请求添加的token
                 'Authorization': `Bearer ${token}`,

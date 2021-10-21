@@ -39,7 +39,7 @@
               <el-form-item label="所在区域" prop="province">
                 <el-cascader
                     size="large"
-                    :placeholder="selectedOptions==[]? '请选择所在区域': `${basic.province}/ ${basic.city}/${basic.county}`"
+                    :placeholder="selectedOptions.length==0? '请选择所在区域':selectedOptions"
                     :options="options"
                     v-model="selectedOptions"
                     @change="handleChange">
@@ -52,7 +52,9 @@
                 </el-radio-group>
               </el-form-item>
               <el-form-item label="推荐单位" v-show="basic.sourceOrgType=='1'">
-                <el-select v-model="basic.sourceOrgName" :placeholder="basic.sourceOrgName==''? '请选择推荐单位':basic.sourceOrgName" :disabled="isState !== 0">
+                <el-select v-model="basic.sourceOrgName"
+                           :placeholder="basic.sourceOrgName==''? '请选择推荐单位':basic.sourceOrgName"
+                           :disabled="isState !== 0">
                   <el-option v-for="(item,index) in filterAssociationList" :key="index" :label="item.name"
                              :value="item.name"></el-option>
                 </el-select>
@@ -111,7 +113,7 @@
             <el-form :model="dan" :rules="rules" ref="dan" label-width="100px" class="demo-ruleForm"
                      @keyup.enter.native="submitForm('dan')">
               <el-form-item label="考试项目" prop="item">
-                <el-select v-model="dan.item" placeholder="请输入考试项目" >
+                <el-select v-model="dan.item" placeholder="请输入考试项目">
                   <el-option v-for="(item,index) in danItemColumns" :key="index" :label="item"
                              :value="item"></el-option>
                 </el-select>
@@ -134,7 +136,7 @@
               <el-form-item label="履历">
                 <el-input type="textarea" v-model="dan.certResume" placeholder="请输履历"></el-input>
               </el-form-item>
-              <el-form-item label="证书上传" class="upload" >
+              <el-form-item label="证书上传" class="upload">
                 <el-upload
                     @click="getType('dan')"
                     v-model="dan.certImg"
@@ -158,7 +160,7 @@
           <el-tab-pane label="运动员等级信息" name="3">
             <el-form :model="player" :rules="rules" ref="player" label-width="100px" class="demo-ruleForm"
                      @keyup.enter.native="submitForm('player')">
-              <el-form-item label="运动员等级"  prop="playerLv">
+              <el-form-item label="运动员等级" prop="playerLv">
                 <el-select v-model="player.playerLv" placeholder="请选择您的级别" @change="selectedPlayerLevel">
                   <el-option v-for="(item,index) in athletesGradeColumns" :key="index" :label="item"
                              :value="item"></el-option>
@@ -327,28 +329,28 @@ export default {
         avatar: [
           {required: true, message: '证件照不能为空！'}
         ],
-        item:[
+        item: [
           {required: true, message: '考试项目不能为空！'}
         ],
-        value:[
+        value: [
           {required: true, message: '考试点不能为空！'}
         ],
-        level:[
+        level: [
           {required: true, message: '等级不能为空！'}
         ],
-        certCode:[
+        certCode: [
           {required: true, message: '段位编号不能为空！'}
         ],
-        certImg:[
+        certImg: [
           {required: true, message: '请上传证书！'}
         ],
-        certSource:[
+        certSource: [
           {required: true, message: '审批单位不能为空！'}
         ],
-        certTime:[
+        certTime: [
           {required: true, message: '审批时间不能为空！'}
         ],
-        playerLv:[
+        playerLv: [
           {required: true, message: '等级不能为空！'}
         ],
       },
@@ -548,6 +550,8 @@ export default {
     // userinfo() {
     //   return this.$store.state.userinfo;
     // },
+
+
     // 计算数学，匹配搜索
     filteredAssociationList() {
       const self = this;
@@ -595,10 +599,12 @@ export default {
   mounted() {
     let self = this;
     // self.userInfo = self.userinfo.userInfo;
+    self.$store.commit("showLoading");
+
     getUserProfile().then((res) => {
       if (res.code == 200) {
-        // window.sessionStorage.setItem("user", JSON.stringify(res.data));
-        window.localStorage.setItem("user", JSON.stringify(res.data));
+        window.sessionStorage.setItem("user", JSON.stringify(res.data));
+        // window.localStorage.setItem("user", JSON.stringify(res.data));
 
         // self.$store.dispatch("saveUserInfo", res.data);
 
@@ -610,16 +616,20 @@ export default {
             self.basic.phonenumber = self.userInfo.phonenumber;
             self.basic.identityCode = self.userInfo.identityCode;
             self.basic.sex = self.userInfo.sex;
-            self.basic.avatar = self.userInfo.avatar
+            self.basic.avatar = self.userInfo.avatar;
             self.$set(self.basic, "avatars", [
               {url: self.loadUrl(self.userInfo.avatar)},
             ]);
-
             self.$set(self.basic, "memberName", self.userInfo.memberName);
             self.$set(self.basic, "sourceOrgType", self.userInfo.sourceOrgType.toString());
+            if(self.basic.province && self.basic.city && self.basic.county){
+              self.selectedOptions=self.basic.province.concat('/',self.basic.city,'/',self.basic.county)
+            }
           } else {
-
             self.basic = self.userInfo;
+            if(self.basic.province && self.basic.city && self.basic.county){
+              self.selectedOptions=self.basic.province.concat('/',self.basic.city,'/',self.basic.county)
+            }
             self.$set(
                 self.basic,
                 "memberApply",
@@ -655,7 +665,7 @@ export default {
           }
           if (res.data.playerInfo.length > 0) {
             self.player = res.data.playerInfo[0];
-            self.player.playerLv=self.player.level
+            self.player.playerLv = self.player.level
             self.$set(self.player, "certImgs", [
               {url: self.loadUrl(self.player.certImg)},
             ]);
@@ -706,7 +716,7 @@ export default {
           self.$router.push("/login");
         }, 3000);
       }
-      // self.$store.commit("hideLoading");
+      self.$store.commit("hideLoading");
     });
     //  文化程度
     // this.queryDictListByGrade();
@@ -715,8 +725,8 @@ export default {
     getType(type) {
       this.cType = type;
     },
-    selectedPlayerLevel(value){
-      this.player.level=value
+    selectedPlayerLevel(value) {
+      this.player.level = value
     },
     //选择地区
     handleChange(value) {
@@ -980,15 +990,11 @@ export default {
 
         });
         if (res.code == 200) {
-         let _rankEvalList= res.data.rankEvalList;
-          console.log(1)
-          console.log(self.itemValue)
+          let _rankEvalList = res.data.rankEvalList;
           _rankEvalList.map((item) => {
 
             if (item.value === self.itemValue) {
               self.dan.name = item.label;
-              console.log(3)
-              console.log(self.dan.name)
             }
 
             self.danAppraisal.push(

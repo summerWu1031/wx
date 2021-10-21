@@ -16,13 +16,28 @@ import Login from "@/views/User/Login";
 import Agreement from "@/components/Agreement";
 import MyUser from "@/views/User/MyUser";
 import ForgetPassword from "@/views/User/ForgetPassword";
-import Coach from "@/views/User/Coach";
-import Referee from "@/views/User/Referee";
-import CRlist from "@/views/User/CRlist";
-import CoachReferee from "@/views/User/CoachReferee";
-import Trains from "@/views/Trains/Trains";
-import TrainsDetailList from "@/views/Trains/TrainsDetailList";
+import Coach from "@/views/rc/Coach";
+import Referee from "@/views/rc/Referee";
+import CRlist from "@/views/rc/CRlist";
+import CoachReferee from "@/views/rc/CoachReferee";
+import CourseMenu from "@/views/Course/CourseMenu";
+import CourseDetailList from "@/views/Course/CourseDetailList";
 import MemberPay from "@/views/User/MemberPay";
+import CourseContent from "@/views/Course/CourseContent";
+import CoursePay from "@/views/Course/CoursePay";
+import Trains from "@/views/trains/Trains";
+import ApplyList from "@/views/trains/ApplyList";
+import ApplyDetail from "@/views/trains/ApplyDetail";
+import TrainsDetail from "@/views/trains/TrainsDetail";
+import TrainsPay from "@/views/trains/TrainsPay";
+import ExamVedio from '@/views/trains/Exam-upvideo'
+import ExamOline from '@/views/trains/Exam-online'
+import ItemPay from "@/views/trains/ItemPay";
+import ExamList from "@/views/trains/Exam-list";
+import ExamRecord from "@/views/trains/Exam-record";
+import ExamState from '@/views/trains/Exam-state'
+
+import NotFound from "@/components/NotFound";
 
 //获取原型对象上的push函数
 const originalPush = VueRouter.prototype.push
@@ -39,6 +54,10 @@ const routes = [
     path: '/',
     name: '/',
     component: Home
+  },
+  {
+    path:'*',
+    component:NotFound
   },
   {
     path: '/introduce',
@@ -98,6 +117,8 @@ const routes = [
   },
   {
     path: '/login',
+    name: 'login',
+    // props: true,
     component: Login
   },
   {
@@ -114,20 +135,14 @@ const routes = [
     path: '/forgot-password',
     name: 'forgot-password',
     component: ForgetPassword
-  }, {
-    path: '/coach',
-    name: 'coach',
-    component: Coach
-  },
-  {
-    path: '/referee',
-    name: 'referee',
-    component: Referee
   },
   {
     path: '/coachreferee',
     name: 'coachreferee',
-    component: CoachReferee
+    component: CoachReferee,
+    meta:{
+      requireAuth:true
+    }
   },
   {
     path: '/crlist',
@@ -136,19 +151,152 @@ const routes = [
     component: CRlist
   },
   {
-    path: '/trains',
-    name: 'trains',
+    path: '/course',
+    name: 'course',
     props: true,
-    component: Trains
+    component: CourseMenu,
+  },
+  {
+    path: '/course-detail/:id',
+    name: 'course-detail',
+    props: true,
+    component: CourseDetailList,
+    meta:{
+      requireAuth:true
+    }
+  },
+  {
+    path: '/course-content/:selected/:id',
+    name: 'course-content',
+    props: true,
+    component: CourseContent,
+    meta:{
+      requireAuth:true
+    }
+  },
+  {
+    path: '/course-pay/:detail',
+    name: 'course-pay',
+    props: true,
+    component: CoursePay,
+    meta:{
+      requireAuth:true
+    }
   },
   {
     path: '/memberpay',
     name: 'memberpay',
     props: true,
-    component: MemberPay
+    component: MemberPay,
+    meta:{
+      requireAuth:true
+    }
   },
-
-
+  {
+    path: '/apply-list',
+    name: 'applyList',
+    props: true,
+    component: ApplyList,
+  },
+  {
+    path: '/apply-detail/:id',
+    name: 'applyDetail',
+    props: true,
+    component: ApplyDetail,
+    meta:{
+      requireAuth:true
+    }
+  },
+  {
+    path: '/trains-pay/:detail',
+    name: 'trainsPay',
+    props: true,
+    component: TrainsPay,
+  },
+  {
+    path: '/trains',
+    name: 'trains',
+    props: true,
+    component: Trains,
+    meta:{
+      requireAuth:true
+    }
+  },
+  {
+    path: '/trains-detail/:id/:name',
+    name: 'trainsDetail',
+    props: true,
+    component: TrainsDetail,
+    meta:{
+      requireAuth:true
+    }
+  },
+  // {
+  //   path: '/exam-upvideo',
+  //   props: true,
+  //   component: ExamVedio,
+  //   meta:{
+  //     requireAuth:true
+  //   }
+  // },
+  {
+    path: '/exam-online/:id',
+    props: true,
+    component: ExamOline,
+    meta:{
+      requireAuth:true
+    }
+  },
+  {
+    path: '/exam-state',
+    props: true,
+    component: ExamState,
+    meta:{
+      requireAuth:true
+    }
+  },
+  {
+    path: '/item-pay',
+    props: true,
+    component: ItemPay,
+    meta:{
+      requireAuth:true
+    }
+  },
+  {
+    path: '/exam-list',
+    props: true,
+    component: ExamList,
+    meta:{
+      requireAuth:true
+    }
+  },
+  {
+    path: '/exam-record/:paperid',
+    props: true,
+    component: ExamRecord,
+    meta:{
+      requireAuth:true
+    }
+  },
+  {
+    path: '/rc-score-list',
+    name:'rcScoreList',
+    props: true,
+    component: () => import('@/views/rc/RcScoreList'),
+    meta:{
+      requireAuth:true
+    }
+  },
+  {
+    path: '/rc-score-detail',
+    name:'rcScoreDetail',
+    props: true,
+    component: () => import('@/views/rc/RcScoreDetail'),
+    meta:{
+      requireAuth:true
+    }
+  },
 ]
 
 const router = new VueRouter({

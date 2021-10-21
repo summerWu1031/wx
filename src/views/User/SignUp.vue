@@ -237,8 +237,8 @@ export default {
     },
     onlogin(_type) {
       var self = this;
-      // let getOpenid = window.sessionStorage.getItem("openid");
-      let getOpenid = window.localStorage.getItem("openid");
+      let getOpenid = window.sessionStorage.getItem("openid");
+      // let getOpenid = window.localStorage.getItem("openid");
 
       //这里写登录的操作
       let param = {
@@ -251,8 +251,8 @@ export default {
       self.$store.commit("showLoading");
       login(param).then((res) => {
         if (res.token) {
-          // window.sessionStorage.setItem("token", res.token);
-          window.localStorage.setItem("token", res.token);
+          window.sessionStorage.setItem("token", res.token);
+          // window.localStorage.setItem("token", res.token);
           self.getUserProfiles();
 
             self.$router.push("/");
@@ -270,8 +270,8 @@ export default {
         self.$store.commit("showLoading");
 
         if (res.code == 200) {
-           // window.sessionStorage.setItem("user", JSON.stringify(res.data));
-          window.localStorage.setItem("user", JSON.stringify(res.data));
+           window.sessionStorage.setItem("user", JSON.stringify(res.data));
+          // window.localStorage.setItem("user", JSON.stringify(res.data));
           //self.$store.dispatch("saveUserInfo", res.data);
         } else {
           self.$message("登录失败！");
