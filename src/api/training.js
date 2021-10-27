@@ -1,6 +1,7 @@
 import request from '@/util/request'
+
 /**
- * 培训报名 -- 列表 
+ * 培训报名 -- 列表
  * 参数： sign: "wx", pageNum ,pageSize
  */
 export const queryOrgTrainList = data => {
@@ -26,7 +27,7 @@ export const queryOrgTrainDetail = data => {
 
 /**
  * 培训报名 -- 确认
- * 参数 ： 
+ * 参数 ：
  */
 export const sureTrainApply = data => {
     return request({
@@ -45,8 +46,8 @@ export const sureTrainApply = data => {
     querytype   查询类型（0.所有，1.我的考试，2.收藏）
     trainName	标题搜索（查询）
     trainType	培训类型(1.段位培训，2.教练员培训,3.裁判员培训,4.考评员培训)
-} 
- *  
+}
+ *
  */
 export const getTrainList = params => {
     return request({
@@ -69,7 +70,7 @@ export const getTrainInfo = (params) => {
 
 /**
  * 培训课程 -- 详情(参加培训) 判断是否预览过
- * 参数 ： trainId ：(id)  培训活动的id	
+ * 参数 ： trainId ：(id)  培训活动的id
  */
 export const join = data => {
     return request({
@@ -81,9 +82,9 @@ export const join = data => {
 /**
  * 培训课程 -- 答题(提交答案)
  * 参数 ： {
-       isFinish	是否完成(0否，1是)	
+       isFinish	是否完成(0否，1是)
        paperId	试卷id
-       score 得分	
+       score 得分
        userAnswer 填写的答案
  * }
  */
@@ -95,7 +96,7 @@ export const answer = data => {
     })
 }
 /**
- * 培训课程 -- 交卷（结束考试） 
+ * 培训课程 -- 交卷（结束考试）
  * 参数 ： paperid
  */
 export const finishPaper = data => {
@@ -106,8 +107,8 @@ export const finishPaper = data => {
     })
 }
 /**
- * 培训课程 -- 考试的试卷id（PaperId）   获取支付时需：  orderNumber 
- * 参数 ： trainId ：(id) 
+ * 培训课程 -- 考试的试卷id（PaperId）   获取支付时需：  orderNumber
+ * 参数 ： trainId ：(id)
  */
 export const getPaperId = (params) => {
     return request({
@@ -119,7 +120,7 @@ export const getPaperId = (params) => {
 
 /**
  * 培训课程 -- 试卷的题目
- * 参数 ： trainId ：(PaperId) 
+ * 参数 ： trainId ：(PaperId)
  */
 export const getSubject = (params) => {
     return request({
@@ -142,23 +143,23 @@ export const getExamExpireTime = (params) => {
 
 /**
  * 培训课程 -- 考试视频上传
- * 参数 ： 
+ * 参数 ：
  */
 export const uploadVideo = data => {
     return request({
         url: 'http://wushu.sportsit.cn:8080/upload/uploadVideo',
         method: 'post',
         data,
-        timeout: 10*60*1000,
+        timeout: 10 * 60 * 1000,
     })
 }
 /**
  * 培训课程 -- 考试视频上传(提交))
  * 参数 ： {
- *  coverUrl	封面地址	
+ *  coverUrl	封面地址
     paperId	试卷id
     trainId	培训活动的id
-    userId	用户id	
+    userId	用户id
     videoUrl	视频地址
 }
  */
@@ -208,7 +209,7 @@ export const refereeList = params => {
 }
 /**
  * 培训课程 -- 裁判评分
- * 参数 ：id	评分id	;score	分数
+ * 参数 ：id    评分id    ;score    分数
  */
 export const Scoring = data => {
     return request({
@@ -220,7 +221,7 @@ export const Scoring = data => {
 
 /**
  * 培训课程 -- 裁判评分数量
- * 参数 ： 
+ * 参数 ：
  */
 export const reffgetcount = params => {
     return request({
@@ -235,7 +236,7 @@ export const reffgetcount = params => {
  * 培训课程 -- 根据培训id用户id查询改用户在改培训的所有考试记录
  * 参数 ： {
  * pageNum	页数
-   pageSize	页长度	
+   pageSize	页长度
    trainId	培训id
 }
  */
@@ -263,7 +264,7 @@ export const getPaperInfoByPaperId = params => {
  * 培训课程 -- 根据培训id获得考试信息(试卷整体信息)
  * 参数 ： trainId
  */
- export const getExamInfoByTrainId = params => {
+export const getExamInfoByTrainId = params => {
     return request({
         url: '/app/orgTrain/getExamInfoByTrainId',
         method: 'get',
@@ -273,9 +274,9 @@ export const getPaperInfoByPaperId = params => {
 
 /**
  * 培训课程 -- 获得培训包的列表(报名列表)
- * 参数 ： pageNum,	pageSize
+ * 参数 ： pageNum,    pageSize
  */
- export const getApplyTrainList = params => {
+export const getApplyTrainList = params => {
     return request({
         url: '/app/orgTrain/apply/getList',
         method: 'get',
@@ -286,7 +287,7 @@ export const getPaperInfoByPaperId = params => {
  * 培训课程 -- 根据id获得培训包详情(报名详情)
  * 参数 ： id
  */
- export const getApplyTrainDetail = params => {
+export const getApplyTrainDetail = params => {
     return request({
         url: '/app/orgTrain/apply/getOne',
         method: 'get',
@@ -297,10 +298,26 @@ export const getPaperInfoByPaperId = params => {
  * 培训课程 -- 报名培训包(确认报名)
  * 参数 ： id
  */
- export const confirmationTrain = data => {
+export const confirmationTrain = data => {
     return request({
         url: '/app/orgTrain/apply/apply',
         method: 'post',
         data
+    })
+}
+
+/**
+ * 培训课程 -- 报名培训包(确认报名)
+ * 参数 ：{
+ * pageNum
+ * pageSize
+ * needPay //筛选条件 0.无需支付 1.需要支付
+ * }
+ */
+export const myCourse = params=>{
+    return request({
+        url:'/app/orgTrain/apply/getApplyInfoByUserId',
+        method: 'get',
+        params
     })
 }

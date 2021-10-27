@@ -10,11 +10,12 @@
       <!--          <input class="input_1" id="keyword" type="text" placeholder="请输入您想查找的内容" autocomplete="off">-->
       <!--          <input type="button" id="" class="input_2" >-->
       <!--        </div>-->
-      <div class="block" v-if="userInfo.userName">
+      <div class="block" v-if="userInfo">
         <el-dropdown>
           <el-avatar :size="50" :src="userInfo.avatar"></el-avatar>
           <el-dropdown-menu slot="dropdown">
             <el-dropdown-item @click.native="$router.push('/myuser')">我的信息</el-dropdown-item>
+            <el-dropdown-item @click.native="$router.push('/myCourse')">我的课程</el-dropdown-item>
             <el-dropdown-item @click.native="logout">退出登录</el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
@@ -32,18 +33,19 @@
     <slot name="nav"></slot>
     <div class="navBar">
       <ul class="navUl">
-        <li v-for="(t,index) in title" :key=index @click="pick(t)" :class="{selected: current[0]===t.name}">
+        <li v-for="(t,index) in title" :key=index @click="pick(t)"
+            :class="{selected: current[0]===t.name,judge:t.name==='考评员'}">
           <a :href="t.link" target="_blank" v-if="t.a">
             {{ t.name }}
           </a>
-          <router-link :to="t.link" v-else-if="t.pop">
+          <router-link :to="t.link" v-else-if="t.rc">
             <div id="components-dropdown-demo-placement" class="dropdownWrapper">
               <Dropdown trigger="hover" style="margin-left: 20px">
                 裁判教练
                 <Icon type="ios-arrow-down"></Icon>
 
                 <Dropdown-menu slot="list">
-                  <Dropdown-item v-for="(item,index) in  popList" :key="index"
+                  <Dropdown-item v-for="(item,index) in  rcList" :key="index"
                   >
                     <router-link :to="{path:item.link , query:{crType:item.type}}">{{ item.name }}</router-link>
                   </Dropdown-item>
@@ -52,6 +54,23 @@
               </Dropdown>
             </div>
           </router-link>
+          <router-link :to="t.link" v-else-if="t.exam" class="judge">
+            <div id="components-dropdown-demo-placement" class="dropdownWrapper">
+              <Dropdown trigger="hover" style="margin-left: 20px">
+                考评员
+                <Icon type="ios-arrow-down"></Icon>
+
+                <Dropdown-menu slot="list">
+                  <Dropdown-item v-for="(item,index) in  judgeList" :key="index"
+                  >
+                    <router-link :to="{path:item.link , query:{crType:item.type}}">{{ item.name }}</router-link>
+                  </Dropdown-item>
+
+                </Dropdown-menu>
+              </Dropdown>
+            </div>
+          </router-link>
+
           <router-link :to="t.link" v-else>
             {{ t.name }}
           </router-link>
@@ -78,15 +97,20 @@ import {getUserProfile} from "@/api/user";
 export default {
   data() {
     return {
-      userInfo: {userName: '', avatar: ''},
+      userInfo: null,
       popShow: 'notShow',
-      popList: [
-        {name: '裁判注册', link: 'coachreferee', type: '1'},
-        {name: '裁判列表', link: 'crlist', type: '1'},
-        {name:'裁判打分',link:'rc-score-list',type:'1'},
-        {name: '教练注册', link: 'coachreferee', type: '0'},
-        {name: '教练列表', link: 'crlist', type: '0'},
+      rcList: [
+        {name: '裁判注册', link: '/coachreferee', type: '1'},
+        {name: '裁判列表', link: '/crlist', type: '1'},
+        {name: '裁判打分', link: '/rc-score-list', type: '1'},
+        {name: '教练注册', link: '/coachreferee', type: '0'},
+        {name: '教练列表', link: '/crlist', type: '0'},
       ],
+      judgeList: [
+        {name: '考评员注册', link: '/coachreferee', type: '3'},
+        {name: '考评员列表', link: '/crlist', type: '3'},
+
+      ]
     }
   },
   mounted() {
@@ -97,10 +121,18 @@ export default {
         // window.localStorage.setItem("user", JSON.stringify(res.data));
         window.sessionStorage.setItem("user", JSON.stringify(res.data));
         //self.$store.dispatch("saveUserInfo", res.data);
-        if(res.data.userInfo){
-          self.userInfo = res.data.userInfo
-          self.userInfo.avatar = self.loadUrl(self.userInfo.avatar)
+        if(res.data.userType===1){
+          if (res.data.userInfo) {
+            self.userInfo = res.data.userInfo
+            self.userInfo.avatar = self.loadUrl(self.userInfo.avatar)
+          }
+        }else {
+          if (res.data.orgInfo) {
+            self.userInfo = res.data.orgInfo
+            self.userInfo.avatar = self.loadUrl(res.data.orgInfo.img)
+          }
         }
+
 
       } else {
         console.log(res.mes)
@@ -125,7 +157,7 @@ export default {
       // window.localStorage.removeItem("token");
       // window.localStorage.removeItem("user");
       this.$store.dispatch("saveUserInfo", {});
-      this.userInfo = {}
+      this.userInfo = null
     },
   },
   computed: {
@@ -151,7 +183,8 @@ export default {
     align-items: center;
     font-size: 14px;
     color: #8e8e8e;
-    a{
+
+    a {
       color: #8e8e8e;
     }
 
@@ -225,18 +258,19 @@ export default {
 
   > .navBar {
     width: 1200px;
-    height: 40px;
+    //height: 40px;
 
     .navUl {
       display: flex;
       justify-content: space-between;
+      //flex-wrap: wrap;
 
       > li {
         text-align: center;
         width: 130px;
         height: 40px;
         font-size: 16px;
-        padding: 10px 6px;
+        padding: 10px 2px;
         //&:hover{
         //  border-bottom: 2px solid #DB261D;
         //  >a{
@@ -251,6 +285,10 @@ export default {
           }
         }
 
+        &.judge {
+          width: 100px;
+        }
+
         > a {
           color: #8e8e8e;
         }
@@ -258,8 +296,15 @@ export default {
       }
 
       .dropdownWrapper {
+        width: 100px;
         a {
           color: #8e8e8e;
+        }
+
+        ::v-deep .ivu-dropdown-rel {
+          width: 100px;
+          margin-left: -20px !important;
+          box-sizing: border-box;
         }
 
         ::v-deep .ivu-dropdown-menu {
@@ -272,10 +317,12 @@ export default {
           box-shadow: 0 2px 8px rgb(0 0 0 / 15%);
           -webkit-transform: translate3d(0, 0, 0);
         }
-        ::v-deep .ivu-dropdown-item{
+
+        ::v-deep .ivu-dropdown-item {
           font-size: 14px !important;
           padding: 10px 16px;
-          :hover{
+
+          :hover {
             color: #DB261D;
           }
         }
@@ -285,25 +332,29 @@ export default {
 
   }
 }
-.nav2{
+
+.nav2 {
   background-color: #f7f7f7;
   border-bottom: 1px #d2d2d2 solid;
   margin-top: 8px;
-  >ul{
+
+  > ul {
     width: 1200px;
     margin: 0 auto;
     height: 40px;
     display: flex;
     //padding-left: 47px;
-    >li{
+    > li {
       line-height: 40px;
       font-size: 14px;
       width: 60px;
       height: 40px;
-      >a{
+
+      > a {
         color: #848484;
       }
-      &.red{
+
+      &.red {
         color: #DB261D;
       }
     }

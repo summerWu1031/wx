@@ -3,7 +3,9 @@
     <Nav/>
     <Nav2>
       <span v-if="queryParams.type=='0'">教练列表</span>
-      <span v-else>裁判列表</span>
+      <span v-else-if="queryParams.type=='1'">裁判列表</span>
+      <span v-else>考评员列表</span>
+
     </Nav2>
     <main>
       <div class="danSearch">

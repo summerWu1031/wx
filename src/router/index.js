@@ -38,6 +38,7 @@ import ExamRecord from "@/views/trains/Exam-record";
 import ExamState from '@/views/trains/Exam-state'
 
 import NotFound from "@/components/NotFound";
+import Mycourse from "@/views/Course/Mycourse";
 
 //获取原型对象上的push函数
 const originalPush = VueRouter.prototype.push
@@ -54,10 +55,6 @@ const routes = [
     path: '/',
     name: '/',
     component: Home
-  },
-  {
-    path:'*',
-    component:NotFound
   },
   {
     path: '/introduce',
@@ -184,6 +181,15 @@ const routes = [
     }
   },
   {
+    path: '/myCourse',
+    name: 'mycourse',
+    props: true,
+    component: Mycourse,
+    meta:{
+      requireAuth:true
+    }
+  },
+  {
     path: '/memberpay',
     name: 'memberpay',
     props: true,
@@ -199,7 +205,7 @@ const routes = [
     component: ApplyList,
   },
   {
-    path: '/apply-detail/:id',
+    path: '/apply-detail',
     name: 'applyDetail',
     props: true,
     component: ApplyDetail,
@@ -296,6 +302,28 @@ const routes = [
     meta:{
       requireAuth:true
     }
+  },
+  {
+    path: '/raceList',
+    name:'raceList',
+    props: true,
+    component: () => import('@/views/Race/RaceList'),
+    meta:{
+      requireAuth:true
+    }
+  },
+  {
+    path: '/race-list-detail',
+    name:'raceListDetail',
+    props: true,
+    component: () => import('@/views/Race/RaceListDetail'),
+    meta:{
+      requireAuth:true
+    }
+  },
+  {
+    path:'*',
+    component:NotFound
   },
 ]
 

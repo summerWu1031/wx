@@ -193,6 +193,14 @@ export default {
               self.selectedOptions=self.queryParams.province
 
             }
+          }else if(self.queryParams.type === '3'){
+            if(res.data.examiner.length >0){
+              self.queryParams=res.data.examiner[res.data.examiner.length - 1]
+              self.$set(self.queryParams, "certImgs", [
+                {url: self.loadUrl(self.queryParams.certImg)},
+              ]);
+              self.selectedOptions=self.queryParams.province
+            }
           }
         }
       } else {

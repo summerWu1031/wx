@@ -156,9 +156,9 @@ export default {
           self.orderId = self.order.orderNumber;
         } else {
           self.$message(res.msg);
-          // setTimeout(() => {
-          //   self.$router.push("/login");
-          // }, 3000);
+          setTimeout(() => {
+            self.$router.push("/login");
+          }, 3000);
         }
       });
     },

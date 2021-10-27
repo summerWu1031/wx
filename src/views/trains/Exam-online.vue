@@ -58,26 +58,29 @@
           <li class="option disabled" v-for="(item,index) in  currentExam.optionList"
               :key="index"><!--@click="pick(item)" :class="{ disabled:currentExam.userAnswer}"-->
             <!--            题目是正确的-->
-            <div class="icon" v-if="trueId.indexOf(currentExam.id)>=0"
+            <div class="icon " v-if="trueId.indexOf(currentExam.id)>=0"
                  :class="{
                 onTrue: currentExam.subjectAnswer==item.option,
               }"> <!-- :class="{on:item.option==answer}" -->
-              <span v-if="currentExam.subjectAnswer==item.option"><i class="el-icon-check"></i></span>
+
+              <span v-if="answer==item.option"><i class="el-icon-check"></i></span>
               <span v-else>{{ item.option }}</span>
             </div>
             <!--题目是错误的-->
-            <div class="icon" v-else
+
+            <div class="icon " v-else
                  :class="{
                 onTrue: currentExam.subjectAnswer==item.option,
-                onFalse: currentExam.userAnswer==item.option
-              }"> <!-- :class="{on:item.option==answer}" -->
+                onFalse: picked==item.option
+              }">
+
               <span v-if="currentExam.subjectAnswer==item.option"><i class="el-icon-check"></i></span>
-              <span v-else-if="currentExam.userAnswer==item.option"><i class="el-icon-close"></i></span>
+              <span v-else-if="picked==item.option"><i class="el-icon-close"></i></span>
               <span v-else>{{ item.option }}</span>
             </div>
             <span class="content" :class="{
                 onTrue: currentExam.subjectAnswer==item.option ,
-                onFalse: currentExam.userAnswer==item.option && falseId.indexOf(currentExam.id)>=0
+                onFalse: picked==item.option && falseId.indexOf(currentExam.id)>=0
               }">{{ item.content }}</span>
           </li>
 
@@ -213,8 +216,17 @@ export default {
       }
       return idList
     },
+
   },
   methods: {
+    filter(){
+      const self = this
+      self.allFalseList.map((item)=>{
+        if(item.id==self.currentExam.id){
+          self.picked = item.selected
+        }
+      })
+    },
     back() {
       this.$router.back()
     },
@@ -241,8 +253,9 @@ export default {
         if (!self.isFinshPaper) {
           if (self.currentExam.subjectAnswer === item.option) {
             self.allTureList.push(self.currentExam)
+            console.log('true')
           } else if (self.currentExam.sujectAnswer != item.option && item.option != 0) {
-            self.allFalseList.push(self.currentExam)
+            self.allFalseList.push({id:self.currentExam.id,selected:item.option})
           }
         }
       }
@@ -270,6 +283,8 @@ export default {
       this.cIndex = index
       this.currentExam = item
       this.answer = item.userAnswer
+      this.filter()
+
     },
     // next() {
     //   let next = this.cIndex += 1
@@ -303,6 +318,8 @@ export default {
                 // 未做的题
               } else {
                 self.allFalseList.push(item)
+                self.allFalseList.push({id:item.id,selected:item.userAnswer})
+
               }
             })
           }

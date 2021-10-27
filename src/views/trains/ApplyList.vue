@@ -179,7 +179,8 @@ export default {
       this.init();
     },
     golink(id) {
-      this.$router.push(`/apply-detail/${id}`);
+      // this.$router.push(`/apply-detail/${id}`);
+      this.$router.push({path:'/apply-detail',query:{id}})
     },
   }
 }

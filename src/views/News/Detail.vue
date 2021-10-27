@@ -12,7 +12,11 @@
             <span >{{source}}</span>
           </span>
           <span class="time" v-if="time">发布时间:
-            <span>{{time}}</span></span>
+            <span>{{time}}</span>
+          </span>
+        </div>
+        <div class="trainLink" v-if="trainId" @click="golink">
+          培训链接
         </div>
       </div>
       <div class="content-text" v-html="content" >
@@ -35,6 +39,7 @@ export default {
       source:'',
       detailImg:'',
       title:'',
+      trainId:null
     }
   },
 
@@ -51,10 +56,15 @@ export default {
           self.time = res.data.releaseTime;
           self.source = res.data.noticeSource;
           self.title = res.data.noticeTitle;
+          self.trainId = res.data.trainId
         } else {
           self.$message(res.msg);
         }
       });
+    },
+    golink() {
+      // this.$router.push(`/apply-detail/${id}`);
+      this.$router.push({path:'/apply-detail',query:{id:this.trainId}})
     },
   }
 }

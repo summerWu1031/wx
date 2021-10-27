@@ -4,15 +4,16 @@
     <div class="course">
       <div class="sideBar">
         <el-menu :default-active="activeIndex" class="el-menu-vertical-demo"
-                 :collapse="isCollapse" @select="handleSelect">
-          <div @click="toggle(false)" v-if="isCollapse==true" class="barIcon">
-            <i class="el-icon-s-unfold" @click="isCollapse==false"></i>
-          </div>
-          <div @click="toggle(true)" v-else class="barIcon">
-            <i class="el-icon-s-fold"></i>
-          </div>
+                 :collapse="isCollapse" @select="handleSelect" :class="{on:isCollapse==false,off:isCollapse==true}">
+          <!--          <div @click="toggle(false)" v-if="isCollapse==true" class="barIcon">-->
+          <!--            <i class="el-icon-s-unfold" @click="isCollapse==false"></i>-->
+          <!--          </div>-->
+          <!--          <div @click="toggle(true)" v-else class="barIcon">-->
+          <!--            <i class="el-icon-s-fold"></i>-->
+          <!--          </div>-->
           <!--          :index=id-->
-          <el-menu-item :index="item.id" v-show="isCollapse==false" v-for="(item) in detail.orgWxTrainExaminations" :key="item.id">
+          <el-menu-item :index="item.id" v-show="isCollapse==false" v-for="(item) in detail.orgWxTrainExaminations"
+                        :key="item.id">
             <div class="type" v-if="item.lookType==1">
               <i class="el-icon-video-camera"></i>
               <span>视频</span>
@@ -24,13 +25,20 @@
             <div class="courseTitle">{{ item.trainName }}</div>
           </el-menu-item>
         </el-menu>
+        <!--        <div class="expand onshow" v-if="isCollapse==false" @click="toggle(true)">-->
+        <!--          <i class="el-icon-arrow-left" @click="isCollapse==true"></i>-->
+        <!--        </div>-->
+        <!--        <div class="expand offshow" v-else @click="toggle(false)">-->
+        <!--          <i class="el-icon-arrow-right" @click="isCollapse==false"></i>-->
+        <!--        </div>-->
+
       </div>
       <div class="course-video" v-if="videoUrl">
         <h2 class="nav">{{ courseName }}</h2>
-        <video controls  class="video">
-          <source :src="loadUrl(videoUrl)" type="video/mp4" >
+        <video controls class="video">
+          <source :src="loadUrl(videoUrl)" type="video/mp4">
         </video>
-<!--        <pdf v-else ref="pdf" :src="loadUrl(wordUrl)"></pdf>-->
+        <!--        <pdf v-else ref="pdf" :src="loadUrl(wordUrl)"></pdf>-->
       </div>
       <div class="course-video" v-else>
         <h2 class="nav">{{ courseName }}</h2>
@@ -46,22 +54,23 @@
 
 <script>
 import {getApplyTrainDetail, getTrainInfo} from '@/api/training'
+
 export default {
   data() {
     return {
-      detail:'',
+      detail: '',
       isCollapse: false,
       courseName: '',
       videoUrl: '',
-      wordUrl:'',
-      id:this.$route.params.id,
-      activeIndex:this.$route.params.selected.toString(),  //selected:item.id
-      selected:this.$route.params.selected,
+      wordUrl: '',
+      id: this.$route.params.id,
+      activeIndex: this.$route.params.selected.toString(),  //selected:item.id
+      selected: this.$route.params.selected,
     }
   },
   mounted() {
     const self = this
-    getApplyTrainDetail({id:self.id}).then((res) => {
+    getApplyTrainDetail({id: self.id}).then((res) => {
       if (res.code == 200) {
         self.detail = res.data;
       } else {
@@ -72,20 +81,20 @@ export default {
       }
       self.$store.commit("hideLoading");
     });
-   self.init()
+    self.init()
   },
   methods: {
     toggle(bool) {
       this.isCollapse = bool
     },
-    init(){
-      this.wordUrl=''
-      this.videoUrl=''
-      getTrainInfo({id:this.selected}).then((res) => {
+    init() {
+      this.wordUrl = ''
+      this.videoUrl = ''
+      getTrainInfo({id: this.selected}).then((res) => {
         if (res.code == 200) {
           this.courseName = res.data.trainName
-          this.wordUrl= res.data.wordUrl
-          if(res.data.videoUrl){
+          this.wordUrl = res.data.wordUrl
+          if (res.data.videoUrl) {
             this.videoUrl = res.data.videoUrl
           }
         } else {
@@ -96,7 +105,7 @@ export default {
     },
     handleSelect(key, keyPath) {
       console.log(key)
-     this.selected=key
+      this.selected = key
       this.init()
     }
   }
@@ -105,12 +114,42 @@ export default {
 
 <style lang="scss" scoped>
 .course {
-  margin-top: 12px;
-  margin-bottom: 30px;
+  //margin-top: 12px;
+  //margin-bottom: 30px;
   display: flex;
+  width: 1200px;
+  margin: 12px auto;
 
   .sideBar {
     padding-top: 12px;
+    //background-color: #fff;
+    overflow: auto;
+
+    .expand {
+      display: flex;
+      align-items: center;
+      position: fixed;
+      top: calc(50vh - 25px);
+      background-color: inherit;
+      padding: 5px 2px;
+      height: 50px;
+      width: 16px;
+      box-shadow: 1px 0 1px rgb(0 0 0 / 10%);
+      border-radius: 0 16px 16px 0;
+      cursor: pointer;
+
+      &.onshow {
+        left: 280px;
+      }
+
+      &.offshow {
+        left: 8px;
+      }
+
+      i {
+        font-size: 12px;
+      }
+    }
 
     .barIcon {
       padding: 4px 2px;
@@ -121,14 +160,17 @@ export default {
       font-size: 20px;
       cursor: pointer;
     }
-    .el-menu-item:hover{
+
+    .el-menu-item:hover {
       background-color: #fff;
     }
+
     ::v-deep.is-active {
       box-shadow: 0 2px 4px rgba(0, 0, 0, .12), 0 0 6px rgba(0, 0, 0, .04);
       color: #db261d;
       background-color: #fff;
-      :hover{
+
+      :hover {
         background-color: #fff;
       }
     }
@@ -138,6 +180,7 @@ export default {
     //margin-left: 124px;
     margin: 0 auto;
     width: 882px;
+
     .nav {
       border-bottom: 1px solid #c1c1c1;
       margin-bottom: 16px;
@@ -150,11 +193,13 @@ export default {
       height: 500px;
       width: 882px;
     }
-   .download{
-     font-size: 14px;
 
-   }
-    a{
+    .download {
+      font-size: 14px;
+
+    }
+
+    a {
       font-size: 14px;
       //font-weight: 600;
       color: #2d8cf0;
@@ -166,17 +211,20 @@ export default {
 .el-menu-vertical-demo:not(.el-menu--collapse) {
   width: 280px;
   min-height: 558px;
+
+  &.off {
+    width: 4px;
+  }
 }
 
 .el-menu--collapse {
-  width: 36px;
+  width: 20px;
 }
 
 .el-menu {
   background-color: #f3f3f3;
   box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1)
 }
-
 
 
 .el-menu-item {
@@ -195,7 +243,8 @@ export default {
     color: #999;
     align-items: center;
     margin-bottom: 4px;
-    box-shadow:none;
+    box-shadow: none;
+
     i {
       font-size: 18px;
     }
@@ -208,7 +257,7 @@ export default {
     text-overflow: ellipsis;
     white-space: nowrap;
     margin-bottom: 4px;
-    box-shadow:none;
+    box-shadow: none;
   }
 }
 </style>

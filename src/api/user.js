@@ -308,7 +308,11 @@ export const getOrderById = data => {
 /**
  * pc微信支付：
  * @param {*} params
- * 参数JSON：{id:订单id}
+ * 参数JSON：
+ * {
+ * id:订单id
+ * orderType //5培训 4培训包
+ * }
  */
 export const wxPay = data => {
     return request({

@@ -4,16 +4,17 @@
       <span class="back"> <router-link to="/">&lt; 返回首页</router-link>   </span>
       <div class="user-head">
         <div class="block">
-          <el-avatar :size="50" v-model="basic.avatars" :src="basic.avatars[0].url"></el-avatar>
+          <el-avatar :size="50" v-model="userInfo.avatars" :src="userInfo.avatars[0].url"></el-avatar>
         </div>
         <span class="name"> {{ userInfo.userName }}</span>
         <span class="tel">{{ userInfo.phonenumber }}</span>
       </div>
       <div class="wrapper">
-        <el-tabs type="card" v-model="activeName" class="formTab">
+        <!--        个人-->
+        <el-tabs type="card" v-model="activeName" class="formTab" v-if="userType===1">
           <el-tab-pane label="基本信息" name="1">
             <el-form :model="basic" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm"
-                     @keyup.enter.native="submitForm('ruleForm')">
+                     @keyup.enter.native="submitForm('ruleForm',1)">
               <el-form-item label="真实姓名" prop="userName">
                 <el-input v-model="basic.userName" placeholder="请输入真实姓名"></el-input>
               </el-form-item>
@@ -42,7 +43,7 @@
                     :placeholder="selectedOptions.length==0? '请选择所在区域':selectedOptions"
                     :options="options"
                     v-model="selectedOptions"
-                    @change="handleChange">
+                    @change="handleChange()">
                 </el-cascader>
               </el-form-item>
               <el-form-item label="入会类型" prop="sourceOrgType">
@@ -104,14 +105,14 @@
                 </el-select>
               </el-form-item>
               <el-form-item class="btn">
-                <el-button type="primary" @click="submitForm('ruleForm')">保存</el-button>
+                <el-button type="primary" @click="submitForm('ruleForm',1)">保存</el-button>
               </el-form-item>
             </el-form>
           </el-tab-pane>
 
           <el-tab-pane label="段位信息" name="2">
             <el-form :model="dan" :rules="rules" ref="dan" label-width="100px" class="demo-ruleForm"
-                     @keyup.enter.native="submitForm('dan')">
+                     @keyup.enter.native="onSubmitCert('dan','dan')">
               <el-form-item label="考试项目" prop="item">
                 <el-select v-model="dan.item" placeholder="请输入考试项目">
                   <el-option v-for="(item,index) in danItemColumns" :key="index" :label="item"
@@ -159,7 +160,7 @@
 
           <el-tab-pane label="运动员等级信息" name="3">
             <el-form :model="player" :rules="rules" ref="player" label-width="100px" class="demo-ruleForm"
-                     @keyup.enter.native="submitForm('player')">
+                     @keyup.enter.native="onSubmitCert('player','player')">
               <el-form-item label="运动员等级" prop="playerLv">
                 <el-select v-model="player.playerLv" placeholder="请选择您的级别" @change="selectedPlayerLevel">
                   <el-option v-for="(item,index) in athletesGradeColumns" :key="index" :label="item"
@@ -200,9 +201,75 @@
             </el-form>
           </el-tab-pane>
 
-
         </el-tabs>
-
+        <!--团体-->
+        <el-form v-else :model="unitBasic" :rules="rules" ref="unit" label-width="100px" class="demo-ruleForm"
+                 @keyup.enter.native="submitForm('unit',2)">
+          <el-form-item label="单位名称" prop="userName">
+            <el-input v-model="unitBasic.name" placeholder="请输入单位名称"></el-input>
+          </el-form-item>
+          <el-form-item label="联系人" prop="principal">
+            <el-input v-model="unitBasic.principal" placeholder="请输入联系人"></el-input>
+          </el-form-item>
+          <el-form-item label="联系电话" prop="phone">
+            <el-input v-model="unitBasic.phone" placeholder="请输入联系电话"></el-input>
+          </el-form-item>
+          <el-form-item label="统一社会信用代码" prop="creditCode">
+            <el-input v-model="unitBasic.creditCode" placeholder="请输入统一社会信用代码"></el-input>
+          </el-form-item>
+          <el-form-item label="电子邮箱">
+            <el-input v-model="unitBasic.email" placeholder="请输入电子邮箱"></el-input>
+          </el-form-item>
+          <el-form-item label="所在区域" prop="province">
+            <el-cascader
+                size="large"
+                :placeholder="selectedOptions.length==0? '请选择所在区域':selectedOptions"
+                :options="options"
+                v-model="selectedOptions"
+                @change="handleChange()">
+            </el-cascader>
+          </el-form-item>
+          <el-form-item label="详细地址">
+            <el-input v-model="unitBasic.area" placeholder="请输入详细地址"></el-input>
+          </el-form-item>
+          <el-form-item label="介绍" >
+            <el-input type="textarea" class="intro" v-model="unitBasic.introduction" placeholder="请输入介绍"></el-input>
+          </el-form-item>
+          <el-form-item label="章程" >
+            <el-input type="textarea" v-model="unitBasic.constitution" placeholder="请输入章程"></el-input>
+          </el-form-item>
+          <el-form-item label="营业执照上传" prop="licenses" class="upload">
+            <el-upload
+                @click="getType('licenses')"
+                v-model="unitBasic.licenses"
+                class="avatar-uploader"
+                action="http://wushu.sportsit.cn:8080/upload/uploadImage"
+                :show-file-list="false"
+                :on-success="handleAvatarSuccessLicenses"
+                :before-upload="beforeAvatarUpload">
+              <img v-if="unitBasic.licenses" :src="unitBasic.licenses[0].url" class="avatar">
+              <img v-else src="../../assets/image/upload.png" alt="" class="uploadIcon">
+              <!--              <i v-else class="el-icon-plus avatar-uploader-icon"></i>-->
+            </el-upload>
+          </el-form-item>
+          <el-form-item label="证件照" prop="img" class="upload">
+            <el-upload
+                @click="getType('unitBasic')"
+                v-model="unitBasic.img"
+                class="avatar-uploader"
+                action="http://wushu.sportsit.cn:8080/upload/uploadImage"
+                :show-file-list="false"
+                :on-success="handleAvatarSuccessUnit"
+                :before-upload="beforeAvatarUpload">
+              <img v-if="unitBasic.img" :src="unitBasic.avatars[0].url" class="avatar">
+              <img v-else src="../../assets/image/upload.png" alt="" class="uploadIcon">
+              <!--              <i v-else class="el-icon-plus avatar-uploader-icon"></i>-->
+            </el-upload>
+          </el-form-item>
+          <el-form-item class="btn">
+            <el-button type="primary" @click="submitForm('unit',2)">保存</el-button>
+          </el-form-item>
+        </el-form>
 
       </div>
     </div>
@@ -236,10 +303,11 @@ export default {
       }
     }
     return {
+      userType: null,
       activeName: '1',
       options: regionData,
       selectedOptions: [],
-      user: {},
+      // user: {},
       userInfo: {},
       cId: 0,
       cType: "",
@@ -353,6 +421,23 @@ export default {
         playerLv: [
           {required: true, message: '等级不能为空！'}
         ],
+        name: [
+          {required: true, message: '请填写单位名称!', trigger: 'blur'},
+        ],
+        principal: [
+          {required: true, message: '请填写联系人'}
+        ],
+        phone: [
+          {required: true, message: '请填写联系电话'}
+        ],
+        introduction: [
+          {required: true, message: '请填写介绍'},
+          {required: true, max: 600, message: '字数限制为600字'}
+        ],
+        constitution: [
+          {required: true, message: '请填写章程'},
+          {required: true, max: 500, message: '字数限制为500字'}
+        ]
       },
       nationActions: [
         {label: "汉族", value: "汉族"},
@@ -547,11 +632,9 @@ export default {
     }
   },
   computed: {
-    // userinfo() {
-    //   return this.$store.state.userinfo;
-    // },
-
-
+    user() {
+      return JSON.parse(window.sessionStorage.getItem('user'))
+    },
     // 计算数学，匹配搜索
     filteredAssociationList() {
       const self = this;
@@ -596,105 +679,202 @@ export default {
       return newAssociationList
     }
   },
+
   mounted() {
     let self = this;
-    // self.userInfo = self.userinfo.userInfo;
+    self.userInfo = self.user.userInfo;
+    self.userType = self.user.userType
     self.$store.commit("showLoading");
 
-    getUserProfile().then((res) => {
-      if (res.code == 200) {
-        window.sessionStorage.setItem("user", JSON.stringify(res.data));
-        // window.localStorage.setItem("user", JSON.stringify(res.data));
-
-        // self.$store.dispatch("saveUserInfo", res.data);
-
-        if (res.data.userType == 1) {
-          self.userInfo = res.data.userInfo
-
-          if (!self.userInfo.updateTime) {
-            self.basic.userName = self.userInfo.userName;
-            self.basic.phonenumber = self.userInfo.phonenumber;
-            self.basic.identityCode = self.userInfo.identityCode;
-            self.basic.sex = self.userInfo.sex;
-            self.basic.avatar = self.userInfo.avatar;
-            self.$set(self.basic, "avatars", [
-              {url: self.loadUrl(self.userInfo.avatar)},
-            ]);
-            self.$set(self.basic, "memberName", self.userInfo.memberName);
-            self.$set(self.basic, "sourceOrgType", self.userInfo.sourceOrgType.toString());
-            if(self.basic.province && self.basic.city && self.basic.county){
-              self.selectedOptions=self.basic.province.concat('/',self.basic.city,'/',self.basic.county)
-            }
-          } else {
-            self.basic = self.userInfo;
-            if(self.basic.province && self.basic.city && self.basic.county){
-              self.selectedOptions=self.basic.province.concat('/',self.basic.city,'/',self.basic.county)
-            }
-            self.$set(
-                self.basic,
-                "memberApply",
-                Object.assign(
-                    {},
-                    {
-                      sign: "wx",
-                      memberName: "",
-                      memberId: 0,
-                      goodsPrice: "",
-                      sourceOrgName: "",
-                      searchSourceOrgName: "",
-                      sourceOrgId: 0,
-                      nation: "",
-                      speciality: "",
-                      culture: "",
-                    }
-                )
-            );
-            self.$set(self.basic, "sourceOrgType", self.userInfo.sourceOrgType.toString());
-            self.$set(self.basic, "avatars", [
-              {url: self.loadUrl(self.basic.avatar)},
-            ]);
-          }
-          if (res.data.rankInfo.length > 0) {
-            self.dan = res.data.rankInfo[0];
-            self.itemValue = self.dan.value;
-            self.$set(self.dan, "certImgs", [
-              {url: self.loadUrl(self.dan.certImg)},
-            ]);
-
-
-          }
-          if (res.data.playerInfo.length > 0) {
-            self.player = res.data.playerInfo[0];
-            self.player.playerLv = self.player.level
-            self.$set(self.player, "certImgs", [
-              {url: self.loadUrl(self.player.certImg)},
-            ]);
-
-          }
-        } else {
-          self.userInfo = res.data.userInfo
-          let orgInfo = self.userinfo.orgInfo;
-          if (!orgInfo.updateTime) {
-            self.unitBasic.name = orgInfo.name;
-            self.unitBasic.principal = orgInfo.principal;
-            self.unitBasic.phone = orgInfo.phone;
-            self.unitBasic.creditCode = orgInfo.creditCode;
-          } else {
-            self.unitBasic = orgInfo;
-            self.userInfo.avatar = self.unitBasic.img;
-            self.$set(self.unitBasic, "avatars", [
-              {url: self.loadUrl(self.unitBasic.img)},
-            ]);
-            self.$set(self.unitBasic, "licenses", [
-              {url: self.loadUrl(self.unitBasic.license)},
-            ]);
-          }
+    if (self.userType == 1) {
+      self.userInfo = self.userinfo.userInfo
+      if (!self.userInfo.updateTime) {
+        self.basic.userName = self.userInfo.userName;
+        self.basic.phonenumber = self.userInfo.phonenumber;
+        self.basic.identityCode = self.userInfo.identityCode;
+        self.basic.sex = self.userInfo.sex;
+        self.basic.avatar = self.userInfo.avatar;
+        self.$set(self.basic, "avatars", [
+          {url: self.loadUrl(self.userInfo.avatar)},
+        ]);
+        self.$set(self.basic, "memberName", self.userInfo.memberName);
+        self.$set(self.basic, "sourceOrgType", self.userInfo.sourceOrgType.toString());
+        if (self.basic.province && self.basic.city && self.basic.county) {
+          self.selectedOptions = self.basic.province.concat('/', self.basic.city, '/', self.basic.county)
         }
       } else {
-        self.$message(res.mes)
+        self.basic = self.userInfo;
+        if (self.basic.province && self.basic.city && self.basic.county) {
+          self.selectedOptions = self.basic.province.concat('/', self.basic.city, '/', self.basic.county)
+        }
+        self.$set(
+            self.basic,
+            "memberApply",
+            Object.assign(
+                {},
+                {
+                  sign: "wx",
+                  memberName: "",
+                  memberId: 0,
+                  goodsPrice: "",
+                  sourceOrgName: "",
+                  searchSourceOrgName: "",
+                  sourceOrgId: 0,
+                  nation: "",
+                  speciality: "",
+                  culture: "",
+                }
+            )
+        );
+        self.$set(self.basic, "sourceOrgType", self.userInfo.sourceOrgType.toString());
+        self.$set(self.basic, "avatars", [
+          {url: self.loadUrl(self.basic.avatar)},
+        ]);
       }
-      this.queryDictListByTypeLists();
-    })
+      if (self.user.rankInfo.length > 0) {
+        self.dan = res.data.rankInfo[0];
+        self.itemValue = self.dan.value;
+        self.$set(self.dan, "certImgs", [
+          {url: self.loadUrl(self.dan.certImg)},
+        ]);
+
+
+      }
+      if (self.user.playerInfo.length > 0) {
+        self.player = res.data.playerInfo[0];
+        self.player.playerLv = self.player.level
+        self.$set(self.player, "certImgs", [
+          {url: self.loadUrl(self.player.certImg)},
+        ]);
+
+      }
+    } else {
+      self.userInfo = self.user.orgInfo
+      let orgInfo = self.userInfo;
+      if (!orgInfo.updateTime) {
+        self.unitBasic.name = orgInfo.name;
+        self.unitBasic.principal = orgInfo.principal;
+        self.unitBasic.phone = orgInfo.phone;
+        self.unitBasic.creditCode = orgInfo.creditCode;
+        if (self.unitBasic.province && self.unitBasic.city && self.unitBasic.county) {
+          self.selectedOptions = self.unitBasic.province.concat('/', self.unitBasic.city, '/', self.unitBasic.county)
+        }
+      } else {
+        self.unitBasic = orgInfo;
+        self.userInfo.avatar = self.unitBasic.img;
+        self.$set(self.unitBasic, "avatars", [
+          {url: self.loadUrl(self.unitBasic.img)},
+        ]);
+        self.$set(self.unitBasic, "licenses", [
+          {url: self.loadUrl(self.unitBasic.license)},
+        ]);
+        if (self.unitBasic.province && self.unitBasic.city && self.unitBasic.county) {
+          self.selectedOptions = self.unitBasic.province.concat('/', self.unitBasic.city, '/', self.unitBasic.county)
+        }
+      }
+    }
+    this.queryDictListByTypeLists();
+
+
+    // getUserProfile().then((res) => {
+    //   if (res.code == 200) {
+    //     window.sessionStorage.setItem("user", JSON.stringify(res.data));
+    //     // window.localStorage.setItem("user", JSON.stringify(res.data));
+    //
+    //     // self.$store.dispatch("saveUserInfo", res.data);
+    //
+    //     if (res.data.userType == 1) {
+    //       self.userInfo = res.data.userInfo
+    //       if (!self.userInfo.updateTime) {
+    //         self.basic.userName = self.userInfo.userName;
+    //         self.basic.phonenumber = self.userInfo.phonenumber;
+    //         self.basic.identityCode = self.userInfo.identityCode;
+    //         self.basic.sex = self.userInfo.sex;
+    //         self.basic.avatar = self.userInfo.avatar;
+    //         self.$set(self.basic, "avatars", [
+    //           {url: self.loadUrl(self.userInfo.avatar)},
+    //         ]);
+    //         self.$set(self.basic, "memberName", self.userInfo.memberName);
+    //         self.$set(self.basic, "sourceOrgType", self.userInfo.sourceOrgType.toString());
+    //         if (self.basic.province && self.basic.city && self.basic.county) {
+    //           self.selectedOptions = self.basic.province.concat('/', self.basic.city, '/', self.basic.county)
+    //         }
+    //       } else {
+    //         self.basic = self.userInfo;
+    //         if (self.basic.province && self.basic.city && self.basic.county) {
+    //           self.selectedOptions = self.basic.province.concat('/', self.basic.city, '/', self.basic.county)
+    //         }
+    //         self.$set(
+    //             self.basic,
+    //             "memberApply",
+    //             Object.assign(
+    //                 {},
+    //                 {
+    //                   sign: "wx",
+    //                   memberName: "",
+    //                   memberId: 0,
+    //                   goodsPrice: "",
+    //                   sourceOrgName: "",
+    //                   searchSourceOrgName: "",
+    //                   sourceOrgId: 0,
+    //                   nation: "",
+    //                   speciality: "",
+    //                   culture: "",
+    //                 }
+    //             )
+    //         );
+    //         self.$set(self.basic, "sourceOrgType", self.userInfo.sourceOrgType.toString());
+    //         self.$set(self.basic, "avatars", [
+    //           {url: self.loadUrl(self.basic.avatar)},
+    //         ]);
+    //       }
+    //       if (res.data.rankInfo.length > 0) {
+    //         self.dan = res.data.rankInfo[0];
+    //         self.itemValue = self.dan.value;
+    //         self.$set(self.dan, "certImgs", [
+    //           {url: self.loadUrl(self.dan.certImg)},
+    //         ]);
+    //
+    //
+    //       }
+    //       if (res.data.playerInfo.length > 0) {
+    //         self.player = res.data.playerInfo[0];
+    //         self.player.playerLv = self.player.level
+    //         self.$set(self.player, "certImgs", [
+    //           {url: self.loadUrl(self.player.certImg)},
+    //         ]);
+    //
+    //       }
+    //     } else {
+    //       self.userInfo = res.data.orgInfo
+    //       let orgInfo = self.userInfo;
+    //       if (!orgInfo.updateTime) {
+    //         self.unitBasic.name = orgInfo.name;
+    //         self.unitBasic.principal = orgInfo.principal;
+    //         self.unitBasic.phone = orgInfo.phone;
+    //         self.unitBasic.creditCode = orgInfo.creditCode;
+    //         if (self.unitBasic.province && self.unitBasic.city && self.unitBasic.county) {
+    //           self.selectedOptions = self.unitBasic.province.concat('/', self.unitBasic.city, '/', self.unitBasic.county)
+    //         }
+    //       } else {
+    //         self.unitBasic = orgInfo;
+    //         self.userInfo.avatar = self.unitBasic.img;
+    //         self.$set(self.unitBasic, "avatars", [
+    //           {url: self.loadUrl(self.unitBasic.img)},
+    //         ]);
+    //         self.$set(self.unitBasic, "licenses", [
+    //           {url: self.loadUrl(self.unitBasic.license)},
+    //         ]);
+    //         if (self.unitBasic.province && self.unitBasic.city && self.unitBasic.county) {
+    //           self.selectedOptions = self.unitBasic.province.concat('/', self.unitBasic.city, '/', self.unitBasic.county)
+    //         }
+    //       }
+    //     }
+    //   } else {
+    //     self.$message(res.mes)
+    //   }
+    //   this.queryDictListByTypeLists();
+    // })
     // this.queryDictListByTypeLists();
 
     // hysq
@@ -733,11 +913,15 @@ export default {
       let self = this;
 
       // CodeToText属性是区域码，属性值是汉字 CodeToText['110000']输出北京市
-      self.basic.province = CodeToText[self.selectedOptions[0]]
-      self.basic.city = CodeToText[self.selectedOptions[1]]
-      self.basic.county = CodeToText[self.selectedOptions[2]];
-
-
+      if (self.userType === 1) {
+        self.basic.province = CodeToText[self.selectedOptions[0]]
+        self.basic.city = CodeToText[self.selectedOptions[1]]
+        self.basic.county = CodeToText[self.selectedOptions[2]];
+      } else {
+        self.unitBasic.province = CodeToText[self.selectedOptions[0]]
+        self.unitBasic.city = CodeToText[self.selectedOptions[1]]
+        self.unitBasic.county = CodeToText[self.selectedOptions[2]];
+      }
     },
 
     // 上传头像
@@ -803,6 +987,46 @@ export default {
         }
       })
     },
+    handleAvatarSuccessLicenses(res, file) {
+      this.unitBasic.license = URL.createObjectURL(file.raw);
+      let self = this
+      let formData = new FormData()
+      formData.append('file', file.raw)
+      uploadImage(formData).then((res) => {
+        if (res.code == 200) {
+          setTimeout(() => {
+            let str = res.fileName
+            file.name = str
+            self.unitBasic.license = str;
+            self.unitBasic.licenses[0] = {url: self.loadUrl(str)};
+            file.status = "done";
+            file.message = "上传成功";
+          }, 1000)
+        } else {
+          self.$message(res.msg);
+        }
+      })
+    },
+    handleAvatarSuccessUnit(res, file) {
+      this.unitBasic.img = URL.createObjectURL(file.raw);
+      let self = this
+      let formData = new FormData()
+      formData.append('file', file.raw)
+      uploadImage(formData).then((res) => {
+        if (res.code == 200) {
+          setTimeout(() => {
+            let str = res.fileName
+            file.name = str
+            self.unitBasic.img = str;
+            self.unitBasic.avatars[0] = {url: self.loadUrl(str)};
+            file.status = "done";
+            file.message = "上传成功";
+          }, 1000)
+        } else {
+          self.$message(res.msg);
+        }
+      })
+    },
     beforeAvatarUpload(file) {
       // const isSize = new Promise(function (resolve, reject) {
       //   let width = 300
@@ -831,11 +1055,11 @@ export default {
     },
 
     // 提交表单
-    submitForm(formName) {
+    submitForm(formName, type) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           let self = this
-          let param = self.basic
+          let param = type === 1 ? self.basic : self.unitBasic
           // 会员申请元素
           self.basic.memberApply.memberName = self.basic.memberName;
           self.basic.memberApply.memberId = self.basic.memberId;
@@ -932,18 +1156,21 @@ export default {
     // 会员申请部分
     getMembershipFee() {
       let self = this;
-      queryCenterApplyMemberList({sign: "wx"}).then((res) => {
-        if (res.code == 200) {
-          self.MemberList = res.data;
-          res.data.map((item) => {
-            self.MemTypeColumns.push(item.memberName);
-          });
-          // self.MemParms.memberId = res.data[0].id
-          // self.getCustomForms();
-        } else {
-          self.$message(res.msg);
-        }
-      });
+      console.log(self.userType)
+      if (self.userType === 1) {
+        queryCenterApplyMemberList({sign: "wx"}).then((res) => {
+          if (res.code == 200) {
+            self.MemberList = res.data;
+            res.data.map((item) => {
+              self.MemTypeColumns.push(item.memberName);
+            });
+            // self.MemParms.memberId = res.data[0].id
+            // self.getCustomForms();
+          } else {
+            self.$message(res.msg);
+          }
+        });
+      }
     },
     // 会员类别
     onMemType(value) {
@@ -1089,6 +1316,12 @@ export default {
         width: 80%;
         vertical-align: bottom;
         font-size: 14px;
+      }
+
+      .intro {
+        ::v-deep.el-textarea__inner {
+          height: 200px;
+        }
       }
 
       ::v-deep .el-radio__input {

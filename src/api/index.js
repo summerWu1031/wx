@@ -86,6 +86,20 @@ export const danQuery = params => {
     })
 }
 
+
+/**
+ * 赛事报名查询
+ * {pageNum: 1, pageSize: 10, userName: null, orderStatus: null}
+ */
+export const raceListQuery = data =>{
+    return request({
+        url:'/app/competition/wx/applyPayList2',
+        method: 'post',
+        data
+    })
+}
+
+
 /**
  * 段位查询 -- 姓名
  * 参数：userName,identityCode,pageSize,pageNum

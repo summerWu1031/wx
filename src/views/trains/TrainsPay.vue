@@ -1,6 +1,6 @@
 <template>
   <div class="coach">
-    <div class="content">
+    <div class="payContent">
       <span class="back" @click="back">&lt; 返回课程列表 </span>
       <div class="user-head">
         <div class="block">
@@ -59,7 +59,7 @@
                  :logoScale=".2"
                  :logoMargin="5"
                  logoBackgroundColor="white"
-                 :margin="10" :size="190" text="test"/>
+                 :margin="10" :size="190" :text="qrcode"/>
           <h2>请用微信扫码支付</h2>
           <h2 class="payPrice">{{ payInfo.price }}元</h2>
         </div>
@@ -75,8 +75,8 @@ import {
   getUserProfile, checkUserMember
 } from "@/api/user";
 import VueQr from "vue-qr";
-import {confirmationTrain,getPaperId} from "@/api/training";
-
+import {confirmationTrain} from "@/api/training";
+import "@/assets/pay.scss"
 
 export default {
   components: {
@@ -86,20 +86,20 @@ export default {
   props: ['detail'],
   data() {
     return {
-      detailShow:false,
+      detailShow: false,
       payInfo: {},
       payType: 2, //支付宝:1 微信:2
       userInfo: {},
       qrcode: '',
       isShowQrcode: false,
       websock: undefined,
-      order:{},
-      orderId:null
+      order: {},
+      orderId: null
     }
   },
   mounted() {
     let self = this
-    self.getPaperIds();
+
     self.checkUserMembers()
     getUserProfile().then((res) => {
       let self = this
@@ -126,35 +126,13 @@ export default {
   },
 
   methods: {
-    getPaperIds() {
-      const self = this;
-      let trainId = this.detail.id;
-
-      self.$store.commit("showLoading");
-      getPaperId({ trainId }).then((res) => {
-        self.$store.commit("hideLoading");
-        if (res.code == 200) {
-
-          self.order = res.data.orderInfo;
-          //  console.log("order", self.order.trainId);
-          self.orderId = self.order.orderNumber;
-        } else {
-          self.$message(res.msg);
-          // setTimeout(() => {
-          //   self.$router.push("/login");
-          // }, 3000);
-        }
-      });
-    },
-
-
     confirmationTrains() {
       const self = this;
       let id = self.detail.id;
       confirmationTrain({id}).then((res) => {
         if (res.code == 2) {
-
           self.payInfo = res.data
+          self.orderId= self.payInfo.orderNumber
         } else {
           self.$message(res.msg);
         }
@@ -183,7 +161,7 @@ export default {
       const self = this;
       self.$store.commit("showLoading");
       self.initWebSocket()
-      wxPay({id: self.orderId}).then((res) => {
+      wxPay({id: self.orderId, orderType:5}).then((res) => {
         self.$store.commit("hideLoading");
         self.qrcode = res.data.qrcode
 
@@ -242,279 +220,102 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.content {
-  width: 1200px;
-  margin: 40px auto;
-  background-color: #fff;
-  padding-bottom: 2px;
-  max-height: 1900px;
-
-  .back {
-    padding: 20px 0 0 20px;
-    display: inline-block;
-    color: #555;
-    position: relative;
-    cursor: pointer;
-    font-size: 14px;
-  }
-
-  .user-head {
-    text-align: center;
-    padding: 16px 0;
-
-    .block {
-      ::v-deep .el-avatar {
-        width: 100px !important;
-        height: 100px !important;
-        border: solid 8px #fff;
-        box-shadow: -6px 6px 20px #eee;
-
-        img {
-          width: 100%;
-          object-fit: fill;
-
-        }
-      }
-    }
-
-    .name {
-      padding: 10px 0;
-      display: block;
-      color: #1a1613;
-      font-size: 20px;
-    }
-
-    .tel {
-      display: block;
-      color: #999;
-      font-size: 14px;
-    }
-  }
-
-  .wrapper {
-    width: 800px;
-    margin: 0 auto;
-    margin-bottom: 60px;
-
-    .demo-ruleForm {
-      margin: 12px auto 6px auto;
-      width: 800px;
-      padding-left: 26px;
-      margin-left: 66px;
-
-      .el-input {
-        position: relative;
-        font-size: 14px;
-        display: inline-block;
-        width: 80%;
-      }
-
-      .radio-content {
-        display: inline-flex;
-        align-items: center;
-        width: 78px;
-        //float: left;
-        img {
-          width: 30px;
-          height: 30px;
-          display: inline-block;
-
-          &.wx {
-            margin: 0 4px;
-          }
-        }
-
-        .wechat {
-          height: 30px;
-          display: inline-block;
-          line-height: 30px;
-        }
-      }
-
-
-      ::v-deep .el-radio {
-        width: 498px;
-        display: flex;
-        justify-content: space-between;
-        flex-direction: row-reverse;
-        align-items: center;
-      }
-
-      ::v-deep .el-radio__label {
-        width: 100px;
-        padding-left: 0;
-      }
-
-      ::v-deep .el-radio__input {
-        padding-right: 4px;
-      }
-
-    }
-
-    .paycard, .paytype {
-      margin-top: 16px;
-      border-radius: 16px;
-      padding: 16px;
-      box-shadow: 0 0 16px rgb(0 0 0 / 10%);
-
-      h2 {
-        padding-left: 20px;
-        margin-bottom: 20px;
-      }
-
-      .pay-item {
-        display: block;
-        padding: 12px 8px;
-        background: rgba(0, 0, 0, 0.03);
-        font-size: 14px;
-        margin: 0 20px 12px 20px;
-
-        &.price {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          padding: 4px 0 4px 8px
-        }
-
-        .card {
-          display: flex;
-          justify-content: space-between;
-
-          .checkCard {
-            cursor: pointer;
-            color: #969799;
-          }
-        }
-
-        ::v-deep .el-button {
-          width: 100px;
-          background-color: #DB261D;
-
-          span {
-            color: #fff;
-          }
-        }
-
-        ::v-deep .el-button--primary {
-          border-color: unset;
-        }
-
-        i {
-          font-style: normal;
-        }
-
-        .Red {
-          color: #db261d;
-        }
-
-        .payPrice {
-          color: #db261d;
-          font-size: 20px;
-        }
-      }
-    }
-
-    .paytype {
-      .radio-content {
-        display: inline-flex;
-        align-items: center;
-        width: 78px;
-        //float: left;
-        img {
-          width: 24px;
-          height: 24px;
-          display: inline-block;
-
-          &.wx {
-            margin: 0 6px;
-          }
-        }
-
-        .wechat {
-          height: 30px;
-          display: inline-block;
-          line-height: 30px;
-        }
-      }
-
-
-      ::v-deep .el-radio {
-        width: 742px;
-        display: flex;
-        justify-content: space-between;
-        flex-direction: row-reverse;
-        align-items: center;
-        padding-left: 20px;
-        padding-bottom: 6px;
-      }
-
-      ::v-deep .el-radio__label {
-        width: 100px;
-        padding-left: 0;
-      }
-
-      ::v-deep .el-radio__input {
-        padding-right: 4px;
-
-        :hover {
-          border-color: rgb(219, 38, 29);
-        }
-      }
-
-      ::v-deep .el-radio__input.is-checked .el-radio__inner {
-        border-color: rgb(219, 38, 29);
-        background-color: #fff;
-
-      }
-
-      ::v-deep .el-radio__inner::after {
-        width: 6px;
-        height: 6px;
-        background-color: rgb(219, 38, 29);
-      }
-
-      ::v-deep .el-radio__input.is-checked + .el-radio__label {
-        color: #606266;
-      }
-    }
-
-    .memberCard {
-
-    }
-
-    .codeUrl {
-      //margin-top: 20px;
-      padding-top: 16px;
-      margin: 0 auto;
-      width: 250px;
-      position: absolute;
-      top: 480px;
-      left: 634px;
-      box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
-
-      i {
-        position: absolute;
-        top: 6px;
-        right: 6px;
-        font-size: 20px;
-        cursor: pointer;
-      }
+.payContent {
+  .block {
+    ::v-deep .el-avatar {
+      width: 100px !important;
+      height: 100px !important;
+      border: solid 8px #fff;
+      box-shadow: -6px 6px 20px #eee;
 
       img {
-        padding-left: 30px;
-      }
+        width: 100%;
+        object-fit: fill;
 
-      h2 {
-        text-align: center;
-
-        &.payPrice {
-          color: #db261d;
-          //font-size: 20px;
-        }
       }
+    }
+  }
+
+  .demo-ruleForm {
+    ::v-deep .el-radio {
+      width: 498px;
+      display: flex;
+      justify-content: space-between;
+      flex-direction: row-reverse;
+      align-items: center;
+    }
+
+    ::v-deep .el-radio__label {
+      width: 100px;
+      padding-left: 0;
+    }
+
+    ::v-deep .el-radio__input {
+      padding-right: 4px;
+    }
+
+  }
+
+  .paycard, .paytype {
+
+    ::v-deep .el-button {
+      width: 100px;
+      background-color: #DB261D;
+
+      span {
+        color: #fff;
+      }
+    }
+
+    ::v-deep .el-button--primary {
+      border-color: unset;
+    }
+
+  }
+
+  .paytype {
+
+    ::v-deep .el-radio {
+      width: 742px;
+      display: flex;
+      justify-content: space-between;
+      flex-direction: row-reverse;
+      align-items: center;
+      padding-left: 20px;
+      padding-bottom: 6px;
+    }
+
+    ::v-deep .el-radio__label {
+      width: 100px;
+      padding-left: 0;
+    }
+
+    ::v-deep .el-radio__input {
+      padding-right: 4px;
+
+      :hover {
+        border-color: rgb(219, 38, 29);
+      }
+    }
+
+    ::v-deep .el-radio__input.is-checked .el-radio__inner {
+      border-color: rgb(219, 38, 29);
+      background-color: #fff;
+
+    }
+
+    ::v-deep .el-radio__inner::after {
+      width: 6px;
+      height: 6px;
+      background-color: rgb(219, 38, 29);
+    }
+
+    ::v-deep .el-radio__input.is-checked + .el-radio__label {
+      color: #606266;
     }
   }
 }
 
 
 </style>
+

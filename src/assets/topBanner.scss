@@ -1,0 +1,23 @@
+  .topBanner {
+  width: 1200px;
+    margin: 0 auto;
+    color: #848484;
+    background-color: #f9f9f9;
+    font-size: 12px;
+    height: 54px;
+    line-height: 46px;
+    padding: 8px 0 8px 6px;
+
+    span {
+      color: #848484;
+    }
+
+    .tabs {
+      cursor: pointer;
+    }
+
+    .tabs:hover {
+      color: #666;
+    }
+
+  }

@@ -31,3 +31,74 @@ video{
   display: block;
   margin: 0 auto;
 }
+
+.page {
+  display: flex;
+  border: 1px solid #dddddd;
+  float: right;
+  margin-right: 20px;
+
+  ::v-deep.el-input {
+    width: 40px;
+    padding: 0;
+    border: none;
+  }
+
+  ::v-deep .el-input__inner {
+    border-radius: 0;
+    padding: 0 6px;
+  }
+
+  .pageTotal {
+    border-right: 1px solid #dddddd;
+    padding: 6px 12px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #fff;
+
+    &:hover {
+      background-color: #fff;
+    }
+  }
+
+  .jumper {
+    padding: 6px 12px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #fff;
+    cursor: pointer;
+
+    &:hover {
+      background-color: #fff;
+    }
+  }
+
+
+  .per, .next, .firstPage, .lastPage {
+    border-right: 1px solid #dddddd;
+    padding: 6px 12px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #fff;
+    cursor: pointer;
+
+    &:hover {
+      background-color: #fff;
+    }
+  }
+
+  ::v-deep .el-pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  ::v-deep .el-pagination.is-background .el-pager li:not(.disabled).active {
+    background-color: #DB261D;
+    color: #fff;
+  }
+
+}

@@ -1,0 +1,188 @@
+.payContent {
+  width: 1200px;
+  margin: 40px auto;
+  background-color: #fff;
+  padding-bottom: 2px;
+  max-height: 1900px;
+
+  .back {
+    padding: 20px 0 0 20px;
+    display: inline-block;
+    color: #555;
+    position: relative;
+    cursor: pointer;
+    font-size: 14px;
+  }
+
+  .user-head {
+    text-align: center;
+    padding: 16px 0;
+
+
+    .name {
+      padding: 10px 0;
+      display: block;
+      color: #1a1613;
+      font-size: 20px;
+    }
+
+    .tel {
+      display: block;
+      color: #999;
+      font-size: 14px;
+    }
+  }
+
+  .wrapper {
+    width: 800px;
+    margin: 0 auto;
+    margin-bottom: 60px;
+
+    .demo-ruleForm {
+      margin: 12px auto 6px auto;
+      width: 800px;
+      padding-left: 26px;
+      margin-left: 66px;
+
+      .el-input {
+        position: relative;
+        font-size: 14px;
+        display: inline-block;
+        width: 80%;
+      }
+
+      .radio-content {
+        display: inline-flex;
+        align-items: center;
+        width: 78px;
+        //float: left;
+        img {
+          width: 30px;
+          height: 30px;
+          display: inline-block;
+
+          &.wx {
+            margin: 0 4px;
+          }
+        }
+
+        .wechat {
+          height: 30px;
+          display: inline-block;
+          line-height: 30px;
+        }
+      }
+
+
+    }
+
+    .paycard, .paytype {
+      margin-top: 16px;
+      border-radius: 16px;
+      padding: 16px;
+      box-shadow: 0 0 16px rgb(0 0 0 / 10%);
+
+      h2 {
+        padding-left: 20px;
+        margin-bottom: 20px;
+      }
+
+      .pay-item {
+        display: block;
+        padding: 12px 8px;
+        background: rgba(0, 0, 0, 0.03);
+        font-size: 14px;
+        margin: 0 20px 12px 20px;
+
+        &.price {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: 4px 0 4px 8px
+        }
+
+        .card {
+          display: flex;
+          justify-content: space-between;
+
+          .checkCard {
+            cursor: pointer;
+            color: #969799;
+          }
+        }
+
+
+        i {
+          font-style: normal;
+        }
+
+        .Red {
+          color: #db261d;
+        }
+
+        .payPrice {
+          color: #db261d;
+          font-size: 20px;
+        }
+      }
+    }
+
+    .paytype {
+      .radio-content {
+        display: inline-flex;
+        align-items: center;
+        width: 78px;
+        //float: left;
+        img {
+          width: 24px;
+          height: 24px;
+          display: inline-block;
+
+          &.wx {
+            margin: 0 6px;
+          }
+        }
+
+        .wechat {
+          height: 30px;
+          display: inline-block;
+          line-height: 30px;
+        }
+      }
+
+    }
+
+
+    .codeUrl {
+      //margin-top: 20px;
+      padding-top: 16px;
+      margin: 0 auto;
+      width: 250px;
+      position: absolute;
+      top: 480px;
+      left: 634px;
+      box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+
+      i {
+        position: absolute;
+        top: 6px;
+        right: 6px;
+        font-size: 20px;
+        cursor: pointer;
+      }
+
+      img {
+        padding-left: 30px;
+      }
+
+      h2 {
+        text-align: center;
+
+        &.payPrice {
+          color: #db261d;
+          //font-size: 20px;
+        }
+      }
+    }
+  }
+}

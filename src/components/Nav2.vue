@@ -40,6 +40,7 @@ export default {
       }
       &.red{
         color: #DB261D;
+        width: 100%;
       }
     }
   }

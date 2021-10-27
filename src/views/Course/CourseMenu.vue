@@ -14,7 +14,7 @@
         </div>
       </div>
       <div class="course-content">
-        <ul class="course-list">
+        <ul class="course-list" v-if="certLists.length>0">
           <li class="list-item" v-for="(item,index) in certLists" :key="index" @click="golink(item.id)">
             <div class="item-img">
               <img :src="loadUrl(item.coverImg)">
@@ -28,6 +28,7 @@
             <el-tag type="success" size="mini" v-show="item.needPay==0" class="bg3">免费</el-tag>
           </li>
         </ul>
+        <el-empty v-else description="暂无内容"></el-empty>
         <div class="page">
           <div class="pageTotal">共<span>{{ total }}</span>条</div>
           <div @click="firstPage" class="firstPage">首页</div>

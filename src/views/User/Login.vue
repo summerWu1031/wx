@@ -88,7 +88,7 @@ export default {
     }
   },
   mounted() {
-    console.log(this.$route.query.redirect)
+
     let token = window.sessionStorage.getItem("token");
     // let token = window.localStorage.getItem("token");
     if (token) {

@@ -17,9 +17,9 @@
 <!--          </div>-->
           <div class="tabsWrapper">
             <div class="tabs">
-              <ul class="items">
+              <ul class="navUl">
                 <li class="item " v-for="(item,index) in tabs" :key="index" @click="selectTab(item.value)"
-                    :class="{on:selected==item.value}">
+                    :class="{selected:selected==item.value}">
                   <span>{{ item.name }}</span>
                 </li>
               </ul>
@@ -191,7 +191,6 @@ export default {
     init() {
       const self = this;
       self.certLists = []
-      console.log(self.queryParams)
       getTrainList(self.queryParams).then((res) => {
         if (res.code == 200) {
           self.certLists = res.data;
@@ -269,6 +268,8 @@ export default {
           display: flex;
           width: 1200px;
           padding-bottom: 12px;
+
+
           .search{
             ::v-deep .el-input__inner {
               border-radius: 50px;
@@ -277,8 +278,66 @@ export default {
             }
           }
         }
+        .tabs{
 
-        .menu, .tabs {
+          .navUl {
+            width: 1200px;
+            border-bottom: 1px solid #d7d7d7 ;
+            display: flex;
+            //justify-content: space-between;
+            > li {
+              text-align: center;
+              width: 100px;
+              height: 40px;
+              font-size: 14px;
+              padding: 10px 2px;
+              &.selected {
+                border-bottom: 1px #DB261D solid;
+                color: #DB261D;
+
+              }
+
+
+            }
+
+            .dropdownWrapper {
+              width: 100px;
+              a {
+                color: #8e8e8e;
+              }
+
+              ::v-deep .ivu-dropdown-rel {
+                width: 100px;
+                margin-left: -20px !important;
+                box-sizing: border-box;
+              }
+
+              ::v-deep .ivu-dropdown-menu {
+                position: absolute;
+                background-color: #fff;
+                width: 146px;
+                left: -84px;
+                border-radius: 4px;
+                outline: none;
+                box-shadow: 0 2px 8px rgb(0 0 0 / 15%);
+                -webkit-transform: translate3d(0, 0, 0);
+              }
+
+              ::v-deep .ivu-dropdown-item {
+                font-size: 14px !important;
+                padding: 10px 16px;
+
+                :hover {
+                  color: #DB261D;
+                }
+              }
+            }
+
+          }
+        }
+
+
+        .menu {
           .items {
             .item {
               float: left;
@@ -287,7 +346,7 @@ export default {
               border-radius: 6px;
               line-height: 32px;
               cursor: pointer;
-
+              font-size: 13px;
               :hover {
                 color: #DB261D;
               }

@@ -111,7 +111,7 @@
               </div>
             </li>
           </router-link>
-          <router-link to="/apply-list">
+          <router-link to="/raceList">
             <li>
               <img src="../assets/image/huimin3.png" alt="赛事服务">
               <div>
