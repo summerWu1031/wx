@@ -307,7 +307,7 @@ export default {
       activeName: '1',
       options: regionData,
       selectedOptions: [],
-      // user: {},
+      user: {},
       userInfo: {},
       cId: 0,
       cType: "",
@@ -631,10 +631,11 @@ export default {
       coachGradeColumns: ["国家级", "高级", "一级", "二级", "三级"],
     }
   },
+  created() {
+    this.user =JSON.parse(window.sessionStorage.getItem('user'))
+  },
   computed: {
-    user() {
-      return JSON.parse(window.sessionStorage.getItem('user'))
-    },
+
     // 计算数学，匹配搜索
     filteredAssociationList() {
       const self = this;
@@ -682,12 +683,11 @@ export default {
 
   mounted() {
     let self = this;
-    self.userInfo = self.user.userInfo;
     self.userType = self.user.userType
     self.$store.commit("showLoading");
-
     if (self.userType == 1) {
-      self.userInfo = self.userinfo.userInfo
+      self.userInfo = self.user.userInfo
+      console.log(self.userInfo)
       if (!self.userInfo.updateTime) {
         self.basic.userName = self.userInfo.userName;
         self.basic.phonenumber = self.userInfo.phonenumber;
@@ -732,7 +732,7 @@ export default {
         ]);
       }
       if (self.user.rankInfo.length > 0) {
-        self.dan = res.data.rankInfo[0];
+        self.dan = self.user.rankInfo[0];
         self.itemValue = self.dan.value;
         self.$set(self.dan, "certImgs", [
           {url: self.loadUrl(self.dan.certImg)},
@@ -741,7 +741,7 @@ export default {
 
       }
       if (self.user.playerInfo.length > 0) {
-        self.player = res.data.playerInfo[0];
+        self.player = self.user.playerInfo[0];
         self.player.playerLv = self.player.level
         self.$set(self.player, "certImgs", [
           {url: self.loadUrl(self.player.certImg)},

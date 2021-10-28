@@ -1,6 +1,6 @@
 .course-content {
   width: 1200px;
-  margin: 68px auto 0 auto;
+  margin: 30px auto 66px auto;
 
   .course-list {
     display: flex;
@@ -38,17 +38,11 @@
 
       .item-name {
         display: flex;
-        margin-top: 12px;
-        padding-left: 4px;
-        align-items: center;
-        margin-bottom: 8px;
+        padding: 0 8px;
 
         .item-title {
-          //height: 26px;
-          //line-height: 20px;
           text-indent: 0;
           padding: 0 8px;
-          //margin-bottom: 8px;
           white-space: nowrap;
           overflow: hidden;
           text-overflow: ellipsis;
@@ -60,7 +54,6 @@
         line-height: 20px;
         text-indent: 0;
         padding: 0 8px;
-        //margin-bottom: 8px;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;

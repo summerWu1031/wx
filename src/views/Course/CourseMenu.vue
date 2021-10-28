@@ -71,7 +71,7 @@ export default {
     return {
       tab: [
         {name: '教学服务', type: 1},
-        {name: '培训', type: 2},
+        // {name: '培训', type: 2},
       ],
       selected: 1,
       certLists: [],

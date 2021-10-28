@@ -1,58 +1,22 @@
-.tabs{
-  .navUl {
-    width: 1200px;
-    margin: 12px auto;
-    border-bottom: 1px solid #d7d7d7 ;
-    display: flex;
-    //justify-content: space-between;
-    > li {
-      text-align: center;
-      width: 100px;
-      height: 40px;
-      font-size: 14px;
-      padding: 10px 2px;
-      cursor: pointer;
-      &.selected {
-        border-bottom: 1px #DB261D solid;
-        color: #DB261D;
+//课程详情下面的tabs
+.nav2Tabs {
+  height: 52px;
+  border-bottom: 1px solid #eee;
+  font-size: 18px;
+  line-height: 52px;
+  display: flex;
+  width: 1200px;
+  padding: 0 10px;
 
-      }
+  .tab {
+    margin-right: 100px;
+    padding-right: 2px;
+    color: #999;
+    cursor: pointer;
 
-
+    &.on {
+      border-bottom: 2px solid #ee0a24;
+      color: #ee0a24;
     }
-
-    .dropdownWrapper {
-      width: 100px;
-      a {
-        color: #8e8e8e;
-      }
-
-      ::v-deep .ivu-dropdown-rel {
-        width: 100px;
-        margin-left: -20px !important;
-        box-sizing: border-box;
-      }
-
-      ::v-deep .ivu-dropdown-menu {
-        position: absolute;
-        background-color: #fff;
-        width: 146px;
-        left: -84px;
-        border-radius: 4px;
-        outline: none;
-        box-shadow: 0 2px 8px rgb(0 0 0 / 15%);
-        -webkit-transform: translate3d(0, 0, 0);
-      }
-
-      ::v-deep .ivu-dropdown-item {
-        font-size: 14px !important;
-        padding: 10px 16px;
-
-        :hover {
-          color: #DB261D;
-        }
-      }
-    }
-
   }
 }

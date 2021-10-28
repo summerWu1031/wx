@@ -73,14 +73,15 @@
 </template>
 
 <script>
-import {getApplyTrainList,getApplyTrainDetail} from "@/api/training";
+import {getApplyTrainList, getApplyTrainDetail} from "@/api/training";
 import {pagination} from '@/mixins/mixin'
 import '@/assets/courseContent.scss'
+
 export default {
   mixins: [pagination],
   data() {
     return {
-      input:'',
+      input: '',
       activeNames: ["1", "2"],
       isActive: 0,
       screeningStatus: ["国家级", "一级", "二级"],
@@ -96,17 +97,10 @@ export default {
       total: null,
       // 下拉刷新
       queryParams: {
-        // 0 .待考试 1.已考试
-        // examed: null,
         pageNum: 1,
         pageSize: 8,
-        // 标题搜索
         name: '',
-        // 查询类型（0.所有:课程，1.我的考试，2.收藏）
-        // querytype: 0,
-        // 培训类型(1.段位培训，2.教练员培训,3.裁判员培训,4.考评员培训)
-        // trainType: 1,
-        // trainLv: null,
+        type: 2 //type 类型 1.教学服务 2.培训
       },
       loading: false,
       finished: false,
@@ -180,7 +174,7 @@ export default {
     },
     golink(id) {
       // this.$router.push(`/apply-detail/${id}`);
-      this.$router.push({path:'/apply-detail',query:{id}})
+      this.$router.push({path: '/apply-detail', query: {id}})
     },
   }
 }
@@ -235,93 +229,45 @@ export default {
     }
   }
 
-  //.course-content {
-  //  width: 1200px;
-  //  margin: 32px auto 98px auto;
-  //
-  //  .course-list {
-  //    display: flex;
-  //    flex-wrap: wrap;
-  //    margin-right: -24px;
-  //    //margin-bottom: 20px;
-  //
-  //    .list-item {
-  //      width: 278px;
-  //      height: 230px;
-  //      margin: 0 24px 24px 0;
-  //      background: #FFFFFF;
-  //      box-shadow: 0 6px 10px 0 rgb(95 101 105 / 15%);
-  //      border-radius: 8px;
-  //      cursor: pointer;
-  //
-  //      .item-img {
-  //        height: 152px;
-  //        margin-bottom: 8px;
-  //
-  //        img {
-  //          width: 100%;
-  //          height: 100%;
-  //          object-fit: cover;
-  //          border-radius: 8px 8px 0 0;
-  //        }
-  //
-  //        video {
-  //          width: 100%;
-  //          height: 100%;
-  //          object-fit: cover;
-  //          border-radius: 8px 8px 0 0;
-  //        }
-  //      }
-  //
-  //      .item-name {
-  //        display: flex;
-  //        margin-top: 12px;
-  //        padding-left: 4px;
-  //        align-items: center;
-  //        margin-bottom: 8px;
-  //
-  //        .item-title {
-  //          //height: 26px;
-  //          //line-height: 20px;
-  //          text-indent: 0;
-  //          padding: 0 8px;
-  //          //margin-bottom: 8px;
-  //          white-space: nowrap;
-  //          overflow: hidden;
-  //          text-overflow: ellipsis;
-  //        }
-  //      }
-  //
-  //
-  //
-  //      .item-time {
-  //        height: 20px;
-  //        text-indent: 0;
-  //        line-height: 20px;
-  //        margin-right: 2px;
-  //        margin-bottom: 8px;
-  //        padding: 0 8px;
-  //        color: #999;
-  //        font-size: 12px;
-  //      }
-  //
-  //      .item-price {
-  //        height: 20px;
-  //        text-indent: 0;
-  //        line-height: 20px;
-  //        margin-right: 2px;
-  //        color: #F01414;
-  //        padding: 0 8px;
-  //        margin-bottom: 18px;
-  //        font-weight: 700;
-  //      }
-  //    }
-  //  }
-  //
-  //  .empty {
-  //    margin: 0 auto;
-  //  }
-  //}
+  .course-content {
+
+    margin: 32px auto 98px auto;
+
+    .course-list {
+
+      //margin-bottom: 20px;
+
+      .list-item {
+
+
+        .item-time {
+          height: 20px;
+          text-indent: 0;
+          line-height: 20px;
+          margin-right: 2px;
+          margin-bottom: 8px;
+          padding: 0 8px;
+          color: #999;
+          font-size: 12px;
+        }
+
+        .item-price {
+          height: 20px;
+          text-indent: 0;
+          line-height: 20px;
+          margin-right: 2px;
+          color: #F01414;
+          padding: 0 8px;
+          margin-bottom: 18px;
+          font-weight: 700;
+        }
+      }
+    }
+
+    .empty {
+      margin: 0 auto;
+    }
+  }
 }
 
 </style>

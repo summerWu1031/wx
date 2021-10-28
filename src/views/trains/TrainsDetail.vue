@@ -8,8 +8,11 @@
         <span @click="back" class="tabs">{{ name }} ></span>
         <span class="courseName">{{ detail.trainName }}</span>
       </div>
+
+
       <div class="contentWrapper">
-        <div class="introWrapper">
+
+        <div class="ss-introWrapper">
           <div class="courseIntro">
             <div class="left" :class="{exam:detail.hasExam==0 }">
               <img :src="loadUrl(detail.imgUrl)" alt="">
@@ -74,9 +77,10 @@
             </div>
           </div>
         </div>
+
         <div class="courseDetail">
           <div class="courseMenu">
-            <div class="tabs">
+            <div class="nav2Tabs">
               <div class="tab" :class="{on: selected==index}" @click="select(index)" v-for="(item,index) in tabs"
                    :key="index">
                 {{ item }}
@@ -102,8 +106,8 @@
                   <div class="exam">
                     <span class="times">第{{ item.times }}次考试</span>
                     <el-tag v-if="item.status == 0" type="primary" size="small">考试中</el-tag>
-                    <el-tag v-if="item.status == 1" type="warning" size="small" >评分中</el-tag>
-                    <el-tag v-if="item.status == 2" type="success" size="small" >考试完成</el-tag>
+                    <el-tag v-if="item.status == 1" type="warning" size="small">评分中</el-tag>
+                    <el-tag v-if="item.status == 2" type="success" size="small">考试完成</el-tag>
                   </div>
                   <div class="score">
                  <span v-if="item.status == 0"
@@ -146,20 +150,23 @@ import {
   getTrainInfo, getPaperHistoryBytrainId
 } from "@/api/training";
 import ExamUpvideo from '@/views/trains/Exam-upvideo'
+import '@/assets/tabs.scss'
+import '@/assets/topBanner.scss'
+import "@/assets/ss-introWrapper.scss"
 
 export default {
   components: {ExamUpvideo},
   props: ['id'],
   data() {
     return {
-      name:this.$route.params.name,
+      name: this.$route.params.name,
       detail: {},
       wordUrl: '',
       videoUrl: '',
       dialogVisible: false,
       //tabs
       selected: 0,
-      tabs: ['规程','培训内容', '考试记录'],
+      tabs: ['规程', '培训内容', '考试记录'],
       // 考试记录
       total: null,
       active: 0,
@@ -225,7 +232,7 @@ export default {
         }
       });
     },
-    checkRecord(record){
+    checkRecord(record) {
       // status==0没完成考试
       if (record.status == 0) {
         let _detail = JSON.stringify(this.detail);
@@ -234,7 +241,7 @@ export default {
           //   path: "/exam-upvideo",
           //   query: { detail: _detail },
           // });
-          this.dialogVisible=true
+          this.dialogVisible = true
         } else {
           this.$router.push(`/exam-online/${this.id}`);
         }
@@ -252,129 +259,19 @@ export default {
   margin: 0 auto;
   //background-color: #f9f9f9;
   .topBanner {
-    color: #848484;
-    background-color: #f9f9f9;
-    font-size: 12px;
-    height: 54px;
-    line-height: 46px;
-    padding: 8px 0 8px 6px;
-
-    span {
-      color: #848484;
-    }
-
-    .tabs {
-      cursor: pointer;
-    }
-
-    .tabs:hover {
-      color: #666;
-    }
-
+    background-color: #fff;
   }
 
-  .contentWrapper{
+  .contentWrapper {
     padding: 12px 10px;
     background-color: #fff;
-    .introWrapper {
-      //padding-bottom: 46px;
-      background-color: #fff;
 
+    .ss-introWrapper {
       .courseIntro {
-        display: flex;
-        justify-content: space-between;
-        flex-wrap: nowrap;
-
-
         .left {
-          width: 320px;
-          max-height: 292px;
-          margin-right: 16px;
-
+          height: 292px;
           &.exam {
             height: 192px;
-          }
-
-          img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-          }
-        }
-
-        .right {
-          width: 856px;
-          display: flex;
-          flex-direction: column;
-          justify-content: space-between;
-
-          .item-name {
-            display: flex;
-
-            .item-title {
-              padding-right: 8px;
-              padding-top: 4px;
-            }
-          }
-
-          .items {
-            display: flex;
-            justify-content: space-between;
-
-            ul {
-              li {
-                color: #666;
-                font-size: 14px;
-                padding: 10px 0 0 0;
-                .price {
-                  color: #F01414;
-                }
-              }
-              .btn {
-                text-align: center;
-                width: 130px;
-                height: 36px;
-                line-height: 36px;
-                border-radius: 4px;
-                background-color: #db261d;
-                color: #FFFFFF;
-                cursor: pointer;
-                font-size: 14px;
-                display: inline-block;
-              }
-
-            }
-
-            .buy {
-              display: flex;
-              align-items: end;
-              margin-right: 20px;
-              flex-direction: column-reverse;
-
-              .price {
-                font-size: 26px;
-                padding-right: 24px;
-                color: #F01414;
-
-                i {
-                  font-size: 22px;
-                  color: #F01414;
-                }
-              }
-
-              .btn {
-                text-align: center;
-                width: 150px;
-                height: 45px;
-                line-height: 45px;
-                border-radius: 25px;
-                background-color: #db261d;
-                color: #FFFFFF;
-                cursor: pointer;
-                font-size: 16px;
-                display: inline-block;
-              }
-            }
           }
         }
       }
@@ -393,33 +290,16 @@ export default {
         //width: 900px;
         width: 1200px;
 
-        .tabs {
-          height: 52px;
-          border-bottom: 1px solid #eee;
-          font-size: 18px;
-          line-height: 52px;
-          display: flex;
-
-          .tab {
-            margin-right: 100px;
-            padding-right: 2px;
-            color: #999;
-            cursor: pointer;
-
-            &.on {
-              border-bottom: 2px solid #ee0a24;
-              color: #ee0a24;
-            }
-          }
-        }
 
         .content {
           min-height: 294px;
-          .rules{
+
+          .rules {
             padding-top: 20px;
           }
+
           .video {
-            width: 800px;
+            width: 1200px;
             height: 400px;
             margin: 12px 0;
           }
@@ -436,6 +316,7 @@ export default {
 
           .list {
             cursor: pointer;
+
             .listItem {
               display: flex;
               justify-content: space-between;
@@ -461,24 +342,24 @@ export default {
 
       }
 
-      .courseTeacher {
-        width: 250px;
-
-        h3 {
-          height: 52px;
-          border-bottom: 1px solid #eee;
-          font-size: 18px;
-          line-height: 52px;
-        }
-
-        p {
-          font-size: 14px;
-          line-height: 30px;
-          padding: 20px 0;
-          color: #666;
-          text-indent: 28px;
-        }
-      }
+      //.courseTeacher {
+      //  width: 250px;
+      //
+      //  h3 {
+      //    height: 52px;
+      //    border-bottom: 1px solid #eee;
+      //    font-size: 18px;
+      //    line-height: 52px;
+      //  }
+      //
+      //  p {
+      //    font-size: 14px;
+      //    line-height: 30px;
+      //    padding: 20px 0;
+      //    color: #666;
+      //    text-indent: 28px;
+      //  }
+      //}
     }
   }
 

@@ -13,12 +13,12 @@
 
       <div class="course-content">
         <ul class="course-list">
-          <li class="list-item" v-for="(item,index) in list" :key="index" @click="jump(item.id)">
+          <li class="list-item" v-for="(item,index) in list" :key="index" @click="golink(item.id)">
             <div class="item-img">
-              <img :src="loadUrl(item.imgUrl)">
+              <img :src="loadUrl(item.coverImg)">
             </div>
-            <p class="item-title">{{ item.trainName }}</p>
-            <p class="item-time">{{ item.beginTime }} 至 {{ item.endTime }}</p>
+            <p class="item-title">{{ item.name }}</p>
+            <p class="item-time">{{ item.trainStartTime }} 至 {{ item.trainEndTime }}</p>
           </li>
         </ul>
         <div class="page" v-if="total">
@@ -55,42 +55,46 @@
 
 <script>
 import '@/assets/courseContent.scss'
-import "@/assets/tabs.scss"
+import "@/assets/navUl.scss"
 import {myCourse} from '@/api/training'
 import {pagination} from "@/mixins/mixin";
 
 export default {
-  mixins:[pagination],
+  mixins: [pagination],
   data() {
     return {
-      tabs:['付费课程','免费课程'],
+      tabs: ['付费课程', '免费课程'],
       selected: 0,
-      queryParams:{
+      queryParams: {
         needPay: 1,  //0.无需支付 1.需要支付
-        pageNum:1,
-        pageSize:8
+        pageNum: 1,
+        pageSize: 8
       },
-      list:[],
-      total:0,
+      list: [],
+      total: 0,
     }
   },
   mounted() {
     this.init()
   },
-  methods:{
-    init(){
-      myCourse(this.queryParams).then((res)=>{
-        if(res.code===200){
-          this.list=res.data.orgWxTrainExaminations
-          this.total=res.total
-        }else {
+  methods: {
+    init() {
+      myCourse(this.queryParams).then((res) => {
+        if (res.code === 200) {
+          this.list = res.data
+          this.total = res.total
+        } else {
           this.$message(res.msg)
         }
       })
     },
-    selectTab(index){
-      this.selected=index
-      this.queryParams.needPay=index
+    selectTab(index) {
+      this.selected = index
+      this.queryParams.needPay = index
+      this.init()
+    },
+    golink(id) {
+      this.$router.push(`/course-detail/${id}`);
     }
   }
 }
@@ -98,5 +102,63 @@ export default {
 
 <style lang="scss" scoped>
 
+</style>
+<style lang="scss" scoped>
+.page {
+  display: flex;
+  border: 1px solid #dddddd;
+  float: right;
+  margin-right: 20px;
+
+  ::v-deep.el-input {
+    width: 40px;
+    padding: 0;
+    border: none;
+  }
+
+  ::v-deep .el-input__inner {
+    border-radius: 0;
+    padding: 0 6px;
+  }
+
+  .pageTotal {
+    border-right: 1px solid #dddddd;
+    padding: 6px 12px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #fff;
+
+    &:hover {
+      background-color: #fff;
+    }
+  }
+
+  .jumper, .per, .next, .firstPage, .lastPage {
+    border-right: 1px solid #dddddd;
+    padding: 6px 12px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #fff;
+    cursor: pointer;
+
+    &:hover {
+      background-color: #fff;
+    }
+  }
+
+  ::v-deep .el-pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  ::v-deep .el-pagination.is-background .el-pager li:not(.disabled).active {
+    background-color: #DB261D;
+    color: #fff;
+  }
+
+}
 </style>
 

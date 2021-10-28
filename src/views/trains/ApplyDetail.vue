@@ -8,7 +8,7 @@
         <span class="courseName">{{ detail.name }}</span>
       </div>
       <div class="contentWrapper">
-        <div class="introWrapper">
+        <div class="ss-introWrapper">
           <div class="courseIntro">
             <div class="left">
               <img :src="loadUrl(detail.coverImg)" alt="">
@@ -64,8 +64,13 @@
         <div class="courseDetail">
           <div class="courseMenu">
 
-            <div class="tab">课程目录</div>
-            <div class="content">
+            <div class="nav2Tabs">
+              <div class="tab" :class="{on: selected==index}" @click="select(index)" v-for="(item,index) in tabs"
+                   :key="index">
+                {{ item }}
+              </div>
+            </div>
+            <div class="content" v-show="selected==0">
               <ul class="list">
                 <li @click="jump(item.id)" v-for="(item,index) in detail.orgWxTrainExaminations" :key="index">
                   <i class="el-icon-video-camera" v-if="item.lookType==1"></i>
@@ -77,10 +82,9 @@
                 </li>
               </ul>
             </div>
-          </div>
-          <div class="courseTeacher">
-            <h3 class="tab">报名信息</h3>
-            <p>{{ detail.info }}</p>
+            <div class="content" v-show="selected==1">
+              <p class="info">{{ detail.info }}</p>
+            </div>
           </div>
         </div>
       </div>
@@ -94,6 +98,9 @@ import {
   getApplyTrainDetail,
   confirmationTrain,
 } from "@/api/training";
+import '@/assets/tabs.scss'
+import '@/assets/topBanner.scss'
+import '@/assets/ss-introWrapper.scss'
 
 export default {
   // props: ['id'],
@@ -101,7 +108,9 @@ export default {
   data() {
     return {
       detail: '',
-      id: this.$route.query.id
+      id: this.$route.query.id,
+      tabs: ['课程目录', '报名信息'],
+      selected: 0
     }
   },
 
@@ -158,175 +167,36 @@ export default {
         }
       });
     },
-
+    select(index) {
+      this.selected = index
+    }
   }
 
 }
 </script>
 
 <style lang="scss" scoped>
+
 .trains-detail {
   width: 1200px;
   margin: 0 auto;
-  //background-color: #f9f9f9;
   .topBanner {
-    color: #848484;
-    background-color: #f9f9f9;
-    font-size: 12px;
-    height: 54px;
-    line-height: 46px;
-    padding: 8px 0 8px 6px;
-
-    span {
-      color: #848484;
-    }
-
-    .tabs:hover {
-      color: #666;
-    }
-
+    background-color: #fff;
   }
-
-  .contentWrapper {
+  .contentWrapper{
     padding: 12px 10px;
     background-color: #fff;
-
-    .introWrapper {
-      padding-bottom: 18px;
-      //background-color: #f9f9f9;
-      background-color: #fff;
-
-      .courseIntro {
-        display: flex;
-        justify-content: space-between;
-        flex-wrap: nowrap;
-        //height: 180px;
-        //background-color: #f9f9f9;
-        //padding-left: 6px;
-
-        .left {
-          width: 320px;
-          min-height: 166px;
-          margin-right: 16px;
-
-          img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-          }
-        }
-
-        .right {
-          width: 856px;
-          display: flex;
-          flex-direction: column;
-          justify-content: space-between;
-
-          .item-name {
-            display: flex;
-
-            .item-title {
-              padding-right: 8px;
-              padding-top: 4px;
-            }
-
-            ::v-deep .el-tag {
-              line-height: 24px;
-              background-color: #f4f4f5;
-              border-color: #e9e9eb;
-              color: #909399;
-              height: 24px;
-              margin-top: 5px;
-
-            }
-          }
-
-          .items {
-            display: flex;
-            justify-content: space-between;
-
-            ul {
-              li {
-                color: #666;
-                font-size: 14px;
-                padding: 10px 0 0 0;
-
-                .price {
-                  color: #F01414;
-                }
-              }
-
-              .btn {
-                text-align: center;
-                width: 130px;
-                height: 36px;
-                line-height: 36px;
-                border-radius: 4px;
-                background-color: #db261d;
-                color: #FFFFFF;
-                cursor: pointer;
-                font-size: 14px;
-                display: inline-block;
-              }
-            }
-
-            .buy {
-              display: flex;
-              flex-direction: column-reverse;
-              align-items: end;
-              margin-right: 20px;
-
-              .price {
-                font-size: 26px;
-                padding-right: 24px;
-                color: #F01414;
-
-                i {
-                  font-size: 22px;
-                  color: #F01414;
-                }
-              }
-
-              .btn {
-                text-align: center;
-                width: 150px;
-                height: 45px;
-                line-height: 45px;
-                border-radius: 25px;
-                background-color: #db261d;
-                color: #FFFFFF;
-                cursor: pointer;
-                font-size: 16px;
-                display: inline-block;
-              }
-            }
-          }
-        }
-      }
-    }
-
-
     .courseDetail {
       display: flex;
       justify-content: space-between;
       background-color: #fff;
-      //padding-top: 20px;
+      padding-top: 20px;
       //padding-left: 10px;
       //padding-right: 10px;
-      //padding-bottom: 20px;
-      padding: 20px 0;
+      padding-bottom: 20px;
 
       .courseMenu {
         width: 900px;
-
-
-        .tab {
-          height: 52px;
-          border-bottom: 1px solid #eee;
-          font-size: 18px;
-          line-height: 52px;
-          color: #000000;
-        }
 
         .content {
           .intro {
@@ -367,7 +237,6 @@ export default {
                 .content {
                   font-size: 16px;
                   padding-left: 10px;
-
                 }
 
                 .time {
@@ -379,32 +248,19 @@ export default {
               }
             }
           }
+
+          .info {
+            padding-top: 12px;
+          }
         }
 
 
       }
 
-      .courseTeacher {
-        width: 250px;
 
-        h3 {
-          height: 52px;
-          border-bottom: 1px solid #eee;
-          font-size: 18px;
-          line-height: 52px;
-        }
-
-        p {
-          font-size: 14px;
-          line-height: 30px;
-          padding: 20px 0;
-          color: #666;
-          text-indent: 28px;
-        }
-      }
     }
   }
 
-
 }
+
 </style>

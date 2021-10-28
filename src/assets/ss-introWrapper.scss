@@ -1,0 +1,84 @@
+//coursed上面部分的介绍
+.ss-introWrapper {
+  padding-bottom: 16px;
+  background-color: #fff;
+
+  .courseIntro {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: nowrap;
+    //height: 180px;
+    //background-color: #f9f9f9;
+
+
+    .left {
+      width: 320px;
+      height: 180px;
+      margin-right: 16px;
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+    }
+
+    .right {
+      width: 856px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+
+      .item-name {
+        display: flex;
+
+        .item-title {
+          padding-right: 8px;
+          padding-top: 4px;
+        }
+      }
+
+      .items {
+        display: flex;
+        justify-content: space-between;
+
+        ul {
+          li {
+            color: #666;
+            font-size: 14px;
+            padding: 10px 0 0 0
+          }
+        }
+
+        .buy {
+          display: flex;
+          align-items: end;
+          margin-right: 20px;
+          flex-direction: column-reverse;
+          .price {
+            font-size: 26px;
+            padding-right: 24px;
+            color: #F01414;
+
+            i {
+              font-size: 22px;
+              color: #F01414;
+            }
+          }
+
+          .btn {
+            text-align: center;
+            width: 150px;
+            height: 45px;
+            line-height: 45px;
+            border-radius: 25px;
+            background-color: #db261d;
+            color: #FFFFFF;
+            cursor: pointer;
+            font-size: 16px;
+            display: inline-block;
+          }
+        }
+      }
+    }
+  }
+}

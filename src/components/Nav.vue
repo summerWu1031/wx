@@ -10,6 +10,7 @@
       <!--          <input class="input_1" id="keyword" type="text" placeholder="请输入您想查找的内容" autocomplete="off">-->
       <!--          <input type="button" id="" class="input_2" >-->
       <!--        </div>-->
+
       <div class="block" v-if="userInfo">
         <el-dropdown>
           <el-avatar :size="50" :src="userInfo.avatar"></el-avatar>
@@ -55,7 +56,7 @@
             </div>
           </router-link>
           <router-link :to="t.link" v-else-if="t.exam" class="judge">
-            <div id="components-dropdown-demo-placement" class="dropdownWrapper">
+            <div  class="dropdownWrapper">
               <Dropdown trigger="hover" style="margin-left: 20px">
                 考评员
                 <Icon type="ios-arrow-down"></Icon>
@@ -97,6 +98,7 @@ import {getUserProfile} from "@/api/user";
 export default {
   data() {
     return {
+      usr: {},
       userInfo: null,
       popShow: 'notShow',
       rcList: [
@@ -113,33 +115,21 @@ export default {
       ]
     }
   },
+
+  created() {
+    this.user = JSON.parse(window.sessionStorage.getItem('user'))
+  },
+
   mounted() {
-    getUserProfile().then((res) => {
-      const self = this
-      // self.$store.commit("showLoading");
-      if (res.code == 200) {
-        // window.localStorage.setItem("user", JSON.stringify(res.data));
-        window.sessionStorage.setItem("user", JSON.stringify(res.data));
-        //self.$store.dispatch("saveUserInfo", res.data);
-        if(res.data.userType===1){
-          if (res.data.userInfo) {
-            self.userInfo = res.data.userInfo
-            self.userInfo.avatar = self.loadUrl(self.userInfo.avatar)
-          }
-        }else {
-          if (res.data.orgInfo) {
-            self.userInfo = res.data.orgInfo
-            self.userInfo.avatar = self.loadUrl(res.data.orgInfo.img)
-          }
-        }
-
-
-      } else {
-        console.log(res.mes)
+    if (this.user.userType === 1) {
+        this.userInfo = this.user.userInfo
+        this.userInfo.avatar = this.loadUrl(this.user.userInfo.avatar)
+    } else {
+      if (this.user.orgInfo) {
+        this.userInfo = this.user.orgInfo
+        this.userInfo.avatar = this.loadUrl( this.user.orgInfo.img)
       }
-      // self.$store.commit("hideLoading");
-
-    })
+    }
 
   },
   methods: {
@@ -158,6 +148,7 @@ export default {
       // window.localStorage.removeItem("user");
       this.$store.dispatch("saveUserInfo", {});
       this.userInfo = null
+      this.user={}
     },
   },
   computed: {
@@ -297,6 +288,7 @@ export default {
 
       .dropdownWrapper {
         width: 100px;
+
         a {
           color: #8e8e8e;
         }

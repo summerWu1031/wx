@@ -100,7 +100,7 @@
 import {getTrainList} from '@/api/training'
 import {pagination} from '@/mixins/mixin'
 import '@/assets/courseContent.scss'
-import "@/assets/tabs.scss"
+import "@/assets/navUl.scss"
 export default {
   mixins: [pagination],
   // props:['aId'],
