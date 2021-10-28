@@ -79,6 +79,9 @@ main{
     justify-content: center;
     color: #1a1613;
     font-size: 18px;
+    .trainLink{
+      text-align: center;
+    }
     >.title{
       color: #5C5C5C;
       font-size: 26px;

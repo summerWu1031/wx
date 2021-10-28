@@ -99,7 +99,8 @@
 <script>
 import {getTrainList} from '@/api/training'
 import {pagination} from '@/mixins/mixin'
-
+import '@/assets/courseContent.scss'
+import "@/assets/tabs.scss"
 export default {
   mixins: [pagination],
   // props:['aId'],
@@ -278,63 +279,63 @@ export default {
             }
           }
         }
-        .tabs{
-
-          .navUl {
-            width: 1200px;
-            border-bottom: 1px solid #d7d7d7 ;
-            display: flex;
-            //justify-content: space-between;
-            > li {
-              text-align: center;
-              width: 100px;
-              height: 40px;
-              font-size: 14px;
-              padding: 10px 2px;
-              &.selected {
-                border-bottom: 1px #DB261D solid;
-                color: #DB261D;
-
-              }
-
-
-            }
-
-            .dropdownWrapper {
-              width: 100px;
-              a {
-                color: #8e8e8e;
-              }
-
-              ::v-deep .ivu-dropdown-rel {
-                width: 100px;
-                margin-left: -20px !important;
-                box-sizing: border-box;
-              }
-
-              ::v-deep .ivu-dropdown-menu {
-                position: absolute;
-                background-color: #fff;
-                width: 146px;
-                left: -84px;
-                border-radius: 4px;
-                outline: none;
-                box-shadow: 0 2px 8px rgb(0 0 0 / 15%);
-                -webkit-transform: translate3d(0, 0, 0);
-              }
-
-              ::v-deep .ivu-dropdown-item {
-                font-size: 14px !important;
-                padding: 10px 16px;
-
-                :hover {
-                  color: #DB261D;
-                }
-              }
-            }
-
-          }
-        }
+        //.tabs{
+        //
+        //  .navUl {
+        //    width: 1200px;
+        //    border-bottom: 1px solid #d7d7d7 ;
+        //    display: flex;
+        //    //justify-content: space-between;
+        //    > li {
+        //      text-align: center;
+        //      width: 100px;
+        //      height: 40px;
+        //      font-size: 14px;
+        //      padding: 10px 2px;
+        //      &.selected {
+        //        border-bottom: 1px #DB261D solid;
+        //        color: #DB261D;
+        //
+        //      }
+        //
+        //
+        //    }
+        //
+        //    .dropdownWrapper {
+        //      width: 100px;
+        //      a {
+        //        color: #8e8e8e;
+        //      }
+        //
+        //      ::v-deep .ivu-dropdown-rel {
+        //        width: 100px;
+        //        margin-left: -20px !important;
+        //        box-sizing: border-box;
+        //      }
+        //
+        //      ::v-deep .ivu-dropdown-menu {
+        //        position: absolute;
+        //        background-color: #fff;
+        //        width: 146px;
+        //        left: -84px;
+        //        border-radius: 4px;
+        //        outline: none;
+        //        box-shadow: 0 2px 8px rgb(0 0 0 / 15%);
+        //        -webkit-transform: translate3d(0, 0, 0);
+        //      }
+        //
+        //      ::v-deep .ivu-dropdown-item {
+        //        font-size: 14px !important;
+        //        padding: 10px 16px;
+        //
+        //        :hover {
+        //          color: #DB261D;
+        //        }
+        //      }
+        //    }
+        //
+        //  }
+        //}
 
 
         .menu {
@@ -363,79 +364,79 @@ export default {
       }
     }
 
-    .course-content {
-      width: 1200px;
-      margin: 68px auto 0 auto;
-
-      .course-list {
-        display: flex;
-        flex-wrap: wrap;
-        margin-right: -24px;
-        margin-bottom: 20px;
-
-        .list-item {
-          width: 278px;
-          height: 210px;
-          margin: 0 24px 24px 0;
-          background: #FFFFFF;
-          box-shadow: 0 6px 10px 0 rgb(95 101 105 / 15%);
-          border-radius: 8px;
-          cursor: pointer;
-
-          .item-img {
-            height: 152px;
-            margin-bottom: 8px;
-
-            img {
-              width: 100%;
-              height: 100%;
-              object-fit: cover;
-              border-radius: 8px 8px 0 0;
-            }
-
-            video {
-              width: 100%;
-              height: 100%;
-              object-fit: cover;
-              border-radius: 8px 8px 0 0;
-            }
-          }
-
-          .item-title {
-            height: 26px;
-            line-height: 20px;
-            text-indent: 0;
-            padding: 0 8px;
-            //margin-bottom: 8px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-          }
-
-          .item-time {
-            height: 20px;
-            text-indent: 0;
-            line-height: 20px;
-            margin-right: 2px;
-            margin-bottom: 8px;
-            padding: 0 8px;
-            color: #999;
-            font-size: 12px;
-          }
-
-          .item-price {
-            height: 20px;
-            text-indent: 0;
-            line-height: 20px;
-            margin-right: 2px;
-            color: #F01414;
-            padding: 0 8px;
-            margin-bottom: 18px;
-            font-weight: 700;
-          }
-        }
-      }
-    }
+    //.course-content {
+    //  width: 1200px;
+    //  margin: 68px auto 0 auto;
+    //
+    //  .course-list {
+    //    display: flex;
+    //    flex-wrap: wrap;
+    //    margin-right: -24px;
+    //    margin-bottom: 20px;
+    //
+    //    .list-item {
+    //      width: 278px;
+    //      height: 210px;
+    //      margin: 0 24px 24px 0;
+    //      background: #FFFFFF;
+    //      box-shadow: 0 6px 10px 0 rgb(95 101 105 / 15%);
+    //      border-radius: 8px;
+    //      cursor: pointer;
+    //
+    //      .item-img {
+    //        height: 152px;
+    //        margin-bottom: 8px;
+    //
+    //        img {
+    //          width: 100%;
+    //          height: 100%;
+    //          object-fit: cover;
+    //          border-radius: 8px 8px 0 0;
+    //        }
+    //
+    //        video {
+    //          width: 100%;
+    //          height: 100%;
+    //          object-fit: cover;
+    //          border-radius: 8px 8px 0 0;
+    //        }
+    //      }
+    //
+    //      .item-title {
+    //        height: 26px;
+    //        line-height: 20px;
+    //        text-indent: 0;
+    //        padding: 0 8px;
+    //        //margin-bottom: 8px;
+    //        white-space: nowrap;
+    //        overflow: hidden;
+    //        text-overflow: ellipsis;
+    //      }
+    //
+    //      .item-time {
+    //        height: 20px;
+    //        text-indent: 0;
+    //        line-height: 20px;
+    //        margin-right: 2px;
+    //        margin-bottom: 8px;
+    //        padding: 0 8px;
+    //        color: #999;
+    //        font-size: 12px;
+    //      }
+    //
+    //      .item-price {
+    //        height: 20px;
+    //        text-indent: 0;
+    //        line-height: 20px;
+    //        margin-right: 2px;
+    //        color: #F01414;
+    //        padding: 0 8px;
+    //        margin-bottom: 18px;
+    //        font-weight: 700;
+    //      }
+    //    }
+    //  }
+    //}
   }
 
 }
