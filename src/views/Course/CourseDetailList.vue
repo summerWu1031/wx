@@ -44,11 +44,12 @@
                   </li>
                 </ul>
                 <div class="buy">
+
+                  <div class="btn" v-if="detail.isApply == 1">已报名</div>
+                  <div class="btn" @click="confirmationTrains" v-else>我要报名</div>
                   <span class="price" v-show="detail.needPay==1 && detail.isApply == 2"><i>￥</i>{{
                       detail.price
                     }}</span>
-                  <div class="btn" v-if="detail.isApply == 1">已报名</div>
-                  <div class="btn" @click="confirmationTrains" v-else>我要报名</div>
                 </div>
               </div>
             </div>
@@ -151,12 +152,14 @@ export default {
       confirmationTrain({id}).then((res) => {
         if (res.code == 200) {
           self.$message("报名成功！");
-          setTimeout(() => {
-            self.$router.push(`/trains/${this.detail.id}`);
-          }, 3000);
+          this.getApplyTrainDetails()
+
+          // setTimeout(() => {
+          //   self.$router.push(`/trains/${this.detail.id}`);
+          // }, 3000);
         } else if (res.code == 2) {
 
-          self.$router.push({name: 'course-pay', params: {detail: self.detail}})
+          self.$router.push({path: '/trains-pay', query: {detail: JSON.stringify(self.detail)}})
         } else {
           self.$message(res.msg);
         }
@@ -174,7 +177,7 @@ export default {
   width: 1200px;
   margin: 0 auto;
 .topBanner{
-  background-color: #fff;
+  //background-color: #fff;
 }
   .contentWrapper {
     padding: 12px 10px;

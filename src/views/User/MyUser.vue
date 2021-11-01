@@ -126,8 +126,8 @@
                 </el-select>
               </el-form-item>
               <el-form-item label="等级" prop="level">
-                <el-select v-model="dan.level" placeholder="请选择您的级别">
-                  <el-option v-for="(item,index) in danGradeColumns" :key="index" :label="item"
+                <el-select v-model="danLevelSelected" placeholder="请选择您的级别"  :disabled="canSelected">
+                  <el-option v-for="(item,index) in danGradeColumns" :key="index" :label="item.label"
                              :value="item"></el-option>
                 </el-select>
               </el-form-item>
@@ -232,10 +232,10 @@
           <el-form-item label="详细地址">
             <el-input v-model="unitBasic.area" placeholder="请输入详细地址"></el-input>
           </el-form-item>
-          <el-form-item label="介绍" >
+          <el-form-item label="介绍">
             <el-input type="textarea" class="intro" v-model="unitBasic.introduction" placeholder="请输入介绍"></el-input>
           </el-form-item>
-          <el-form-item label="章程" >
+          <el-form-item label="章程">
             <el-input type="textarea" v-model="unitBasic.constitution" placeholder="请输入章程"></el-input>
           </el-form-item>
           <el-form-item label="营业执照上传" prop="licenses" class="upload">
@@ -530,6 +530,7 @@ export default {
         id: "",
         item: "",
         level: "",
+        levelValue: '',
         certCode: "",
         certSource: "",
         certTime: "",
@@ -540,6 +541,7 @@ export default {
         value: "",
         searchEvalValue: "",
       },
+      canSelected:false,
       danShowItem: false,
       danItemColumns: [
         "陈式太极拳",
@@ -562,28 +564,9 @@ export default {
         "趣味武术",
         "散打",
       ],
-
+      danLevelSelected: {},
       danShowGrade: false,
-      danGradeColumns: [
-        "段前一段",
-        "段前二段",
-        "段前三段",
-        "段前四段",
-        "段前五段",
-        "段前六段",
-        "段前七段",
-        "段前八段",
-        "段前九段",
-        "一段",
-        "二段",
-        "三段",
-        "四段",
-        "五段",
-        "六段",
-        "七段",
-        "八段",
-        "九段",
-      ],
+      danGradeColumns: [],
       showDan: false,
       danAppraisal: [],
       showAppraisal: false,
@@ -632,7 +615,7 @@ export default {
     }
   },
   created() {
-    this.user =JSON.parse(window.sessionStorage.getItem('user'))
+    this.user = JSON.parse(window.sessionStorage.getItem('user'))
   },
   computed: {
 
@@ -683,562 +666,527 @@ export default {
 
   mounted() {
     let self = this;
+    getUserProfile().then((res) => {
+      if (res.code === 200) {
+        window.sessionStorage.setItem("user", JSON.stringify(res.data))
+        if (res.data.userType == 1) {
+          self.userInfo = self.user.userInfo
+          console.log(self.userInfo)
+          if (!self.userInfo.updateTime) {
+            self.basic.userName = self.userInfo.userName;
+            self.basic.phonenumber = self.userInfo.phonenumber;
+            self.basic.identityCode = self.userInfo.identityCode;
+            self.basic.sex = self.userInfo.sex;
+            self.basic.avatar = self.userInfo.avatar;
+            self.$set(self.basic, "avatars", [
+              {url: self.loadUrl(self.userInfo.avatar)},
+            ]);
+            self.$set(self.basic, "memberName", self.userInfo.memberName);
+            self.$set(self.basic, "sourceOrgType", self.userInfo.sourceOrgType.toString());
+            if (self.basic.province && self.basic.city && self.basic.county) {
+              self.selectedOptions = self.basic.province.concat('/', self.basic.city, '/', self.basic.county)
+            }
+          } else {
+            self.basic = self.userInfo;
+            if (self.basic.province && self.basic.city && self.basic.county) {
+              self.selectedOptions = self.basic.province.concat('/', self.basic.city, '/', self.basic.county)
+            }
+            self.$set(
+                self.basic,
+                "memberApply",
+                Object.assign(
+                    {},
+                    {
+                      sign: "wx",
+                      memberName: "",
+                      memberId: 0,
+                      goodsPrice: "",
+                      sourceOrgName: "",
+                      searchSourceOrgName: "",
+                      sourceOrgId: 0,
+                      nation: "",
+                      speciality: "",
+                      culture: "",
+                    }
+                )
+            );
+            self.$set(self.basic, "sourceOrgType", self.userInfo.sourceOrgType.toString());
+            self.$set(self.basic, "avatars", [
+              {url: self.loadUrl(self.basic.avatar)},
+            ]);
+          }
+          if (self.user.rankInfo.length > 0) {
+            self.dan = self.user.rankInfo[0];
+            self.danLevelSelected = self.dan.level
+            if (self.dan.level !== '') {
+              self.canSelected = true
+            }
+            self.itemValue = self.dan.value;
+            self.$set(self.dan, "certImgs", [
+              {url: self.loadUrl(self.dan.certImg)},
+            ]);
+
+
+          }
+          if (self.user.playerInfo.length > 0) {
+            self.player = self.user.playerInfo[0];
+            self.player.playerLv = self.player.level
+            self.$set(self.player, "certImgs", [
+              {url: self.loadUrl(self.player.certImg)},
+            ]);
+
+          }
+        } else {
+          self.userInfo = self.user.orgInfo
+          let orgInfo = self.userInfo;
+          if (!orgInfo.updateTime) {
+            self.unitBasic.name = orgInfo.name;
+            self.unitBasic.principal = orgInfo.principal;
+            self.unitBasic.phone = orgInfo.phone;
+            self.unitBasic.creditCode = orgInfo.creditCode;
+            if (self.unitBasic.province && self.unitBasic.city && self.unitBasic.county) {
+              self.selectedOptions = self.unitBasic.province.concat('/', self.unitBasic.city, '/', self.unitBasic.county)
+            }
+          } else {
+            self.unitBasic = orgInfo;
+            self.userInfo.avatar = self.unitBasic.img;
+            self.$set(self.unitBasic, "avatars", [
+              {url: self.loadUrl(self.unitBasic.img)},
+            ]);
+            self.$set(self.unitBasic, "licenses", [
+              {url: self.loadUrl(self.unitBasic.license)},
+            ]);
+            if (self.unitBasic.province && self.unitBasic.city && self.unitBasic.county) {
+              self.selectedOptions = self.unitBasic.province.concat('/', self.unitBasic.city, '/', self.unitBasic.county)
+            }
+          }
+
+          this.queryDictListByTypeLists();
+        }
+      } else {
+        self.$message(res.msg)
+      }
+    })
     self.userType = self.user.userType
     self.$store.commit("showLoading");
-    if (self.userType == 1) {
-      self.userInfo = self.user.userInfo
-      console.log(self.userInfo)
-      if (!self.userInfo.updateTime) {
-        self.basic.userName = self.userInfo.userName;
-        self.basic.phonenumber = self.userInfo.phonenumber;
-        self.basic.identityCode = self.userInfo.identityCode;
-        self.basic.sex = self.userInfo.sex;
-        self.basic.avatar = self.userInfo.avatar;
-        self.$set(self.basic, "avatars", [
-          {url: self.loadUrl(self.userInfo.avatar)},
-        ]);
-        self.$set(self.basic, "memberName", self.userInfo.memberName);
-        self.$set(self.basic, "sourceOrgType", self.userInfo.sourceOrgType.toString());
-        if (self.basic.province && self.basic.city && self.basic.county) {
-          self.selectedOptions = self.basic.province.concat('/', self.basic.city, '/', self.basic.county)
-        }
-      } else {
-        self.basic = self.userInfo;
-        if (self.basic.province && self.basic.city && self.basic.county) {
-          self.selectedOptions = self.basic.province.concat('/', self.basic.city, '/', self.basic.county)
-        }
-        self.$set(
-            self.basic,
-            "memberApply",
-            Object.assign(
-                {},
-                {
-                  sign: "wx",
-                  memberName: "",
-                  memberId: 0,
-                  goodsPrice: "",
-                  sourceOrgName: "",
-                  searchSourceOrgName: "",
-                  sourceOrgId: 0,
-                  nation: "",
-                  speciality: "",
-                  culture: "",
-                }
-            )
-        );
-        self.$set(self.basic, "sourceOrgType", self.userInfo.sourceOrgType.toString());
-        self.$set(self.basic, "avatars", [
-          {url: self.loadUrl(self.basic.avatar)},
-        ]);
-      }
-      if (self.user.rankInfo.length > 0) {
-        self.dan = self.user.rankInfo[0];
-        self.itemValue = self.dan.value;
-        self.$set(self.dan, "certImgs", [
-          {url: self.loadUrl(self.dan.certImg)},
-        ]);
 
 
-      }
-      if (self.user.playerInfo.length > 0) {
-        self.player = self.user.playerInfo[0];
-        self.player.playerLv = self.player.level
-        self.$set(self.player, "certImgs", [
-          {url: self.loadUrl(self.player.certImg)},
-        ]);
-
-      }
-    } else {
-      self.userInfo = self.user.orgInfo
-      let orgInfo = self.userInfo;
-      if (!orgInfo.updateTime) {
-        self.unitBasic.name = orgInfo.name;
-        self.unitBasic.principal = orgInfo.principal;
-        self.unitBasic.phone = orgInfo.phone;
-        self.unitBasic.creditCode = orgInfo.creditCode;
-        if (self.unitBasic.province && self.unitBasic.city && self.unitBasic.county) {
-          self.selectedOptions = self.unitBasic.province.concat('/', self.unitBasic.city, '/', self.unitBasic.county)
-        }
-      } else {
-        self.unitBasic = orgInfo;
-        self.userInfo.avatar = self.unitBasic.img;
-        self.$set(self.unitBasic, "avatars", [
-          {url: self.loadUrl(self.unitBasic.img)},
-        ]);
-        self.$set(self.unitBasic, "licenses", [
-          {url: self.loadUrl(self.unitBasic.license)},
-        ]);
-        if (self.unitBasic.province && self.unitBasic.city && self.unitBasic.county) {
-          self.selectedOptions = self.unitBasic.province.concat('/', self.unitBasic.city, '/', self.unitBasic.county)
-        }
-      }
-    }
-    this.queryDictListByTypeLists();
-
-
-    // getUserProfile().then((res) => {
-    //   if (res.code == 200) {
-    //     window.sessionStorage.setItem("user", JSON.stringify(res.data));
-    //     // window.localStorage.setItem("user", JSON.stringify(res.data));
-    //
-    //     // self.$store.dispatch("saveUserInfo", res.data);
-    //
-    //     if (res.data.userType == 1) {
-    //       self.userInfo = res.data.userInfo
-    //       if (!self.userInfo.updateTime) {
-    //         self.basic.userName = self.userInfo.userName;
-    //         self.basic.phonenumber = self.userInfo.phonenumber;
-    //         self.basic.identityCode = self.userInfo.identityCode;
-    //         self.basic.sex = self.userInfo.sex;
-    //         self.basic.avatar = self.userInfo.avatar;
-    //         self.$set(self.basic, "avatars", [
-    //           {url: self.loadUrl(self.userInfo.avatar)},
-    //         ]);
-    //         self.$set(self.basic, "memberName", self.userInfo.memberName);
-    //         self.$set(self.basic, "sourceOrgType", self.userInfo.sourceOrgType.toString());
-    //         if (self.basic.province && self.basic.city && self.basic.county) {
-    //           self.selectedOptions = self.basic.province.concat('/', self.basic.city, '/', self.basic.county)
-    //         }
-    //       } else {
-    //         self.basic = self.userInfo;
-    //         if (self.basic.province && self.basic.city && self.basic.county) {
-    //           self.selectedOptions = self.basic.province.concat('/', self.basic.city, '/', self.basic.county)
-    //         }
-    //         self.$set(
-    //             self.basic,
-    //             "memberApply",
-    //             Object.assign(
-    //                 {},
-    //                 {
-    //                   sign: "wx",
-    //                   memberName: "",
-    //                   memberId: 0,
-    //                   goodsPrice: "",
-    //                   sourceOrgName: "",
-    //                   searchSourceOrgName: "",
-    //                   sourceOrgId: 0,
-    //                   nation: "",
-    //                   speciality: "",
-    //                   culture: "",
-    //                 }
-    //             )
-    //         );
-    //         self.$set(self.basic, "sourceOrgType", self.userInfo.sourceOrgType.toString());
-    //         self.$set(self.basic, "avatars", [
-    //           {url: self.loadUrl(self.basic.avatar)},
-    //         ]);
-    //       }
-    //       if (res.data.rankInfo.length > 0) {
-    //         self.dan = res.data.rankInfo[0];
-    //         self.itemValue = self.dan.value;
-    //         self.$set(self.dan, "certImgs", [
-    //           {url: self.loadUrl(self.dan.certImg)},
-    //         ]);
-    //
-    //
-    //       }
-    //       if (res.data.playerInfo.length > 0) {
-    //         self.player = res.data.playerInfo[0];
-    //         self.player.playerLv = self.player.level
-    //         self.$set(self.player, "certImgs", [
-    //           {url: self.loadUrl(self.player.certImg)},
-    //         ]);
-    //
-    //       }
-    //     } else {
-    //       self.userInfo = res.data.orgInfo
-    //       let orgInfo = self.userInfo;
-    //       if (!orgInfo.updateTime) {
-    //         self.unitBasic.name = orgInfo.name;
-    //         self.unitBasic.principal = orgInfo.principal;
-    //         self.unitBasic.phone = orgInfo.phone;
-    //         self.unitBasic.creditCode = orgInfo.creditCode;
-    //         if (self.unitBasic.province && self.unitBasic.city && self.unitBasic.county) {
-    //           self.selectedOptions = self.unitBasic.province.concat('/', self.unitBasic.city, '/', self.unitBasic.county)
-    //         }
-    //       } else {
-    //         self.unitBasic = orgInfo;
-    //         self.userInfo.avatar = self.unitBasic.img;
-    //         self.$set(self.unitBasic, "avatars", [
-    //           {url: self.loadUrl(self.unitBasic.img)},
-    //         ]);
-    //         self.$set(self.unitBasic, "licenses", [
-    //           {url: self.loadUrl(self.unitBasic.license)},
-    //         ]);
-    //         if (self.unitBasic.province && self.unitBasic.city && self.unitBasic.county) {
-    //           self.selectedOptions = self.unitBasic.province.concat('/', self.unitBasic.city, '/', self.unitBasic.county)
-    //         }
-    //       }
-    //     }
-    //   } else {
-    //     self.$message(res.mes)
-    //   }
-    //   this.queryDictListByTypeLists();
-    // })
-    // this.queryDictListByTypeLists();
-
-    // hysq
-    checkUserIsOrgMember({sign: "wx"}).then((res) => {
-      if (res.code == 200) {
-        const isStaute = (self.state = res.data.isOrgMember);
-        self.isState = isStaute;
-        // if (isStaute == 0) {
-        //   self.getMembershipFee();
-        //   self.queryAssociationLists();
-        // } else {
-        //   // console.log(2);
-        // }
-        self.getMembershipFee();
-        self.queryAssociationLists();
-      } else {
-        self.$message(res.msg);
-        setTimeout(() => {
-          self.$router.push("/login");
-        }, 3000);
-      }
-      self.$store.commit("hideLoading");
-    });
-    //  文化程度
-    // this.queryDictListByGrade();
-  },
-  methods: {
-    getType(type) {
-      this.cType = type;
-    },
-    selectedPlayerLevel(value) {
-      this.player.level = value
-    },
-    //选择地区
-    handleChange(value) {
-      let self = this;
-
-      // CodeToText属性是区域码，属性值是汉字 CodeToText['110000']输出北京市
-      if (self.userType === 1) {
-        self.basic.province = CodeToText[self.selectedOptions[0]]
-        self.basic.city = CodeToText[self.selectedOptions[1]]
-        self.basic.county = CodeToText[self.selectedOptions[2]];
-      } else {
-        self.unitBasic.province = CodeToText[self.selectedOptions[0]]
-        self.unitBasic.city = CodeToText[self.selectedOptions[1]]
-        self.unitBasic.county = CodeToText[self.selectedOptions[2]];
-      }
-    },
-
-    // 上传头像
-    handleAvatarSuccess(res, file) {
-      this.basic.avatar = URL.createObjectURL(file.raw);
-      let self = this
-      let formData = new FormData()
-      formData.append('file', file.raw)
-      uploadImage(formData).then((res) => {
+      // hysq
+      checkUserIsOrgMember({sign: "wx"}).then((res) => {
         if (res.code == 200) {
-          setTimeout(() => {
-            let str = res.fileName
-            file.name = str
-            self.basic.avatar = str;
-            self.basic.avatars[0] = {url: self.loadUrl(str)};
-            file.status = "done";
-            file.message = "上传成功";
-          }, 1000)
+          const isStaute = (self.state = res.data.isOrgMember);
+          self.isState = isStaute;
+          // if (isStaute == 0) {
+          //   self.getMembershipFee();
+          //   self.queryAssociationLists();
+          // } else {
+          //   // console.log(2);
+          // }
+          self.getMembershipFee();
+          self.queryAssociationLists();
         } else {
           self.$message(res.msg);
-        }
-      })
-
-    },
-    handleAvatarSuccessDan(res, file) {
-      this.dan.certImg = URL.createObjectURL(file.raw);
-      let self = this
-      let formData = new FormData()
-      formData.append('file', file.raw)
-      uploadImage(formData).then((res) => {
-        if (res.code == 200) {
           setTimeout(() => {
-            let str = res.fileName
-            file.name = str
-            self.dan.certImg = str;
-            self.dan.certImgs[0] = {url: self.loadUrl(str)};
-            file.status = "done";
-            file.message = "上传成功";
-          }, 1000)
-        } else {
-          self.$message(res.msg);
+            self.$router.push("/login");
+          }, 3000);
         }
-      })
-
-    },
-    handleAvatarSuccessPlayer(res, file) {
-      this.player.certImg = URL.createObjectURL(file.raw);
-      let self = this
-      let formData = new FormData()
-      formData.append('file', file.raw)
-      uploadImage(formData).then((res) => {
-        if (res.code == 200) {
-          setTimeout(() => {
-            let str = res.fileName
-            file.name = str
-            self.player.certImg = str;
-            self.player.certImgs[0] = {url: self.loadUrl(str)};
-            file.status = "done";
-            file.message = "上传成功";
-          }, 1000)
-        } else {
-          self.$message(res.msg);
-        }
-      })
-    },
-    handleAvatarSuccessLicenses(res, file) {
-      this.unitBasic.license = URL.createObjectURL(file.raw);
-      let self = this
-      let formData = new FormData()
-      formData.append('file', file.raw)
-      uploadImage(formData).then((res) => {
-        if (res.code == 200) {
-          setTimeout(() => {
-            let str = res.fileName
-            file.name = str
-            self.unitBasic.license = str;
-            self.unitBasic.licenses[0] = {url: self.loadUrl(str)};
-            file.status = "done";
-            file.message = "上传成功";
-          }, 1000)
-        } else {
-          self.$message(res.msg);
-        }
-      })
-    },
-    handleAvatarSuccessUnit(res, file) {
-      this.unitBasic.img = URL.createObjectURL(file.raw);
-      let self = this
-      let formData = new FormData()
-      formData.append('file', file.raw)
-      uploadImage(formData).then((res) => {
-        if (res.code == 200) {
-          setTimeout(() => {
-            let str = res.fileName
-            file.name = str
-            self.unitBasic.img = str;
-            self.unitBasic.avatars[0] = {url: self.loadUrl(str)};
-            file.status = "done";
-            file.message = "上传成功";
-          }, 1000)
-        } else {
-          self.$message(res.msg);
-        }
-      })
-    },
-    beforeAvatarUpload(file) {
-      // const isSize = new Promise(function (resolve, reject) {
-      //   let width = 300
-      //   let height = 420
-      //   let _URL = window.URL || window.webkitURL
-      //   let img = new Image()
-      //   img.onload = function () {
-      //     let valid = img.width == width && img.height == height;
-      //     valid ? resolve() : reject();
-      //   }
-      //   img.src = _URL.createObjectURL(file);
-      // })
-      //     .then(
-      //         () => {
-      //           return file;
-      //         },
-      //         () => {
-      //           this.$message({
-      //             message: '图片尺寸只能是300*420px!请重新选择!',
-      //             type: 'warning'
-      //           })
-      //           return Promise.reject()
-      //           return false
-      //         })
-      // return isSize
-    },
-
-    // 提交表单
-    submitForm(formName, type) {
-      this.$refs[formName].validate((valid) => {
-        if (valid) {
-          let self = this
-          let param = type === 1 ? self.basic : self.unitBasic
-          // 会员申请元素
-          self.basic.memberApply.memberName = self.basic.memberName;
-          self.basic.memberApply.memberId = self.basic.memberId;
-          self.basic.memberApply.goodsPrice = self.basic.goodsPrice;
-          self.basic.memberApply.nation = self.basic.nation;
-          self.basic.memberApply.speciality = self.basic.speciality;
-          self.basic.memberApply.culture = self.basic.culture;
-          self.basic.memberApply.sourceOrgType = self.basic.sourceOrgType;
-
-          if (self.basic.sourceOrgType == "0") {
-            self.basic.memberApply.sourceOrgName = null;
-            self.basic.memberApply.sourceOrgId = null;
-          } else {
-            self.basic.memberApply.sourceOrgName = self.basic.sourceOrgName;
-            self.basic.memberApply.sourceOrgId = self.basic.sourceOrgId;
-          }
-          param.sign = "wx";
-
-          updUserInfo(param).then((res) => {
-            if (res.code === 200) {
-              self.$message(res.msg)
-              self.$router.push('/')
-            } else {
-              self.$message(res.msg)
-            }
-          })
-
-        } else {
-          console.log('error submit!!');
-          return false;
-        }
+        self.$store.commit("hideLoading");
       });
-    },
-    onSubmitCert(formName, strType) {
-      this.$refs[formName].validate((valid) => {
-        if (valid) {
-          let self = this;
+      //  文化程度
+      // this.queryDictListByGrade();
+    }
+  ,
+    methods: {
+      getType(type)
+      {
+        this.cType = type;
+      },
+      selectedPlayerLevel(value)
+      {
+        this.player.level = value
+      },
 
-          let parms = strType == "dan" ? self.dan : self.player;
-          if (parms === self.dan) {
+      //选择地区
+      handleChange(value)
+      {
+        let self = this;
+
+        // CodeToText属性是区域码，属性值是汉字 CodeToText['110000']输出北京市
+        if (self.userType === 1) {
+          self.basic.province = CodeToText[self.selectedOptions[0]]
+          self.basic.city = CodeToText[self.selectedOptions[1]]
+          self.basic.county = CodeToText[self.selectedOptions[2]];
+        } else {
+          self.unitBasic.province = CodeToText[self.selectedOptions[0]]
+          self.unitBasic.city = CodeToText[self.selectedOptions[1]]
+          self.unitBasic.county = CodeToText[self.selectedOptions[2]];
+        }
+      }
+    ,
+
+      // 上传头像
+      handleAvatarSuccess(res, file)
+      {
+        this.basic.avatar = URL.createObjectURL(file.raw);
+        let self = this
+        let formData = new FormData()
+        formData.append('file', file.raw)
+        uploadImage(formData).then((res) => {
+          if (res.code == 200) {
             setTimeout(() => {
-              if (parms.certImgs.length == 0) {
-                self.$message("证书不能为空！");
-                return false;
-              } else if (parms.item == '') {
-                self.$message("考试项目不能为空！");
-                return false
-              } else if (parms.name == '') {
-                self.$message("考评点不能为空！");
-                return false
-              } else if (parms.level == '') {
-                self.$message("等级不能为空！");
-                return false
-              } else if (parms.certCode == '') {
-                self.$message("段位编号不能为空！");
-                return false
-              }
-            }, 30);
-          } else if (parms === self.player) {
-            setTimeout(() => {
-              if (parms.certImgs.length == 0) {
-                self.$message("证书不能为空！");
-                return false;
-              } else if (parms.certSource == '') {
-                self.$message("审批单位不能为空！");
-                return false
-              } else if (parms.certTime == '') {
-                self.$message("审批日期不能为空！");
-                return false
-              } else if (parms.level == '') {
-                self.$message("等级不能为空！");
-                return false
-              }
-            }, 30);
+              let str = res.fileName
+              file.name = str
+              self.basic.avatar = str;
+              self.basic.avatars[0] = {url: self.loadUrl(str)};
+              file.status = "done";
+              file.message = "上传成功";
+            }, 1000)
+          } else {
+            self.$message(res.msg);
           }
+        })
+
+      }
+    ,
+      handleAvatarSuccessDan(res, file)
+      {
+        this.dan.certImg = URL.createObjectURL(file.raw);
+        let self = this
+        let formData = new FormData()
+        formData.append('file', file.raw)
+        uploadImage(formData).then((res) => {
+          if (res.code == 200) {
+            setTimeout(() => {
+              let str = res.fileName
+              file.name = str
+              self.dan.certImg = str;
+              self.dan.certImgs[0] = {url: self.loadUrl(str)};
+              file.status = "done";
+              file.message = "上传成功";
+            }, 1000)
+          } else {
+            self.$message(res.msg);
+          }
+        })
+
+      }
+    ,
+      handleAvatarSuccessPlayer(res, file)
+      {
+        this.player.certImg = URL.createObjectURL(file.raw);
+        let self = this
+        let formData = new FormData()
+        formData.append('file', file.raw)
+        uploadImage(formData).then((res) => {
+          if (res.code == 200) {
+            setTimeout(() => {
+              let str = res.fileName
+              file.name = str
+              self.player.certImg = str;
+              self.player.certImgs[0] = {url: self.loadUrl(str)};
+              file.status = "done";
+              file.message = "上传成功";
+            }, 1000)
+          } else {
+            self.$message(res.msg);
+          }
+        })
+      }
+    ,
+      handleAvatarSuccessLicenses(res, file)
+      {
+        this.unitBasic.license = URL.createObjectURL(file.raw);
+        let self = this
+        let formData = new FormData()
+        formData.append('file', file.raw)
+        uploadImage(formData).then((res) => {
+          if (res.code == 200) {
+            setTimeout(() => {
+              let str = res.fileName
+              file.name = str
+              self.unitBasic.license = str;
+              self.unitBasic.licenses[0] = {url: self.loadUrl(str)};
+              file.status = "done";
+              file.message = "上传成功";
+            }, 1000)
+          } else {
+            self.$message(res.msg);
+          }
+        })
+      }
+    ,
+      handleAvatarSuccessUnit(res, file)
+      {
+        this.unitBasic.img = URL.createObjectURL(file.raw);
+        let self = this
+        let formData = new FormData()
+        formData.append('file', file.raw)
+        uploadImage(formData).then((res) => {
+          if (res.code == 200) {
+            setTimeout(() => {
+              let str = res.fileName
+              file.name = str
+              self.unitBasic.img = str;
+              self.unitBasic.avatars[0] = {url: self.loadUrl(str)};
+              file.status = "done";
+              file.message = "上传成功";
+            }, 1000)
+          } else {
+            self.$message(res.msg);
+          }
+        })
+      }
+    ,
+      beforeAvatarUpload(file)
+      {
+        // const isSize = new Promise(function (resolve, reject) {
+        //   let width = 300
+        //   let height = 420
+        //   let _URL = window.URL || window.webkitURL
+        //   let img = new Image()
+        //   img.onload = function () {
+        //     let valid = img.width == width && img.height == height;
+        //     valid ? resolve() : reject();
+        //   }
+        //   img.src = _URL.createObjectURL(file);
+        // })
+        //     .then(
+        //         () => {
+        //           return file;
+        //         },
+        //         () => {
+        //           this.$message({
+        //             message: '图片尺寸只能是300*420px!请重新选择!',
+        //             type: 'warning'
+        //           })
+        //           return Promise.reject()
+        //           return false
+        //         })
+        // return isSize
+      }
+    ,
+
+      // 提交表单
+      submitForm(formName, type)
+      {
+        this.$refs[formName].validate((valid) => {
+          if (valid) {
+            let self = this
+            let param = type === 1 ? self.basic : self.unitBasic
+            // 会员申请元素
+            self.basic.memberApply.memberName = self.basic.memberName;
+            self.basic.memberApply.memberId = self.basic.memberId;
+            self.basic.memberApply.goodsPrice = self.basic.goodsPrice;
+            self.basic.memberApply.nation = self.basic.nation;
+            self.basic.memberApply.speciality = self.basic.speciality;
+            self.basic.memberApply.culture = self.basic.culture;
+            self.basic.memberApply.sourceOrgType = self.basic.sourceOrgType;
+
+            if (self.basic.sourceOrgType == "0") {
+              self.basic.memberApply.sourceOrgName = null;
+              self.basic.memberApply.sourceOrgId = null;
+            } else {
+              self.basic.memberApply.sourceOrgName = self.basic.sourceOrgName;
+              self.basic.memberApply.sourceOrgId = self.basic.sourceOrgId;
+            }
+            param.sign = "wx";
+
+            updUserInfo(param).then((res) => {
+              if (res.code === 200) {
+                self.$message(res.msg)
+                self.$router.push('/')
+              } else {
+                self.$message(res.msg)
+              }
+            })
+
+          } else {
+            console.log('error submit!!');
+            return false;
+          }
+        });
+      }
+    ,
+      onSubmitCert(formName, strType)
+      {
+        this.$refs[formName].validate((valid) => {
+          if (valid) {
+            let self = this;
+
+            let parms = {}
+
+            if (strType === 'dan') {
+              self.dan.level = self.danLevelSelected.label
+              self.dan.levelValue = self.danLevelSelected.value
+              parms = self.dan
+            } else if (strType === 'player') {
+              parms = self.player
+            }
+            console.log(parms)
+
+            if (parms === self.dan) {
+              setTimeout(() => {
+                if (parms.certImgs.length == 0) {
+                  self.$message("证书不能为空！");
+                  return false;
+                } else if (parms.item == '') {
+                  self.$message("考试项目不能为空！");
+                  return false
+                } else if (parms.name == '') {
+                  self.$message("考评点不能为空！");
+                  return false
+                } else if (parms.level == '') {
+                  self.$message("等级不能为空！");
+                  return false
+                } else if (parms.certCode == '') {
+                  self.$message("段位编号不能为空！");
+                  return false
+                }
+              }, 30);
+            } else if (parms === self.player) {
+              setTimeout(() => {
+                if (parms.certImgs.length == 0) {
+                  self.$message("证书不能为空！");
+                  return false;
+                } else if (parms.certSource == '') {
+                  self.$message("审批单位不能为空！");
+                  return false
+                } else if (parms.certTime == '') {
+                  self.$message("审批日期不能为空！");
+                  return false
+                } else if (parms.level == '') {
+                  self.$message("等级不能为空！");
+                  return false
+                }
+              }, 30);
+            }
 
 
-          addOrUpdUserCert(parms).then((res) => {
-            // parms = "";
+            addOrUpdUserCert(parms).then((res) => {
+              // parms = "";
+              if (res.code == 200) {
+                self.$message(res.msg);
+                self.$router.push("/");
+              } else {
+                self.$message(res.msg);
+              }
+            });
+          } else {
+            console.log('error submit!!');
+            return false;
+          }
+        });
+
+      }
+    ,
+      // 会员申请部分
+      getMembershipFee()
+      {
+        let self = this;
+        console.log(self.userType)
+        if (self.userType === 1) {
+          queryCenterApplyMemberList({sign: "wx"}).then((res) => {
             if (res.code == 200) {
-              self.$message(res.msg);
-              self.$router.push("/");
+              self.MemberList = res.data;
+              res.data.map((item) => {
+                self.MemTypeColumns.push(item.memberName);
+              });
+              // self.MemParms.memberId = res.data[0].id
+              // self.getCustomForms();
             } else {
               self.$message(res.msg);
             }
           });
-        } else {
-          console.log('error submit!!');
-          return false;
         }
-      });
-
-    },
-    // 会员申请部分
-    getMembershipFee() {
-      let self = this;
-      console.log(self.userType)
-      if (self.userType === 1) {
-        queryCenterApplyMemberList({sign: "wx"}).then((res) => {
+      }
+    ,
+      // 会员类别
+      onMemType(value)
+      {
+        let self = this;
+        let cItem = self.MemberList.filter((item) => item.memberName == value);
+        if (cItem[0].goodsPrice) {
+          self.MemPrice = self.float_calculator(
+              "add",
+              cItem[0].goodsPrice,
+              self.float_calculator(
+                  "add",
+                  cItem[0].makePrice || 0,
+                  cItem[0].rebatePrice || 0
+              )
+          );
+        }
+        self.$set(self.basic, "memberName", value);
+        self.$set(self.basic, "memberId", cItem[0].id);
+        self.$set(self.basic, "goodsPrice", self.MemPrice);
+        self.MemTypeShow = false;
+      }
+    ,
+      onSelectUnit(item)
+      {
+        let self = this;
+        self.basic.sourceOrgName = item.name;
+        self.basic.sourceOrgId = item.id;
+        self.showUnit = false;
+      }
+    ,
+      queryAssociationLists()
+      {
+        let self = this;
+        queryAssociationList({}).then((res) => {
           if (res.code == 200) {
-            self.MemberList = res.data;
-            res.data.map((item) => {
-              self.MemTypeColumns.push(item.memberName);
-            });
-            // self.MemParms.memberId = res.data[0].id
-            // self.getCustomForms();
+            self.associationList = res.data;
           } else {
             self.$message(res.msg);
           }
         });
       }
-    },
-    // 会员类别
-    onMemType(value) {
-      let self = this;
-      let cItem = self.MemberList.filter((item) => item.memberName == value);
-      if (cItem[0].goodsPrice) {
-        self.MemPrice = self.float_calculator(
-            "add",
-            cItem[0].goodsPrice,
-            self.float_calculator(
-                "add",
-                cItem[0].makePrice || 0,
-                cItem[0].rebatePrice || 0
-            )
-        );
-      }
-      self.$set(self.basic, "memberName", value);
-      self.$set(self.basic, "memberId", cItem[0].id);
-      self.$set(self.basic, "goodsPrice", self.MemPrice);
-      self.MemTypeShow = false;
-    },
-    onSelectUnit(item) {
-      let self = this;
-      self.basic.sourceOrgName = item.name;
-      self.basic.sourceOrgId = item.id;
-      self.showUnit = false;
-    },
-    queryAssociationLists() {
-      let self = this;
-      queryAssociationList({}).then((res) => {
-        if (res.code == 200) {
-          self.associationList = res.data;
-        } else {
-          self.$message(res.msg);
-        }
-      });
-    },
+    ,
 
-    // 段位信息-- 考评点
-    queryDictListByTypeLists() {
-      let self = this;
-      queryDictListByTypeList([{type: "rankEval"}]).then((res) => {
-        self.$nextTick(() => {
+      // 段位信息-- 考评点 等级
+      queryDictListByTypeLists()
+      {
+        let self = this;
+        queryDictListByTypeList([{type: "rankEval"}]).then((res) => {
+          if (res.code == 200) {
+            let _rankEvalList = res.data.rankEvalList;
+            _rankEvalList.map((item) => {
 
+              if (item.value === self.itemValue) {
+                self.dan.name = item.label;
+              }
+
+              self.danAppraisal.push(
+                  Object.assign({}, item, {name: item.label})
+              );
+
+            });
+          } else {
+            self.$message(res.msg);
+          }
         });
-        if (res.code == 200) {
-          let _rankEvalList = res.data.rankEvalList;
-          _rankEvalList.map((item) => {
+        queryDictListByTypeList([{type: "levelGrade"}]).then((res) => {
+          if (res.code == 200) {
+            let _danGrade = res.data.levelGradeList;
+            _danGrade.map((item) => {
 
-            if (item.value === self.itemValue) {
-              self.dan.name = item.label;
-            }
+              self.danGradeColumns.push(
+                  Object.assign({}, item, {name: item.label})
+              );
 
-            self.danAppraisal.push(
-                Object.assign({}, item, {name: item.label})
-            );
+            });
+          } else {
+            self.$message(res.msg);
+          }
+        });
 
-          });
-        } else {
-          self.$message(res.msg);
-        }
-      });
-    },
+      }
+    ,
 
+
+    }
 
   }
-
-}
 </script>
 
 <style lang="scss" scoped>

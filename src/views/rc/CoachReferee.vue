@@ -4,30 +4,37 @@
       <span class="back"> <router-link to="/">&lt; 返回首页</router-link>   </span>
       <div class="user-head">
         <div class="block">
-          <el-avatar  :size="50" v-model="userInfo.avatars" :src="userInfo.avatars[0].url"></el-avatar>
+          <el-avatar :size="50" v-model="userInfo.avatars" :src="userInfo.avatars[0].url"></el-avatar>
 
         </div>
         <span class="name"> {{ userInfo.userName }}</span>
         <span class="tel">{{ userInfo.phonenumber }}</span>
       </div>
       <div class="wrapper">
-        <el-form :model="queryParams" :rules="rules" ref="coach" label-width="100px" class="demo-ruleForm"
-                 @keyup.enter.native="onSubmitCert('coach')">
+        <el-form :model="queryParams" :rules="rules" ref="referee" label-width="100px" class="demo-ruleForm"
+                 @keyup.enter.native="onSubmitCert('referee')">
           <el-form-item label="项目名称" prop="item">
             <el-input v-model="queryParams.item" placeholder="请输入项目名称"></el-input>
           </el-form-item>
-          <el-form-item label="等级" prop="level" v-if="queryParams.type===0">
-            <el-select v-model="queryParams.level" placeholder="请选择您的级别">
-              <el-option v-for="(item,index) in coachGradeColumns" :key="index" :label="item"
+          <el-form-item label="等级" prop="levelValue" v-if="queryParams.type===0">
+            <el-select v-model="selectedLevel" placeholder="请选择您的级别"  :disabled="canSelected">
+              <el-option v-for="(item,index) in coachGradeColumns" :key="index" :label="item.label"
                          :value="item"></el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="等级" prop="level" v-else>
-            <el-select v-model="queryParams.level" placeholder="请选择您的级别">
-              <el-option v-for="(item,index) in refereeGradeColumns" :key="index" :label="item"
+          <el-form-item label="等级" prop="levelValue" v-else-if="queryParams.type===1" >
+            <el-select v-model="selectedLevel" placeholder="请选择您的级别"   :disabled="canSelected">
+              <el-option v-for="(item,index) in refereeGradeColumns" :key="index" :label="item.label"
                          :value="item"></el-option>
             </el-select>
           </el-form-item>
+          <el-form-item label="等级" prop="levelValue" v-else-if="queryParams.type==4" >
+            <el-select v-model="selectedLevel" placeholder="请选择您的级别"   :disabled="canSelected">
+              <el-option v-for="(item,index) in judgeGradeColumns" :key="index" :label="item.label"
+                         :value="item"></el-option>
+            </el-select>
+          </el-form-item>
+
           <el-form-item label="证书编号" prop="certCode">
             <el-input v-model="queryParams.certCode" placeholder="请输入证书编号"></el-input>
           </el-form-item>
@@ -85,9 +92,10 @@
             </el-upload>
           </el-form-item>
           <el-form-item class="btn">
-            <el-button type="primary" @click="onSubmitCert('coach')">保存</el-button>
+            <el-button type="primary" @click="onSubmitCert('referee')">保存</el-button>
           </el-form-item>
         </el-form>
+
       </div>
     </div>
   </div>
@@ -96,6 +104,7 @@
 <script>
 import {regionData, CodeToText} from 'element-china-area-data'
 import {uploadImage, addOrUpdUserCert, checkUserMember, getUserProfile} from "@/api/user";
+import {queryDictListByTypeList} from "@/api/dict";
 
 export default {
 
@@ -106,11 +115,14 @@ export default {
       userInfo: {},
       //注册教练信息
       certResumeList: [],
+      selectedLevel: {},
+      canSelected:false,
       queryParams: {
         type: null,
         id: "",
         item: "",
-        level: "",
+        level: '',
+        levelValue: '',
         certCode: "",
         certSource: "",
         certTime: "",
@@ -120,8 +132,9 @@ export default {
         province: '',
         resumes: [],
       },
-      coachGradeColumns: ["国家级", "高级", "一级", "二级", "三级"],
-      refereeGradeColumns: ["国际级", "国家级", "一级", "二级", "三级"],
+      coachGradeColumns: [],
+      refereeGradeColumns: [],
+      judgeGradeColumns: [],
       rules: {
         item: [
           {required: true, message: '请填写项目名称！', trigger: 'blur'},
@@ -179,27 +192,39 @@ export default {
           if (self.queryParams.type === '0') {
             if (res.data.coachInfo.length > 0) {
               self.queryParams = res.data.coachInfo[res.data.coachInfo.length - 1];
+              self.selectedLevel = self.queryParams.level
+              if (self.queryParams.level !== '') {
+                self.canSelected = true
+              }
               self.$set(self.queryParams, "certImgs", [
                 {url: self.loadUrl(self.queryParams.certImg)},
               ]);
-              self.selectedOptions=self.queryParams.province
+              self.selectedOptions = self.queryParams.province
             }
-          }else if(self.queryParams.type === '1'){
+          } else if (self.queryParams.type === '1') {
             if (res.data.refereeInfo.length > 0) {
               self.queryParams = res.data.refereeInfo[res.data.refereeInfo.length - 1];
+              self.selectedLevel = self.queryParams.level
+              if (self.queryParams.level !== '') {
+                self.canSelected = true
+              }
               self.$set(self.queryParams, "certImgs", [
                 {url: self.loadUrl(self.queryParams.certImg)},
               ]);
-              self.selectedOptions=self.queryParams.province
+              self.selectedOptions = self.queryParams.province
 
             }
-          }else if(self.queryParams.type === '3'){
-            if(res.data.examiner.length >0){
-              self.queryParams=res.data.examiner[res.data.examiner.length - 1]
+          } else if (self.queryParams.type === '4') {
+            if (res.data.examiner.length > 0) {
+              self.queryParams = res.data.examiner[res.data.examiner.length - 1]
+              self.selectedLevel = self.queryParams.level
+              if (self.queryParams.level !== '') {
+                self.canSelected = true
+              }
               self.$set(self.queryParams, "certImgs", [
                 {url: self.loadUrl(self.queryParams.certImg)},
               ]);
-              self.selectedOptions=self.queryParams.province
+              self.selectedOptions = self.queryParams.province
             }
           }
         }
@@ -208,10 +233,59 @@ export default {
       }
     })
 
-
+    this.queryDictListByTypeLists()
   },
 
   methods: {
+    //各个身份的等级
+    queryDictListByTypeLists() {
+      let self = this;
+      queryDictListByTypeList([{type: "judgeGrade"}]).then((res) => {
+        if (res.code == 200) {
+          let _judgeGrade = res.data.judgeGradeList;
+          _judgeGrade.map((item) => {
+
+            self.refereeGradeColumns.push(
+                Object.assign({}, item, {name: item.label})
+            );
+
+          });
+        } else {
+          self.$message(res.msg);
+        }
+      });
+      queryDictListByTypeList([{type: "coachGrade"}]).then((res) => {
+        if (res.code == 200) {
+          let _coachGrade = res.data.coachGradeList;
+          _coachGrade.map((item) => {
+
+            self.coachGradeColumns.push(
+                Object.assign({}, item, {name: item.label})
+            );
+
+          });
+        } else {
+          self.$message(res.msg);
+        }
+      });
+      queryDictListByTypeList([{type: "evaluateLevel"}]).then((res) => {
+        if (res.code == 200) {
+          let _judgeGrade = res.data.evaluateLevelList;
+          _judgeGrade.map((item) => {
+
+            self.judgeGradeColumns.push(
+                Object.assign({}, item, {name: item.label})
+            );
+
+          });
+        } else {
+          self.$message(res.msg);
+        }
+      });
+
+    },
+
+
     checkUserMembers() {
       const self = this;
       checkUserMember({sign: "wx"}).then((res) => {
@@ -236,6 +310,10 @@ export default {
     },
     deleteItem(item, index) {
       this.certResumeList.splice(index, 1)
+    },
+    //选择等级
+    pickLevel(value) {
+      console.log(value)
     },
     //选择地区
     handleChange(value) {
@@ -277,6 +355,9 @@ export default {
         if (valid) {
           let self = this;
           self.queryParams.resumes = self.certResumeList
+          self.queryParams.level = self.selectedLevel.label
+          self.queryParams.levelValue = self.selectedLevel.value
+          console.log(self.queryParams)
           let parms = self.queryParams
 
           setTimeout(() => {
@@ -320,7 +401,8 @@ export default {
     padding: 20px 0 0 20px;
     display: inline-block;
     color: #555;
-    a{
+
+    a {
       font-size: 14px;
       color: #555;
     }
@@ -383,12 +465,14 @@ export default {
         vertical-align: bottom;
         font-size: 14px;
       }
-      .el-icon-delete{
+
+      .el-icon-delete {
         padding-left: 6px;
       }
     }
   }
 }
+
 .resume {
 
   img {

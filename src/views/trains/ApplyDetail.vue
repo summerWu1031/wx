@@ -16,13 +16,13 @@
             <div class="right">
               <div class="item-name">
                 <h2 class="item-title">{{ detail.name }}</h2>
-                <el-tag type="info" class="bg1"
+                <el-tag type="info" class="bg1" size="small"
                         v-if="isDuringDate(detail.applyStartTime, detail.applyEndTime) == -1">已结束
                 </el-tag>
-                <el-tag type="danger" class="bg2"
+                <el-tag type="danger" class="bg2" size="small"
                         v-else-if="isDuringDate(detail.applyStartTime, detail.applyEndTime) == 0">进行中
                 </el-tag>
-                <el-tag type="success" class="bg3" v-else>筹备中</el-tag>
+                <el-tag type="success" class="bg3" size="small" v-else>筹备中</el-tag>
 
               </div>
 
@@ -161,7 +161,7 @@ export default {
 
           }, 3000);
         } else if (res.code == 2) {
-          self.$router.push({name: 'trainsPay', params: {detail: self.detail}})
+          self.$router.push({path: '/trains-pay', query: {detail: JSON.stringify(self.detail)}})
         } else {
           self.$message(res.msg);
         }
@@ -181,7 +181,7 @@ export default {
   width: 1200px;
   margin: 0 auto;
   .topBanner {
-    background-color: #fff;
+    //background-color: #fff;
   }
   .contentWrapper{
     padding: 12px 10px;
@@ -225,7 +225,7 @@ export default {
 
               i {
                 padding-left: 6px;
-                width: 60px;
+                width: 30px;
                 font-size: 24px;
               }
 
@@ -235,7 +235,7 @@ export default {
                 width: 100%;
 
                 .content {
-                  font-size: 16px;
+                  font-size: 14px;
                   padding-left: 10px;
                 }
 

@@ -13,7 +13,7 @@
 
       <div class="course-content">
         <ul class="course-list">
-          <li class="list-item" v-for="(item,index) in list" :key="index" @click="golink(item.id)">
+          <li class="list-item" v-for="(item,index) in list" :key="index" @click="golink(item.id,item.type)">
             <div class="item-img">
               <img :src="loadUrl(item.coverImg)">
             </div>
@@ -47,7 +47,6 @@
         </div>
         <el-empty v-else description="暂无内容"></el-empty>
       </div>
-
     </div>
     <Footer/>
   </div>
@@ -63,10 +62,10 @@ export default {
   mixins: [pagination],
   data() {
     return {
-      tabs: ['付费课程', '免费课程'],
+      tabs: ['免费课程', '付费课程'],
       selected: 0,
       queryParams: {
-        needPay: 1,  //0.无需支付 1.需要支付
+        needPay: 0,  //0.无需支付 1.需要支付
         pageNum: 1,
         pageSize: 8
       },
@@ -93,8 +92,15 @@ export default {
       this.queryParams.needPay = index
       this.init()
     },
-    golink(id) {
-      this.$router.push(`/course-detail/${id}`);
+    golink(id,type) {
+      //type 类型 1.教学服务 2.培训
+      if(type==1){
+        this.$router.push(`/course-detail/${id}`);
+      }else if(type==2){
+        this.$router.push(`/apply-detail/${id}`);
+
+      }
+
     }
   }
 }

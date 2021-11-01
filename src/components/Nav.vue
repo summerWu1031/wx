@@ -39,7 +39,7 @@
           <a :href="t.link" target="_blank" v-if="t.a">
             {{ t.name }}
           </a>
-          <router-link :to="t.link" v-else-if="t.rc">
+          <a href="javascript:;" v-else-if="t.rc">
             <div id="components-dropdown-demo-placement" class="dropdownWrapper">
               <Dropdown trigger="hover" style="margin-left: 20px">
                 裁判教练
@@ -54,8 +54,8 @@
                 </Dropdown-menu>
               </Dropdown>
             </div>
-          </router-link>
-          <router-link :to="t.link" v-else-if="t.exam" class="judge">
+          </a>
+          <a href="javascript:;" v-else-if="t.exam" class="judge">
             <div  class="dropdownWrapper">
               <Dropdown trigger="hover" style="margin-left: 20px">
                 考评员
@@ -70,11 +70,11 @@
                 </Dropdown-menu>
               </Dropdown>
             </div>
-          </router-link>
+          </a>
 
-          <router-link :to="t.link" v-else>
+          <a href="javascript:;" v-else>
             {{ t.name }}
-          </router-link>
+          </a>
         </li>
       </ul>
     </div>
@@ -109,8 +109,8 @@ export default {
         {name: '教练列表', link: '/crlist', type: '0'},
       ],
       judgeList: [
-        {name: '考评员注册', link: '/coachreferee', type: '3'},
-        {name: '考评员列表', link: '/crlist', type: '3'},
+        {name: '考评员注册', link: '/coachreferee', type: '4'},
+        {name: '考评员列表', link: '/crlist', type: '4'},
 
       ]
     }
@@ -137,6 +137,12 @@ export default {
       this.$store.commit('updateSelected', item)
       if (item.name === '裁判教练') {
         this.popShow = 'show'
+      }
+      if(item.name=='考评员' || item.name=='裁判教练'){
+
+      }else {
+        let path = item.link
+        this.$router.push(path)
       }
     },
 

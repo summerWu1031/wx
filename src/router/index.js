@@ -214,7 +214,7 @@ const routes = [
     }
   },
   {
-    path: '/trains-pay/:detail',
+    path: '/trains-pay',
     name: 'trainsPay',
     props: true,
     component: TrainsPay,

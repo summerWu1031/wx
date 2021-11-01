@@ -179,7 +179,7 @@ export default {
   watch: {
     $route() {
       this.queryParams.type = this.$route.query.crType
-      if (this.queryParams.type == '0' || this.queryParams.type == '1') {
+      if (this.queryParams.type == '0' || this.queryParams.type == '1'||this.queryParams.type == '3') {
         this.queryParams.level = ''
         this.queryParams.userName = ''
         this.init()

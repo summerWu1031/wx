@@ -60,18 +60,20 @@
                  :logoMargin="5"
                  logoBackgroundColor="white"
                  :margin="10" :size="190" :text="qrcode"/>
-          <h2>请用微信扫码支付</h2>
+          <h2 v-if="payType===2">请用微信扫码支付</h2>
+          <h2 v-else>请用支付宝扫码支付</h2>
           <h2 class="payPrice">{{ payInfo.price }}元</h2>
         </div>
       </div>
 
     </div>
+    <div v-html="html"></div>
   </div>
 </template>
 
 <script>
 import {
-  wxPay,
+  wxPay, aliPay,
   getUserProfile, checkUserMember
 } from "@/api/user";
 import VueQr from "vue-qr";
@@ -83,9 +85,11 @@ export default {
     VueQr,
   },
   inject: ['reload'],
-  props: ['detail'],
+  // props: ['detail'],
   data() {
     return {
+      html: '',
+      detail: {},
       detailShow: false,
       payInfo: {},
       payType: 2, //支付宝:1 微信:2
@@ -99,7 +103,8 @@ export default {
   },
   mounted() {
     let self = this
-
+    self.detail = JSON.parse(self.$route.query.detail)
+    console.log(self.detail)
     self.checkUserMembers()
     getUserProfile().then((res) => {
       let self = this
@@ -128,11 +133,10 @@ export default {
   methods: {
     confirmationTrains() {
       const self = this;
-      let id = self.detail.id;
-      confirmationTrain({id}).then((res) => {
+      confirmationTrain({id: self.detail.id}).then((res) => {
         if (res.code == 2) {
           self.payInfo = res.data
-          self.orderId= self.payInfo.orderNumber
+          self.orderId = self.payInfo.orderNumber
         } else {
           self.$message(res.msg);
         }
@@ -161,12 +165,21 @@ export default {
       const self = this;
       self.$store.commit("showLoading");
       self.initWebSocket()
-      wxPay({id: self.orderId, orderType:5}).then((res) => {
-        self.$store.commit("hideLoading");
-        self.qrcode = res.data.qrcode
+      if (self.payType === 2) {
+        wxPay({id: self.orderId, orderType: 5}).then((res) => {
+          self.$store.commit("hideLoading");
+          self.qrcode = res.data.qrcode
 
-      })
-      this.isShowQrcode = true
+        })
+        this.isShowQrcode = true
+      } else {
+        aliPay({id: self.orderId, orderType: 5}).then((res) => {
+          self.$store.commit("hideLoading");
+          self.qrcode = res.data.qrcode
+        })
+        this.isShowQrcode = true
+      }
+
 
     },
 
@@ -202,8 +215,11 @@ export default {
         if (redata.message == '支付成功') {
           self.isShowQrcode = false
           self.$message('支付成功')
-          // self.$router.push('/')
-          self.$router.push({name: 'course-detail', params: {id: self.id}})
+
+          self.$router.back()
+          // let path = self.$route.path
+          // self.$router.push({path:path, query:{id:self.detail.id}})
+
           this.websock.close()
         }
       }

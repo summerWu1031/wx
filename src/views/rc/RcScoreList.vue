@@ -8,7 +8,7 @@
         <el-form :model="queryParams" ref="ruleForm" label-width="100px" class="demo-ruleForm"
                  @keyup.enter.native="onSubmit">
           <el-form-item label="课程：" class="search-name">
-            <el-input class="nameInput" v-model="queryParams.scoreName" placeholder="请输入课程标题"></el-input>
+            <el-input class="nameInput" v-model="queryParams.scoreName" placeholder="请输入标题"></el-input>
           </el-form-item>
           <el-form-item class="search-btn">
             <el-button class="nameButton" @click="onSubmit">查询</el-button>
@@ -284,7 +284,7 @@ export default {
 
       .list-item {
         width: 278px;
-        height: 230px;
+        height: 236px;
         margin: 0 24px 24px 0;
         background: #FFFFFF;
         box-shadow: 0 6px 10px 0 rgb(95 101 105 / 15%);
@@ -314,7 +314,7 @@ export default {
         .item-title {
           text-indent: 0;
           padding: 0 8px;
-          margin-bottom: 4px;
+          //margin-bottom: 4px;
 
         }
 
@@ -326,6 +326,7 @@ export default {
           padding: 2px 8px;
           color: #999;
           font-size: 12px;
+          margin-bottom: 0;
         }
 
         .btn{

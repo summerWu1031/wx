@@ -20,13 +20,13 @@
             <div class="right">
               <div class="item-name">
                 <h2 class="item-title">{{ detail.trainName }}</h2>
-                <el-tag type="info" class="bg1"
+                <el-tag type="info" class="bg1" size="small"
                         v-if="isDuringDate(detail.applyStartTime, detail.applyEndTime) == -1">已结束
                 </el-tag>
-                <el-tag type="danger" class="bg2"
+                <el-tag type="danger" class="bg2" size="small"
                         v-else-if="isDuringDate(detail.applyStartTime, detail.applyEndTime) == 0">进行中
                 </el-tag>
-                <el-tag type="success" class="bg3" v-else>筹备中</el-tag>
+                <el-tag type="success" class="bg3" size="small" v-else>筹备中</el-tag>
 
               </div>
 
@@ -51,8 +51,8 @@
                   <li v-show="detail.hasExam==1">补考次数：{{ detail.examinationNum }}</li>
                   <li v-show="detail.hasExam==1">
                     考试是否付费：
-                    <el-tag v-if="detail.needPay == 1" type="warning">付费</el-tag>
-                    <el-tag v-else type="success">免费</el-tag>
+                    <el-tag v-if="detail.needPay == 1" type="warning" size="small">付费</el-tag>
+                    <el-tag v-else type="success" size="small">免费</el-tag>
                   </li>
                   <!--                <li v-show="detail.needPay==1 &&detail.isApply !== 1 ">-->
                   <!--                  价格：<span class="price"><i>￥</i>{{ detail.price }}</span>-->
@@ -211,7 +211,7 @@ export default {
       let self = this
       let _detail = JSON.stringify(self.detail);
       if (self.detail.paystatus == 0 && self.detail.needPay == 1) {
-        self.$router.push({path: "/item-pay", query: {IPdetail: _detail}});
+        self.$router.push({path: "/item-pay", query: {IPdetail: _detail }});
       } else {
         if (self.detail.examType == 2) {
           // self.$router.push({
@@ -258,13 +258,10 @@ export default {
   width: 1200px;
   margin: 0 auto;
   //background-color: #f9f9f9;
-  .topBanner {
-    background-color: #fff;
-  }
 
   .contentWrapper {
     padding: 12px 10px;
-    background-color: #fff;
+    //background-color: #fff;
 
     .ss-introWrapper {
       .courseIntro {

@@ -26,18 +26,18 @@
             <el-form-item label="手机号码" prop="phone">
               <el-input v-model="personinfo.phone"></el-input>
             </el-form-item>
-<!--            <el-form-item label="短信验证码" prop="code" class="mes">-->
-<!--              <el-input class="mesInput" v-model="personinfo.code" placeholder="请输入验证码"></el-input>-->
-<!--              <el-button-->
-<!--                  size="small"-->
-<!--                  class="btn-send"-->
-<!--                  native-type="button"-->
-<!--                  @click="getRegisterSmsCode(1)"-->
-<!--                  :disabled="!disabledCodeBtn"-->
-<!--              >-->
-<!--                {{ codeText }}-->
-<!--              </el-button>-->
-<!--            </el-form-item>-->
+            <el-form-item label="短信验证码" prop="code" class="mes">
+              <el-input class="mesInput" v-model="personinfo.code" placeholder="请输入验证码"></el-input>
+              <el-button
+                  size="small"
+                  class="btn-send"
+                  native-type="button"
+                  @click="getRegisterSmsCode(1)"
+                  :disabled="!disabledCodeBtn"
+              >
+                {{ codeText }}
+              </el-button>
+            </el-form-item>
 
             <el-form-item label="用户密码" prop="password">
               <el-input show-password type="password" v-model="personinfo.password" autocomplete="off"></el-input>
@@ -72,18 +72,18 @@
             <el-form-item label="联系电话" prop="phone">
               <el-input v-model="orginfo.phone"></el-input>
             </el-form-item>
-            <!--            <el-form-item label="短信验证码" prop="code" class="mes">-->
-            <!--              <el-input class="mesInput" v-model="orginfo.code" placeholder="请输入验证码"></el-input>-->
-            <!--              <el-button-->
-            <!--                  size="small"-->
-            <!--                  class="btn-send"-->
-            <!--                  native-type="button"-->
-            <!--                  @click="getRegisterSmsCode(2)"-->
-            <!--                  :disabled="!disabledCodeBtn"-->
-            <!--              >-->
-            <!--                {{ codeText }}-->
-            <!--              </el-button>-->
-            <!--            </el-form-item>-->
+            <el-form-item label="短信验证码" prop="code" class="mes">
+              <el-input class="mesInput" v-model="orginfo.code" placeholder="请输入验证码"></el-input>
+              <el-button
+                  size="small"
+                  class="btn-send"
+                  native-type="button"
+                  @click="getRegisterSmsCode(2)"
+                  :disabled="!disabledCodeBtn"
+              >
+                {{ codeText }}
+              </el-button>
+            </el-form-item>
 
             <el-form-item label="用户密码" prop="password">
               <el-input show-password type="password" v-model="orginfo.password" autocomplete="off"></el-input>
@@ -241,8 +241,8 @@ export default {
           {validator: formatter, trigger: 'blur'}
         ],
         code: [
-          // {required: true, message: '请输入验证码!', trigger: 'blur'},
-          // {validator: code, trigger: 'blur'}
+          {required: true, message: '请输入验证码!', trigger: 'blur'},
+          {validator: code, trigger: 'blur'}
         ],
         password: [
           {validator: validatePass, trigger: 'blur'}

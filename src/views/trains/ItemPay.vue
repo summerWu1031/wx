@@ -85,7 +85,7 @@
 <script>
 import {
   wxPay,
-  getUserProfile, checkUserMember
+  getUserProfile, checkUserMember, aliPay
 } from "@/api/user";
 import VueQr from "vue-qr";
 import {getPaperId} from "@/api/training";
@@ -154,11 +154,27 @@ export default {
           self.order = res.data.orderInfo;
           //  console.log("order", self.order.trainId);
           self.orderId = self.order.orderNumber;
-        } else {
+        } else if (res.code === -1) {
+          if (res.msg == 2) {
+            self.$message(res.msg);
+            setTimeout(() => {
+              self.$router.push('/myuser')
+            }, 3000)
+
+          } else {
+            self.$message(res.msg);
+            let crType = res.msg
+            setTimeout(() => {
+              self.$router.push({path:'/coachreferee',query:{crType}})
+            }, 3000)
+          }
+        } else if(res.code===500){
           self.$message(res.msg);
           setTimeout(() => {
-            self.$router.push("/login");
+            self.$router.back()
           }, 3000);
+        }else {
+          self.$message(res.msg);
         }
       });
     },
@@ -170,14 +186,24 @@ export default {
       const self = this;
       self.$store.commit("showLoading");
       self.initWebSocket()
-      wxPay({id: self.orderId}).then((res) => {
-        self.$store.commit("hideLoading");
-        self.qrcode = res.data.qrcode
+      if (self.payType === 2) {
+        wxPay({id: self.orderId, orderType: 4}).then((res) => {
+          self.$store.commit("hideLoading");
+          self.qrcode = res.data.qrcode
 
-      })
-      this.isShowQrcode = true
+        })
+        this.isShowQrcode = true
+      } else {
+        aliPay({id: self.orderId, orderType: 4}).then((res) => {
+          self.$store.commit("hideLoading");
+          self.qrcode = res.data.qrcode
+        })
+        this.isShowQrcode = true
+      }
+
 
     },
+
 
     //webSocket
     initWebSocket() {
@@ -212,7 +238,8 @@ export default {
           self.isShowQrcode = false
           self.$message('支付成功')
           // self.$router.push('/')
-          self.$router.push({name: 'course-detail', params: {id: self.id}})
+          // self.$router.push({name: 'course-detail', params: {id: self.id}})
+          self.$router.back()
           this.websock.close()
         }
       }

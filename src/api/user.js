@@ -321,6 +321,25 @@ export const wxPay = data => {
         data
     })
 }
+
+
+/**
+ * pc支付宝支付：
+ * @param {*} params
+ * 参数JSON：
+ * {
+ * id:订单id
+ * orderType //5培训 4培训包
+ * }
+ */
+export const aliPay = data => {
+    return request({
+        url: '/app/pay/alipayQrcode',
+        method: 'post',
+        data
+    })
+}
+
 /**
  * 支付宝支付：
  * @param {*} params
