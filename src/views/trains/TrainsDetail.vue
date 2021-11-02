@@ -34,12 +34,12 @@
                 <ul>
                   <li>
                     培训类型：{{
-                      detail.trainType == 1
-                          ? "段位考评"
-                          : detail.trainType == 2
+                      detail.trainType == 0
                           ? "教练员培训"
-                          : detail.trainType == 3
-                              ? "裁判员培训"
+                          : detail.trainType == 1
+                          ? "裁判员培训"
+                          : detail.trainType == 2
+                              ? "段位考评"
                               : "考评员培训"
                     }}
                   </li>
@@ -147,7 +147,7 @@
 
 <script>
 import {
-  getTrainInfo, getPaperHistoryBytrainId
+  getTrainInfo, getPaperHistoryBytrainId, getPaperId
 } from "@/api/training";
 import ExamUpvideo from '@/views/trains/Exam-upvideo'
 import '@/assets/tabs.scss'
@@ -211,14 +211,40 @@ export default {
       let self = this
       let _detail = JSON.stringify(self.detail);
       if (self.detail.paystatus == 0 && self.detail.needPay == 1) {
-        self.$router.push({path: "/item-pay", query: {IPdetail: _detail }});
+        self.$router.push({path: "/item-pay", query: {IPdetail: _detail}});
       } else {
         if (self.detail.examType == 2) {
           // self.$router.push({
           //   path:'/exam-upvideo',
           //   query:{_detail}
           // })
-          self.dialogVisible = true
+          getPaperId({trainId: self.detail.id}).then((res) => {
+            if (res.code == 200) {
+              self.dialogVisible = true
+            } else if (res.code === -1) {
+              //没有等级信息，转跳注册页面
+              if (res.msg == 2) {
+                self.$message(res.msg);
+                setTimeout(() => {
+                  self.$router.push('/myuser')
+                }, 3000)
+
+              } else {
+                self.$message(res.msg);
+                let crType = res.msg
+                setTimeout(() => {
+                  self.$router.push({path: '/coachreferee', query: {crType}})
+                }, 3000)
+              }
+            } else if (res.code === 500) {
+              //不能越级考试
+              self.$message(res.msg);
+            } else {
+              self.$message(res.msg);
+            }
+          });
+
+
         } else {
           self.$router.push(`/exam-online/${self.detail.id}`);
         }
@@ -267,6 +293,7 @@ export default {
       .courseIntro {
         .left {
           height: 292px;
+
           &.exam {
             height: 192px;
           }
@@ -286,7 +313,7 @@ export default {
       .courseMenu {
         //width: 900px;
         width: 1200px;
-
+        box-sizing: border-box;
 
         .content {
           min-height: 294px;
@@ -320,6 +347,7 @@ export default {
               align-items: center;
               height: 50px;
               border-bottom: 1px solid #eee;
+              padding: 0 10px;
 
               .exam {
                 .times {

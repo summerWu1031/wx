@@ -85,7 +85,9 @@ export default {
             }
             const time_str = format.replace(/{(y|m|d|h|i|s|a)+}/g, (result, key) => {
                 let value = formatObj[key]
-                if (key === 'a') { return ['日', '一', '二', '三', '四', '五', '六'][value] }
+                if (key === 'a') {
+                    return ['日', '一', '二', '三', '四', '五', '六'][value]
+                }
                 if (result.length > 0 && value < 10) {
                     value = '0' + value
                 }
@@ -163,7 +165,8 @@ export default {
                     r1 = arg1.toString().split(".")[1].length;
                     r2 = arg2.toString().split(".")[1].length;
                 } catch (e) {
-                    r1 = 0; r2 = 0;
+                    r1 = 0;
+                    r2 = 0;
                 }
                 m = Math.pow(10, Math.max(r1, r2));		//计算因子
 
@@ -179,7 +182,8 @@ export default {
                     r1 = arg1.toString().split(".")[1].length;
                     r2 = arg2.toString().split(".")[1].length;
                 } catch (e) {
-                    r1 = 0; r2 = 0;
+                    r1 = 0;
+                    r2 = 0;
                 }
                 m = Math.pow(10, Math.max(r1, r2));		//计算因子
 
@@ -191,7 +195,8 @@ export default {
                 try {
                     t1 = arg1.toString().split(".")[1].length;
                     t2 = arg2.toString().split(".")[1].length;
-                } catch (e) { }
+                } catch (e) {
+                }
 
                 if (Math) {
                     r1 = Number(arg1.toString().replace(".", ""));
@@ -234,6 +239,8 @@ export default {
             }
 
         }
+
+
     }
 }
 

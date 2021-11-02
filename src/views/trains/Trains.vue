@@ -119,10 +119,8 @@ export default {
         pageSize: 8,
         // 标题搜索
         trainName: this.trainName,
-        // 查询类型（0.所有:课程，1.我的考试，2.收藏）
-        querytype: 0,
-        // 培训类型(2.段位培训，0.教练员培训,1.裁判员培训,4.考评员培训)
-        trainType: 1,
+        querytype: 0,// 查询类型（0.所有:课程，1.我的考试，2.收藏）
+        trainType: 2,// 培训类型(2.段位培训，0.教练员培训,1.裁判员培训,4.考评员培训)
         trainLv: null,
         applyId: this.$route.query.aId,
       },
@@ -145,7 +143,7 @@ export default {
         // {name: "裁判员培训", value: 3},
         // {name: "考评员培训", value: 4},
       ],
-      cmOn: 1,
+      cmOn: 2,
       coursemenus2: [
         {name: "待考试", value: 0},
         {name: "已考试", value: 1},

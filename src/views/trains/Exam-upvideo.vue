@@ -1,43 +1,43 @@
 <template>
   <div class="wrapper">
-      <el-form :model="basic" ref="exam" label-width="100px" class="form">
-        <el-form-item label="考试名称：" >
-          <el-input v-model="basic.trainName" autocomplete="off" disabled></el-input>
-        </el-form-item>
-        <el-form-item label="考试类型：" >
-          <el-input v-model="basic.trainType" autocomplete="off" disabled></el-input>
-        </el-form-item>
-        <el-form-item label="考试等级：" >
-          <el-input v-model="basic.trainLv" autocomplete="off" disabled></el-input>
-        </el-form-item>
-        <el-form-item label="考试作品：" class="upload" prop="certImg">
-          <el-upload
-              v-model="basic.videoUrls"
-              class="avatar-uploader"
-              action="http://wushu.sportsit.cn:8080/upload/uploadVideo"
-              :show-file-list="false"
-              :on-success="handleAvatarSuccess"
-              :before-upload="beforeAvatarUpload"
-              v-loading="loading"
-          >
-            <img v-if="basic.coverUrl.length>0" :src="basic.coverUrl[0].url" class="avatar" >
-            <img v-else src="../../assets/image/upload.png" alt="" class="uploadIcon">
-            <div slot="tip" class="el-upload__tip">(请上传视频文件，且不超过500m)</div>
-          </el-upload>
-        </el-form-item>
-        <el-form-item class="btn">
-          <el-button type="primary" @click="onSubmit('exam')" :disabled="!checked"> 提 交</el-button>
-        </el-form-item>
-      </el-form>
+    <el-form :model="basic" ref="exam" label-width="100px" class="form">
+      <el-form-item label="考试名称：">
+        <el-input v-model="basic.trainName" autocomplete="off" disabled></el-input>
+      </el-form-item>
+      <el-form-item label="考试类型：">
+        <el-input v-model="basic.trainType" autocomplete="off" disabled></el-input>
+      </el-form-item>
+      <el-form-item label="考试等级：">
+        <el-input v-model="basic.trainLv" autocomplete="off" disabled></el-input>
+      </el-form-item>
+      <el-form-item label="考试作品：" class="upload" prop="certImg">
+        <el-upload
+            v-model="basic.videoUrls"
+            class="avatar-uploader"
+            action="http://wushu.sportsit.cn:8080/upload/uploadVideo"
+            :show-file-list="false"
+            :on-success="handleAvatarSuccess"
+            :before-upload="beforeAvatarUpload"
+            v-loading="loading"
+        >
+          <img v-if="basic.coverUrl.length>0" :src="basic.coverUrl[0].url" class="avatar">
+          <img v-else src="../../assets/image/upload.png" alt="" class="uploadIcon">
+          <div slot="tip" class="el-upload__tip">(请上传视频文件，且不超过500m)</div>
+        </el-upload>
+      </el-form-item>
+      <el-form-item class="btn">
+        <el-button type="primary" @click="onSubmit('exam')" :disabled="!checked"> 提 交</el-button>
+      </el-form-item>
+    </el-form>
   </div>
 </template>
 
 <script>
-import { getPaperId, uploadVideo, uploadVideoAssess } from "@/api/training";
+import {getPaperId, uploadVideo, uploadVideoAssess} from "@/api/training";
 
 
 export default {
-  props:['detail'],
+  props: ['detail'],
   data() {
     return {
       basic: {
@@ -57,7 +57,7 @@ export default {
       checked: false,
       pDetail: {},
       user: {},
-      loading:false,
+      loading: false,
     }
   },
   created() {
@@ -75,14 +75,32 @@ export default {
       this.parms.userId = this.user.userInfo.userId;
     }
   },
-  methods:{
+  methods: {
     getPaperIds() {
       const self = this;
       let trainId = self.pDetail.id;
       self.parms.trainId = trainId;
-      getPaperId({ trainId }).then((res) => {
+      getPaperId({trainId}).then((res) => {
         if (res.code == 200) {
           self.parms.paperId = res.data.paperId;
+        } else if (res.code === -1) {
+          //没有等级信息，转跳注册页面
+          if (res.msg == 2) {
+            self.$message(res.msg);
+            setTimeout(() => {
+              self.$router.push('/myuser')
+            }, 3000)
+
+          } else {
+            self.$message(res.msg);
+            let crType = res.msg
+            setTimeout(() => {
+              self.$router.push({path: '/coachreferee', query: {crType}})
+            }, 3000)
+          }
+        } else if (res.code === 500) {
+          //不能越级考试
+          self.$message(res.msg);
         } else {
           self.$message(res.msg);
         }
@@ -94,7 +112,7 @@ export default {
       let self = this
       let formData = new FormData()
       formData.append('file', file.raw)
-      self.loading=true
+      self.loading = true
       uploadVideo(formData).then((res) => {
         if (res.code == 200) {
           setTimeout(() => {
@@ -103,7 +121,7 @@ export default {
             self.basic.videoUrl = str;
             self.parms.videoUrl = str;
             self.basic.coverUrl[0] = {url: self.loadUrl(res.targetUrl)};
-            self.parms.coverUrl=res.targetUrl
+            self.parms.coverUrl = res.targetUrl
             file.status = "done";
             file.message = "上传成功";
             self.checked = true;
@@ -111,7 +129,7 @@ export default {
         } else {
           self.$message(res.msg);
         }
-        self.loading=false
+        self.loading = false
       })
     },
     //视频限制
@@ -122,10 +140,10 @@ export default {
       if (!isLt500M) {
         this.$message.error('文件大小不能超过500M');
       }
-      return  isLt500M;
+      return isLt500M;
     },
     //上传表单
-    onSubmit(){
+    onSubmit() {
       let self = this;
       if (self.parms.videoUrl.length == 0) {
         self.$message("作品不能为空！");
@@ -231,7 +249,7 @@ export default {
     border-color: unset;
   }
 
-  ::v-deep  .el-button--primary.is-disabled, .el-button--info.is-disabled:active, .el-button--info.is-disabled:focus, .el-button--info.is-disabled:hover {
+  ::v-deep .el-button--primary.is-disabled, .el-button--info.is-disabled:active, .el-button--info.is-disabled:focus, .el-button--info.is-disabled:hover {
     //color: #fff;
     border-color: #fcb6b6;
     background-color: #fcb6b6;

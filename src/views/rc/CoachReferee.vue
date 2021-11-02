@@ -17,13 +17,13 @@
             <el-input v-model="queryParams.item" placeholder="请输入项目名称"></el-input>
           </el-form-item>
           <el-form-item label="等级" prop="levelValue" v-if="queryParams.type===0">
-            <el-select v-model="selectedLevel" placeholder="请选择您的级别"  :disabled="canSelected">
+            <el-select v-model="selectedLevel" placeholder="请选择您的级别" :disabled="canSelected" >
               <el-option v-for="(item,index) in coachGradeColumns" :key="index" :label="item.label"
                          :value="item"></el-option>
             </el-select>
           </el-form-item>
           <el-form-item label="等级" prop="levelValue" v-else-if="queryParams.type===1" >
-            <el-select v-model="selectedLevel" placeholder="请选择您的级别"   :disabled="canSelected">
+            <el-select v-model="selectedLevel" placeholder="请选择您的级别"  :disabled="canSelected" >
               <el-option v-for="(item,index) in refereeGradeColumns" :key="index" :label="item.label"
                          :value="item"></el-option>
             </el-select>
@@ -61,7 +61,7 @@
             <img src="../../assets/image/addResume.png" alt="" class="uploadIcon" @click="addItem">
           </el-form-item>
           <div class="resumeWrapper">
-            <div v-for="(item,index) in certResumeList" :key="index">
+            <div v-for="(item,index) in certResumeList" :key="index" v-show="item.ifDel!=1">
               <el-form-item label="时间">
                 <el-col :span="11">
                   <el-date-picker type="date" placeholder="选择时间" style="width: 100%;"
@@ -192,6 +192,7 @@ export default {
           if (self.queryParams.type === '0') {
             if (res.data.coachInfo.length > 0) {
               self.queryParams = res.data.coachInfo[res.data.coachInfo.length - 1];
+              self.certResumeList=self.queryParams.resumes
               self.selectedLevel = self.queryParams.level
               if (self.queryParams.level !== '') {
                 self.canSelected = true
@@ -204,6 +205,7 @@ export default {
           } else if (self.queryParams.type === '1') {
             if (res.data.refereeInfo.length > 0) {
               self.queryParams = res.data.refereeInfo[res.data.refereeInfo.length - 1];
+              self.certResumeList=self.queryParams.resumes
               self.selectedLevel = self.queryParams.level
               if (self.queryParams.level !== '') {
                 self.canSelected = true
@@ -217,6 +219,7 @@ export default {
           } else if (self.queryParams.type === '4') {
             if (res.data.examiner.length > 0) {
               self.queryParams = res.data.examiner[res.data.examiner.length - 1]
+              self.certResumeList=self.queryParams.resumes
               self.selectedLevel = self.queryParams.level
               if (self.queryParams.level !== '') {
                 self.canSelected = true
@@ -309,7 +312,11 @@ export default {
       })
     },
     deleteItem(item, index) {
-      this.certResumeList.splice(index, 1)
+      item.ifDel=1
+      if(item.certResumeTime=='' || item.certResumeName==''){
+        this.certResumeList.splice(index, 1)
+      }
+
     },
     //选择等级
     pickLevel(value) {
@@ -481,10 +488,13 @@ export default {
     object-fit: cover;
     margin-left: 6px;
     margin-top: 8px;
+    cursor: pointer;
   }
 
 }
-
+.el-icon-delete{
+  cursor: pointer;
+}
 .resumeWrapper {
   margin-left: 43px;
 }

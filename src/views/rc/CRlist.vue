@@ -14,16 +14,37 @@
           <el-form-item label="姓名：" class="search-name">
             <el-input class="nameInput" v-model="queryParams.userName" placeholder="请输入姓名"></el-input>
           </el-form-item>
-          <el-form-item label="等级：" class="search-level">
-            <el-select v-model="queryParams.level" placeholder="请选择等级">
+          <el-form-item label="等级：" class="search-level" v-if="queryParams.type==0">
+            <el-select v-model="selectedLevel" placeholder="请选择等级">
               <el-option
-                  v-for="item in levelOptions"
+                  v-for="item in coachGradeColumns"
                   :key="item.value"
                   :label="item.label"
-                  :value="item.value">
+                  :value="item">
               </el-option>
             </el-select>
           </el-form-item>
+          <el-form-item label="等级：" class="search-level" v-if="queryParams.type==1">
+            <el-select v-model="selectedLevel" placeholder="请选择等级">
+              <el-option
+                  v-for="item in refereeGradeColumns"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item">
+              </el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="等级：" class="search-level" v-if="queryParams.type==4">
+            <el-select v-model="selectedLevel" placeholder="请选择等级">
+              <el-option
+                  v-for="item in judgeGradeColumns"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item">
+              </el-option>
+            </el-select>
+          </el-form-item>
+
           <el-form-item class="search-btn">
             <el-button class="nameButton" @click="onSubmit">查询</el-button>
             <el-button @click="resetForm()" class="reset">重置</el-button>
@@ -143,6 +164,7 @@
 <script>
 import {checkUserMember, getUserProfile, queryCertList, queryUserCertDetailList} from "@/api/user";
 import {pagination} from '@/mixins/mixin'
+import {queryDictListByTypeList} from "@/api/dict";
 
 export default {
   mixins: [pagination],
@@ -154,18 +176,23 @@ export default {
         {label: '一级', value: '一级'},
         {label: '二级', value: '二级'},
       ],
+      coachGradeColumns: [],
+      refereeGradeColumns: [],
+      judgeGradeColumns: [],
+      selectedLevel: {},
       // 下拉刷新
       queryParams: {
         pageSize: 10,
         pageNum: 1,
         userName: '',
         level: '',
+        levelValue: '',
         type: '',
       },
       list: [],
       total: 0,
       // 弹窗
-      newCRtime: "",
+      newCRtime: "2021 年",
       id: '',
       popList: [],
       popTotal: 0,
@@ -179,10 +206,12 @@ export default {
   watch: {
     $route() {
       this.queryParams.type = this.$route.query.crType
-      if (this.queryParams.type == '0' || this.queryParams.type == '1'||this.queryParams.type == '3') {
-        this.queryParams.level = ''
-        this.queryParams.userName = ''
-        this.init()
+      if (this.queryParams.type == '0' || this.queryParams.type == '1' || this.queryParams.type == '3') {
+        // this.queryParams.level = ''
+        // this.queryParams.userName = ''
+        // this.selectedLevel=''
+        // this.init()
+        this.resetForm()
       }
     }
   },
@@ -190,13 +219,61 @@ export default {
     this.init()
     this.format()
     this.queryParams.type = this.$route.query.crType
+    this.queryDictListByTypeLists()
 
   },
 
   methods: {
+    //各个身份的等级
+    queryDictListByTypeLists() {
+      let self = this;
+      queryDictListByTypeList([{type: "judgeGrade"}]).then((res) => {
+        if (res.code == 200) {
+          let _judgeGrade = res.data.judgeGradeList;
+          _judgeGrade.map((item) => {
+
+            self.refereeGradeColumns.push(
+                Object.assign({}, item, {name: item.label})
+            );
+
+          });
+        } else {
+          self.$message(res.msg);
+        }
+      });
+      queryDictListByTypeList([{type: "coachGrade"}]).then((res) => {
+        if (res.code == 200) {
+          let _coachGrade = res.data.coachGradeList;
+          _coachGrade.map((item) => {
+
+            self.coachGradeColumns.push(
+                Object.assign({}, item, {name: item.label})
+            );
+
+          });
+        } else {
+          self.$message(res.msg);
+        }
+      });
+      queryDictListByTypeList([{type: "evaluateLevel"}]).then((res) => {
+        if (res.code == 200) {
+          let _judgeGrade = res.data.evaluateLevelList;
+          _judgeGrade.map((item) => {
+
+            self.judgeGradeColumns.push(
+                Object.assign({}, item, {name: item.label})
+            );
+
+          });
+        } else {
+          self.$message(res.msg);
+        }
+      });
+
+    },
     clear() {
       this.id = ''
-      this.newCRtime = ''
+      this.newCRtime = '2021 年'
       this.popList = ''
       this.popTotal = 0
     },
@@ -210,6 +287,7 @@ export default {
         id: self.id,
         year: self.newCRtime ? self.newCRtime : null
       }
+
       queryUserCertDetailList(parms).then((res) => {
         if (res.code == 200) {
           for (let i = 0; i < res.rows.length; i++) {
@@ -231,6 +309,7 @@ export default {
       const self = this;
       self.id = row.id
       self.dialog = true
+      this.checkDetail()
     },
     checkUserMembers() {
       const self = this;
@@ -250,6 +329,7 @@ export default {
     init() {
       const self = this;
       queryCertList(self.queryParams).then((res) => {
+
         if (res.code == 200) {
           self.list = res.rows
           self.total = res.total
@@ -265,6 +345,8 @@ export default {
       // this.queryParams.userName = this.userName
       // this.queryParams.level = this.level
       const self = this;
+      self.queryParams.level = self.selectedLevel.label
+      self.queryParams.levelValue = self.selectedLevel.value
       if (self.queryParams.userName || self.queryParams.level) {
         queryCertList(self.queryParams).then((res) => {
           if (res.code == 200) {
@@ -284,10 +366,8 @@ export default {
       this.level = ''
       this.queryParams.userName = ''
       this.queryParams.level = ''
-      console.log(this.userName)
-      console.log(this.level)
-      console.log(this.queryParams.userName)
-      console.log(this.queryParams.level)
+      this.queryParams.levelValue = ''
+      this.selectedLevel = {}
       this.init()
     },
     format() {

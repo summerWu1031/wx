@@ -395,6 +395,25 @@ export default {
           self.showBtn = false;
           self.getSubjects();
           self.getExamExpireTimes();
+        }else if (res.code === -1) {
+          if (res.msg == 2) {
+            self.$message(res.msg);
+            setTimeout(() => {
+              self.$router.push('/myuser')
+            }, 3000)
+
+          } else {
+            self.$message(res.msg);
+            let crType = res.msg
+            setTimeout(() => {
+              self.$router.push({path:'/coachreferee',query:{crType}})
+            }, 3000)
+          }
+        } else if(res.code===500){
+          self.$message(res.msg);
+          setTimeout(() => {
+            self.$router.back()
+          }, 3000);
         } else {
           self.$message(res.msg);
           setTimeout(() => {

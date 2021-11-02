@@ -74,11 +74,12 @@
 <script>
 import {
   wxPay, aliPay,
-  getUserProfile, checkUserMember
+  getUserProfile, checkUserMember, login
 } from "@/api/user";
 import VueQr from "vue-qr";
 import {confirmationTrain} from "@/api/training";
 import "@/assets/pay.scss"
+import {sendSock} from '@/util/webscoket'
 
 export default {
   components: {
@@ -104,7 +105,6 @@ export default {
   mounted() {
     let self = this
     self.detail = JSON.parse(self.$route.query.detail)
-    console.log(self.detail)
     self.checkUserMembers()
     getUserProfile().then((res) => {
       let self = this
@@ -129,7 +129,9 @@ export default {
     this.confirmationTrains()
 
   },
-
+  destroyed() {
+    this.onClose()
+  },
   methods: {
     confirmationTrains() {
       const self = this;
@@ -188,6 +190,7 @@ export default {
       if (typeof (WebSocket) === "undefined") {
         alert("您的浏览器不支持socket")
       } else {
+
         const wsurl = 'ws://8.134.12.113:8889/webSocket'
         this.websock = new WebSocket(wsurl)
         this.websock.onmessage = this.onMessage
@@ -203,6 +206,19 @@ export default {
     },
     onError() {//连接建立失败重连
       this.initWebSocket();
+      // console.log('websocket连接发生错误')
+      // this.websock.close()
+
+    },
+
+    webscoketOnmessage(redata) {
+      if (redata.message == '支付成功') {
+        self.isShowQrcode = false
+        self.$message('支付成功')
+        self.$router.back()
+
+        this.websock.close()
+      }
     },
     onMessage(e) {//数据接收
       let self = this
@@ -225,7 +241,6 @@ export default {
       }
     },
     onSend(Data) {//数据发送
-      console.log(Data, 111)
       this.websock.send(Data);
     },
     onClose(e) {//关闭

@@ -15,9 +15,9 @@
           <!--          <span class="pay-item">课程名称：{{ pDetail.trainName }}</span>-->
           <span class="pay-item">
         培训类型：{{
-              pDetail.trainType == 1 ? "段位考评" : pDetail.trainType == 2
-                  ? "教练员培训" : pDetail.trainType == 3
-                      ? "裁判员培训" : "考评员培训"
+              pDetail.trainType == 0 ? "教练员培训" : pDetail.trainType == 12
+                  ? "裁判员培训" : pDetail.trainType == 2
+                      ? "段位考评" : "考评员培训"
             }}</span
           >
           <span class="pay-item">等级：{{ pDetail.trainLv }}</span>
@@ -210,7 +210,9 @@ export default {
       if (typeof (WebSocket) === "undefined") {
         alert("您的浏览器不支持socket")
       } else {
+
         const wsurl = 'ws://8.134.12.113:8889/webSocket'
+        // const wsurl = 'ws://192.168.1.128:8082/webSocket'
         this.websock = new WebSocket(wsurl)
         this.websock.onmessage = this.onMessage
         this.websock.onopen = this.onOpen

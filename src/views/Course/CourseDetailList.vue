@@ -56,7 +56,7 @@
           </div>
         </div>
         <div class="courseDetail">
-          <div class="courseMenu">
+          <div class="ss-courseMenu">
             <!--          <div class="tab">课程目录</div>-->
             <div class="nav2Tabs">
               <div class="tab" :class="{on: selected==index}" @click="select(index)" v-for="(item,index) in tabs"
@@ -103,7 +103,7 @@ import {
 import '@/assets/tabs.scss'
 import '@/assets/topBanner.scss'
 import '@/assets/ss-introWrapper.scss'
-
+import "@/assets/courseMenu.scss"
 export default {
   props: ['id'],
   data() {
@@ -189,68 +189,6 @@ export default {
       background-color: #fff;
       padding-top: 20px;
       padding-bottom: 20px;
-
-      .courseMenu {
-        width: 900px;
-
-        .content {
-          .intro {
-            padding: 20px 0;
-            margin-bottom: 30px;
-
-            p {
-              line-height: 30px;
-              color: #666;
-              font-size: 14px;
-            }
-          }
-
-          .list {
-            padding-top: 20px;
-
-            li {
-              border: 1px solid #eee;
-              box-shadow: 0 0 20px #eee;
-              border-radius: 5px;
-              margin-bottom: 20px;
-              padding: 20px 0;
-              display: flex;
-              align-items: center;
-              cursor: pointer;
-
-              i {
-                padding-left: 6px;
-                width: 60px;
-                font-size: 24px;
-              }
-
-              .title {
-                display: flex;
-                justify-content: space-between;
-                width: 100%;
-
-                .content {
-                  font-size: 16px;
-                  padding-left: 10px;
-                }
-
-                .time {
-                  font-size: 12px;
-                  color: #999;
-                  line-height: 24px;
-                  padding-right: 10px;
-                }
-              }
-            }
-          }
-
-          .info {
-            padding-top: 12px;
-          }
-        }
-
-
-      }
 
     }
   }
